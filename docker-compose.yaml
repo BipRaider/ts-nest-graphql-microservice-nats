@@ -1,0 +1,97 @@
+version: "3.8"
+name: "TNGMN"
+
+services:
+    # client:
+    #     extends:
+    #         file: ./docker/docker-compose.client.yaml
+    #         service: client
+    #     networks:
+    #         - tngmn
+
+    api:
+        # extends:
+        #     file: ./docker/docker-compose.api.yaml
+        #     service: api
+        container_name: api
+        restart: always
+        build:
+            context: ./
+            dockerfile: ./apps/api/Dockerfile
+        volumes:
+            - ./dist/apps/api:/opt/app/dist
+            - ./schema.gql:/opt/app/schema.gql
+        env_file:
+            - ./envs/.api.env
+            - ./envs/.mongo.env
+        command: npm run start:prod
+        ports:
+            - 8080:8080
+        depends_on:
+            - nats
+            - mongo
+        networks:
+            - tngmn
+
+    product:
+        # extends:
+        #     file: ./docker/docker-compose.product.yaml
+        #     service: product
+        container_name: product
+        restart: always
+        build:
+            context: ./
+            dockerfile: ./apps/product/Dockerfile
+        volumes:
+            - ./dist/apps/product:/opt/app/dist
+        env_file:
+            - ./envs/.product.env
+            - ./envs/.mongo.env
+        command: npm run start:prod
+        depends_on:
+            - nats
+            - mongo
+        networks:
+            - tngmn
+
+    user:
+        # extends:
+        #     file: ./docker/docker-compose.user.yaml
+        #     service: user
+        container_name: user
+        restart: always
+        build:
+            context: ./
+            dockerfile: ./apps/user/Dockerfile
+        volumes:
+            - ./dist/apps/user:/opt/app/dist
+        env_file:
+            - ./envs/.user.env
+            - ./envs/.mongo.env
+        command: npm run start:prod
+        depends_on:
+            - mongo
+            - nats
+        networks:
+            - tngmn
+
+    mongo:
+        extends:
+            file: ./docker/docker-compose.mongo.yaml
+            service: mongo
+        networks:
+            - tngmn
+
+    nats:
+        extends:
+            file: ./docker/docker-compose.nats.yaml
+            service: nats
+        networks:
+            - tngmn
+
+networks:
+    tngmn:
+        driver: bridge
+
+volumes:
+    tngmndata:

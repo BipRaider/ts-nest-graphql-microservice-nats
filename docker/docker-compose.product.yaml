@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  product:
+    container_name: product
+    restart: always
+    build:
+      context: ./
+      dockerfile: ../apps/product/Dockerfile
+    volumes:
+      - ../dist/apps/product:/opt/app/dist
+    env_file:
+      - ../envs/.product.env
+      - ../envs/.mongo.env
+    command: npm run start:prod
+    depends_on:
+      - nats
+      - mongo
+    networks:
+      - tngmn
+
+networks:
+  tngmn:
+    driver: bridge

@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  client:
+    container_name: client
+    restart: always
+    build:
+      context: .
+      dockerfile: ../apps/client/Dockerfile\
+    volumes:
+      - ../apps/client:/app/client
+    env_file:
+      - ../envs/.client.env
+      - ../envs/.mongo.env
+    ports:
+      - '3001:80'
+    networks:
+      - tngmn
+
+networks:
+  tngmn:
+    driver: bridge

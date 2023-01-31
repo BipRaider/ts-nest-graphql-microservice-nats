@@ -1,0 +1,85 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type PrivateData {
+  firstname: String
+  lastname: String
+}
+
+type CreateUserResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+}
+
+type GetUserResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  name: String
+  email: String
+  roles: [Roles!]
+  privateData: PrivateData
+}
+
+"""Roles for Admin creating projects and users"""
+enum Roles {
+  USER
+  ADMIN
+}
+
+type LoginUserResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  name: String
+  email: String
+  roles: [Roles!]
+  privateData: PrivateData
+  access_token: String!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+"""Mongo object id scalar type"""
+scalar ObjectID
+
+type Query {
+  getUser(data: GetUserInput!): GetUserResponse!
+  getUsers(data: GetUsersInput!): [GetUserResponse!]!
+}
+
+input GetUserInput {
+  id: ObjectID
+  email: String
+}
+
+input GetUsersInput {
+  skip: Int
+  limit: Int
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): CreateUserResponse!
+  login(input: LoginUserInput!): LoginUserResponse!
+  logout: Boolean!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+  privateData: PrivateDataInput
+}
+
+input PrivateDataInput {
+  firstname: String
+  lastname: String
+}
+
+input LoginUserInput {
+  password: String!
+  email: String!
+}
