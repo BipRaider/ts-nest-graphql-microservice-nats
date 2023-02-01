@@ -1,18 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientNats } from '@nestjs/microservices';
-import { JwtService } from '@nestjs/jwt';
 
 import { AuthContract } from '@common/contracts';
-import { ErrorUtil, SendErrorUtil } from '@common/utils';
+import { ErrorUtil, JwtUtil, SendErrorUtil } from '@common/utils';
 import { LoginUserInput } from './dto/input/login.input';
+
+import { IJwtGenerateToken } from '@common/interface';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    @Inject('USER_SERVICE') private readonly userClient: ClientNats,
-    @Inject('JwtRefreshTokenService') private readonly refreshTokenService: JwtService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(@Inject('USER_SERVICE') private readonly userClient: ClientNats, private readonly jwt: JwtUtil) {}
 
   public validate = async (data: LoginUserInput): Promise<AuthContract.AuthQuery.Response | SendErrorUtil> => {
     const record = AuthContract.AuthQuery.build(data);
@@ -32,25 +29,23 @@ export class AuthService {
     return user;
   };
 
-  async generateRefreshToken(user: AuthContract.AuthQuery.Response): Promise<string> {
-    return this.refreshTokenService.sign(
-      {
-        user: user.email,
-      },
-      {
-        subject: String(user.id),
-      },
-    );
-  }
+  /*** The func creates two  tokens `access_token` and `refresh_token`, then return `access_token`.*/
+  public generateToken = async (
+    { email, roles, id }: IJwtGenerateToken,
+    context: any,
+  ): Promise<{ access_token: string }> => {
+    const user = { email, roles, id };
+    await this.jwt.generateRefreshToken(user, context);
+    const access_token = await this.jwt.generateAccessToken(user);
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.userId, role: user.role };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
+    return { access_token };
+  };
 
-  async verify(payload) {
-    return this.jwtService.verify(payload);
-  }
+  public logout = async (context: any): Promise<boolean> => {
+    context.res.cookie(this.jwt.refreshTokenName, '', { httpOnly: true, maxAge: 0 });
+
+    context.res.clearCookie('refresh-token');
+
+    return true;
+  };
 }

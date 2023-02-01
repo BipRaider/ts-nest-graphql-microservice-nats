@@ -2,27 +2,31 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
 import { Strategy, ExtractJwt } from 'passport-jwt';
+import { ConfigService } from '@nestjs/config';
+
+import { JwtStrategyName } from '../enum';
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
-  constructor() {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, JwtStrategyName.Refresh) {
+  constructor(private readonly configService: ConfigService) {
     super({
-      secretOrKey: 'JWT_REFRESHTOKEN_SECRET',
-      issuer: 'JWT_ISSUER',
-      audience: 'JWT_AUDIENCE',
+      secretOrKey: configService.get('JWT_REFRESH_SECRET') || 'JWT_REFRESH_SECRET',
+      audience: configService.get('JWT_REFRESH_AUDIENCE') || 'JWT_REFRESH_AUDIENCE',
+      issuer: configService.get('JWT_REFRESH_ISSUER') || 'JWT_REFRESH_ISSUER',
+      expiresIn: configService.get('JWT_REFRESH_EXPIRES') || '2d',
+      algorithm: 'HS256',
       jwtFromRequest: ExtractJwt.fromExtractors([
         req => {
-          return req.get('cookies.refresh-token');
+          const token = req.get('cookies.refresh-token');
+          if (token && typeof token === 'string') return token;
+          return '';
         },
       ]),
     });
   }
 
   async validate(data: any): Promise<any> {
-    // const user: User = await new Promise(async res => {
-    //   this.usersService.getUserByEmail({ email: data.email }).subscribe(async data => res(data));
-    // });
-    console.log('JwtRefreshStrategy--->');
+    console.log('JwtRefreshStrategy--2-step-->', data);
     return data;
   }
 }

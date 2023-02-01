@@ -9,9 +9,9 @@ import { AuthModule } from './modules/auth/auth.module';
 
 import { GraphQLOptionsHost } from './graphql/graphql.option';
 import { ScalarModule } from './graphql/scalar/scalar.module';
-import { AuthMiddleware } from './auth.middleware';
-
-import { GuardsModule } from './guards/guards.module';
+import { AuthMiddleware } from './modules/auth/auth.middleware';
+import { PassportModule } from '@nestjs/passport';
+import { JwtUtilModule } from '@common/utils';
 
 @Module({
   imports: [
@@ -20,13 +20,17 @@ import { GuardsModule } from './guards/guards.module';
       driver: ApolloDriver,
       useClass: GraphQLOptionsHost,
     }),
-
+    PassportModule.register({
+      defaultStrategy: 'jwt-gql',
+      session: true,
+    }),
     ScalarModule,
     UsersModule,
     ProductModule,
     AuthModule,
+    JwtUtilModule,
   ],
-  providers: [GuardsModule],
+  providers: [JwtUtilModule],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

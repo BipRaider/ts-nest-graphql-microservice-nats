@@ -52,14 +52,13 @@ export class GraphQLOptionsHost implements GqlOptionsFactory {
         origin: '*',
         credentials: true,
       },
-      context: async ({ req, res }: { req: Request & { headers: { authorization: string } }; res: Response }) => {
+      context: async ({ req, res }) => {
         return { req, res };
       },
-      formatResponse: (response: GraphQLResponse, _requestContext: GraphQLRequestContext<object>): GraphQLResponse => {
-        logger.log('formatResponse');
-
-        return response;
-      },
+      // formatResponse: (response: GraphQLResponse, requestContext: GraphQLRequestContext<object>): GraphQLResponse => {
+      //   logger.log('formatResponse');
+      //   return response;
+      // },
       formatError: (err: GraphQLError): GraphQLError => {
         delete err.stack;
         logger.error(err);

@@ -4,6 +4,7 @@ import { Reflector } from '@nestjs/core';
 import { Roles } from '@common/interface';
 import { ROLES_KEY } from '../decorator/roles.decorator';
 
+/*** Check a `roles` from access_token */
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
