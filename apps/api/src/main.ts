@@ -5,7 +5,7 @@ import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 import { ValidatePipe } from '@common/pipe';
-import { ErrorsInterceptor, TransformInterceptor } from '@common/interceptor';
+import { LoggingInterceptor, ErrorsInterceptor } from '@common/interceptor';
 
 const logger: Logger = new Logger('Api');
 async function bootstrap(): Promise<void> {
@@ -21,7 +21,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
-  // app.useGlobalInterceptors(new ErrorsInterceptor(), new TransformInterceptor());
+  app.useGlobalInterceptors(new LoggingInterceptor(), new ErrorsInterceptor());
 
   app.enableCors({
     origin: '*',

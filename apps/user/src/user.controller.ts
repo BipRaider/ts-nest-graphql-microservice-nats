@@ -9,7 +9,6 @@ import { IUserController } from './types';
 import { UserService } from './user.service';
 import { Entity } from './user.entity';
 
-const logger = new Logger('User');
 @Controller()
 export class UserController implements IUserController {
   constructor(private readonly usersService: UserService) {}
@@ -18,7 +17,6 @@ export class UserController implements IUserController {
   public async create(
     @Payload() payload: UserContract.CreateCommand.Request,
   ): Promise<UserContract.CreateCommand.Response | SendErrorUtil> {
-    logger.verbose('Create', payload);
     const user: Entity | SendErrorUtil = await this.usersService.create(payload);
 
     if ('status' in user) return user;
@@ -34,7 +32,6 @@ export class UserController implements IUserController {
   public async find(
     @Payload() payload: UserContract.GetUserQuery.Request,
   ): Promise<UserContract.GetUserQuery.Response | SendErrorUtil> {
-    logger.verbose('Find');
     const user: Entity | SendErrorUtil = await this.usersService.find(payload);
 
     if ('status' in user) return user;
@@ -46,7 +43,6 @@ export class UserController implements IUserController {
   public async get(
     @Payload() payload?: UserContract.GetUsersQuery.Request,
   ): Promise<UserContract.GetUserQuery.Response[] | SendErrorUtil> {
-    logger.verbose('Get');
     const user: Entity[] | SendErrorUtil = await this.usersService.get(payload);
 
     if ('status' in user) return user;
@@ -58,7 +54,6 @@ export class UserController implements IUserController {
   public async auth(
     @Payload() payload?: AuthContract.AuthQuery.Request,
   ): Promise<AuthContract.AuthQuery.Response | SendErrorUtil> {
-    logger.verbose('Auth');
     const user: Entity | SendErrorUtil = await this.usersService.auth(payload);
 
     if ('status' in user) return user;

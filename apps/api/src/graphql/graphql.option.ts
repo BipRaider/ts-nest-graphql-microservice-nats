@@ -3,7 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
-import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import { ApolloServerPluginLandingPageLocalDefault, GraphQLResponse, GraphQLRequestContext } from 'apollo-server-core';
+import { Response, Request } from 'express';
 
 import { ErrorUtil } from '@common/utils';
 
@@ -52,15 +53,15 @@ export class GraphQLOptionsHost implements GqlOptionsFactory {
         credentials: true,
       },
       context: async ({ req, res }: { req: Request & { headers: { authorization: string } }; res: Response }) => {
-        logger.log('context');
         return { req, res };
       },
-      formatResponse: res => {
+      formatResponse: (response: GraphQLResponse, _requestContext: GraphQLRequestContext<object>): GraphQLResponse => {
         logger.log('formatResponse');
 
-        return res;
+        return response;
       },
       formatError: (err: GraphQLError): GraphQLError => {
+        delete err.stack;
         logger.error(err);
         return new ErrorUtil().sendClient(err);
       },

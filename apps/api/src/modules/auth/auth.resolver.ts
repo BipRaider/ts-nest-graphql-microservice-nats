@@ -6,11 +6,12 @@ import { ErrorUtil, SendErrorUtil } from '@common/utils';
 import { AuthContract } from '@common/contracts';
 
 import { AuthService } from './auth.service';
-import { RefreshAuthGuard } from './guards/refresh-auth.guard';
-import { CurrentUser } from './decorator/user.decorator';
 
 import { LoginUserInput, LoginUserResponse } from './dto/input/login.input';
 import { Auth } from './dto/auth.model';
+import { User } from '../users/dto/user.model';
+import { RefreshAuthGuard } from '../../guards/refresh-auth.guard';
+import { CurrentUser } from '../../decorator/user.decorator';
 
 @Resolver(of => Auth)
 export class AuthResolver {
@@ -55,18 +56,18 @@ export class AuthResolver {
     return { ...user, access_token };
   }
 
-  // @Mutation(() => User, { nullable: true })
-  // @UseGuards(RefreshAuthGuard)
-  // async refreshToken(@Context() context: any, @CurrentUser() user: User): Promise<User> {
-  //   const { res } = context;
+  @Mutation(() => Auth, { nullable: true })
+  @UseGuards(RefreshAuthGuard)
+  async refreshToken(@Context() context: any, @CurrentUser() user): Promise<User> {
+    const { res } = context;
 
-  //   res.cookie('refresh-token', await this.authService.generateRefreshToken(user), {
-  //     httpOnly: true,
-  //     maxAge: 1.728e8,
-  //   });
+    res.cookie('refresh-token', await this.authService.generateRefreshToken(user), {
+      httpOnly: true,
+      maxAge: 1.728e8,
+    });
 
-  //   return user;
-  // }
+    return user;
+  }
 
   @Mutation(() => Boolean)
   async logout(@Context() context: any): Promise<boolean> {

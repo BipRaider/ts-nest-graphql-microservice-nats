@@ -6,6 +6,9 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 export class RefreshAuthGuard extends AuthGuard('jwt-refresh') {
   getRequest(context: ExecutionContext): any {
     const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req;
+    const req = ctx.getContext().req;
+    console.log('RefreshAuthGuard---->', req.user);
+    console.log('RefreshAuthGuard---->', req.get('cookies.refresh-token'));
+    return req;
   }
 }

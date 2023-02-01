@@ -36,9 +36,8 @@ export class UsersResolver {
   //List mutation func.
   @Mutation(returns => CreateUserResponse)
   async createUser(@Args('input') input: CreateUserInput): Promise<UserContract.CreateCommand.Response | GraphQLError> {
-    console.log('data', input);
     const user: UserContract.CreateCommand.Response | SendErrorUtil = await this.usersService.createUser(input);
-    console.log('user', user);
+
     if ('status' in user) return new ErrorUtil(user.status).response(user);
 
     return user;

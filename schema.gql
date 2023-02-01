@@ -29,6 +29,18 @@ enum Roles {
   ADMIN
 }
 
+type Auth {
+  id: ObjectID
+  created: Date
+  updated: Date
+  name: String
+  email: String
+  password: String
+  roles: [Roles!]
+  privateData: PrivateData
+  access_token: String
+}
+
 type LoginUserResponse {
   id: ObjectID
   created: Date
@@ -64,6 +76,7 @@ input GetUsersInput {
 type Mutation {
   createUser(input: CreateUserInput!): CreateUserResponse!
   login(input: LoginUserInput!): LoginUserResponse!
+  refreshToken: Auth
   logout: Boolean!
 }
 

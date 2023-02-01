@@ -61,6 +61,18 @@ export interface GetUserResponse {
     privateData?: Nullable<PrivateData>;
 }
 
+export interface Auth {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    name?: Nullable<string>;
+    email?: Nullable<string>;
+    password?: Nullable<string>;
+    roles?: Nullable<Roles[]>;
+    privateData?: Nullable<PrivateData>;
+    access_token?: Nullable<string>;
+}
+
 export interface LoginUserResponse {
     id?: Nullable<ObjectID>;
     created?: Nullable<Date>;
@@ -80,6 +92,7 @@ export interface IQuery {
 export interface IMutation {
     createUser(input: CreateUserInput): CreateUserResponse | Promise<CreateUserResponse>;
     login(input: LoginUserInput): LoginUserResponse | Promise<LoginUserResponse>;
+    refreshToken(): Nullable<Auth> | Promise<Nullable<Auth>>;
     logout(): boolean | Promise<boolean>;
 }
 

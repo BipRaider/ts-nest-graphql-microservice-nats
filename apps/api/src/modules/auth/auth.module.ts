@@ -1,25 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
 
 import { NatsModule } from '@common/libs';
-import { PasswordModule } from '@common/utils';
+import { JwtStrategyModule, PasswordModule } from '@common/utils';
 
 import { AuthService } from './auth.service';
-import { JwtRefreshStrategy } from './strategy/refresh.strategy';
-import { jwtRefreshOptions, passportOptions, jwtGqlOptions } from './auth.constants';
-import { GqlStrategy } from './strategy/gql.strategy';
 import { AuthResolver } from './auth.resolver';
-import { GqlAuthGuard } from './guards/gql-auth.guard';
-import { RolesGuard } from './guards/roles.guard';
 import { UsersModule } from '../users/users.module';
+import { GuardsModule } from '../../guards/guards.module';
+import { jwtGqlOptions, jwtRefreshOptions } from '../../auth.constants';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     UsersModule,
-    PasswordModule, //Pass util
-    PassportModule.register(passportOptions),
+    PasswordModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -38,10 +33,7 @@ import { UsersModule } from '../users/users.module';
   providers: [
     AuthResolver,
     AuthService,
-    GqlAuthGuard,
-    RolesGuard,
-    GqlStrategy,
-    JwtRefreshStrategy,
+    GuardsModule,
     {
       provide: 'JwtRefreshTokenService',
       useFactory: (): JwtService => {

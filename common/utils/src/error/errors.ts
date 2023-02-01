@@ -130,7 +130,6 @@ export class ErrorUtil extends Error {
   };
 
   private formatErrorValidatePip = (err: GraphQLError): GraphQLError => {
-    console.dir(err);
     const { extensions } = err;
     const { response } = extensions;
 

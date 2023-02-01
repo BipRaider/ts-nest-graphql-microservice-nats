@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
-import { Auth } from '../dto/auth.model';
 
 @Injectable()
 export class GqlStrategy extends PassportStrategy(Strategy, 'jwt-gql') {
@@ -14,7 +13,8 @@ export class GqlStrategy extends PassportStrategy(Strategy, 'jwt-gql') {
     });
   }
 
-  async validate(payload: any, done: any): Promise<Auth> {
+  async validate(payload: any, done: any): Promise<any> {
+    console.log('GqlStrategy', payload);
     done(null, payload);
     return payload;
   }

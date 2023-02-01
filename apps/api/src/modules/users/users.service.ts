@@ -27,14 +27,14 @@ export class UsersService {
       UserContract.CreateCommand.Pattern,
       record,
     );
-    console.log('response', response);
+
     const user: UserContract.CreateCommand.Response | SendErrorUtil = await new Promise(async res => {
       response.subscribe({
         next: async data => res(data),
         error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
       });
     });
-    console.log('user 2', user);
+
     return user;
   };
 
