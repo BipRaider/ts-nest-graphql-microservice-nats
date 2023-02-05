@@ -13,7 +13,7 @@ export class GqlStrategy extends PassportStrategy(Strategy, JwtStrategyName.Gql)
       audience: configService.get('JWT_ACCESS_AUDIENCE') || 'JWT_ACCESS_AUDIENCE',
       issuer: configService.get('JWT_ACCESS_ISSUER') || 'JWT_ACCESS_ISSUER',
       expiresIn: configService.get('JWT_ACCESS_EXPIRES') || '2y',
-      algorithm: 'HS256',
+
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });

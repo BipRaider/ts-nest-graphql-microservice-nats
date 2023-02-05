@@ -1,10 +1,10 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IBaseData, IPrivateData, IUser, Roles } from '@common/interface';
+import { IBaseData, IPrivateData, IUser, ENUM } from '@common/interface';
 
 import { BaseModel } from '../../base.model';
 
-registerEnumType(Roles, {
+registerEnumType(ENUM.Roles, {
   name: 'Roles',
   description: 'Roles for Admin creating projects and users',
 });
@@ -29,8 +29,8 @@ export class User extends BaseModel implements IUser, IBaseData {
   @Field(() => String, { nullable: true })
   password: string;
 
-  @Field(type => [Roles], { nullable: true })
-  roles?: Roles[];
+  @Field(type => [ENUM.Roles], { nullable: true })
+  roles?: ENUM.Roles[];
 
   @Field(type => PrivateData, { nullable: true })
   privateData?: PrivateData;

@@ -1,6 +1,7 @@
 import { AuthContract, UserContract } from '@common/contracts';
-import { Entity } from '../user.entity';
 import { SendErrorUtil } from '@common/utils';
+
+import { Entity } from '../user.entity';
 
 /*** A class working like `mediator` with classes `controller` and `repository`.
  **  * Getting data from `controller` and modify them for `repository`.

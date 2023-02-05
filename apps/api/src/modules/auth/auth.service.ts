@@ -3,13 +3,17 @@ import { ClientNats } from '@nestjs/microservices';
 
 import { AuthContract } from '@common/contracts';
 import { ErrorUtil, JwtUtil, SendErrorUtil } from '@common/utils';
-import { LoginUserInput } from './dto/input/login.input';
+import { ENUM, IJwtGenerateToken } from '@common/interface';
 
-import { IJwtGenerateToken } from '@common/interface';
+import { LoginUserInput } from './dto/input/login.input';
+import { SocialAuthInput } from './dto/input';
 
 @Injectable()
 export class AuthService {
-  constructor(@Inject('USER_SERVICE') private readonly userClient: ClientNats, private readonly jwt: JwtUtil) {}
+  constructor(
+    @Inject(ENUM.NatsServicesName.USER) private readonly userClient: ClientNats,
+    private readonly jwt: JwtUtil,
+  ) {}
 
   public validate = async (data: LoginUserInput): Promise<AuthContract.AuthQuery.Response | SendErrorUtil> => {
     const record = AuthContract.AuthQuery.build(data);
@@ -35,17 +39,43 @@ export class AuthService {
     context: any,
   ): Promise<{ access_token: string }> => {
     const user = { email, roles, id };
-    await this.jwt.generateRefreshToken(user, context);
-    const access_token = await this.jwt.generateAccessToken(user);
+    const refresh_token = await this.jwt.generateRefreshToken(user, context);
+    const access_token = await this.jwt.generateAccessToken(user, context);
 
-    return { access_token };
+    context.req.session.authTokens = { access_token, refresh_token };
+
+    return { ...user, access_token };
   };
 
   public logout = async (context: any): Promise<boolean> => {
-    context.res.cookie(this.jwt.refreshTokenName, '', { httpOnly: true, maxAge: 0 });
+    try {
+      const { res, req } = context;
+      await req?.session?.destroy();
+      res.cookie(this.jwt.accessTokenName, '', { httpOnly: true, maxAge: 0 });
+      res.cookie(this.jwt.refreshTokenName, '', { httpOnly: true, maxAge: 0 });
+      res.clearCookie(this.jwt.refreshTokenName);
+      res.clearCookie(this.jwt.accessTokenName);
+      res.removeHeader('set-cookie');
+      res.removeHeader('authorization');
+      res.removeHeader('refresh');
 
-    context.res.clearCookie('refresh-token');
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
-    return true;
+  getGoogleAuthURL = () => {
+    return 'getGoogleAuthURL';
+  };
+
+  googleAuth = (input: SocialAuthInput, context: any) => {
+    return 'googleAuth';
+  };
+  githubAuth = (input: SocialAuthInput, context: any) => {
+    return 'githubAuth';
+  };
+  redditAuth = (input: SocialAuthInput, context: any) => {
+    return 'redditAuth';
   };
 }

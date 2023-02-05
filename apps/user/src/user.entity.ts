@@ -1,23 +1,33 @@
-import { IBaseData, IPrivateData, IUser, Roles } from '@common/interface';
 import { Schema } from 'mongoose';
-import { ISchema } from './user.schema';
+
+import { IBaseData, IPrivateData, IUser, ENUM } from '@common/interface';
 import { UserContract } from '@common/contracts';
+
+import { ISchema } from './user.schema';
 
 /** Class to working with the data use
  ** Always work via this class when work a data of the user.
  */
 export class Entity implements Required<IUser & IBaseData> {
-  public password: string = undefined;
-  public email: string = undefined;
-  public name: string = undefined;
-  public privateData: IPrivateData = undefined;
-  public roles: Roles[] = undefined;
   public id: Schema.Types.ObjectId = undefined;
   public created: Date = undefined;
   public updated: Date = undefined;
 
+  public password: string = undefined;
+  public email: string = undefined;
+  public name: string = undefined;
+  public privateData: IPrivateData = undefined;
+  public roles: ENUM.Roles[] = undefined;
+  public tokens: string = undefined;
+  public active: boolean = undefined;
+  public githubId: string = undefined;
+  public redditId: string = undefined;
+  public googleId: string = undefined;
+  public avatar: string = undefined;
+
   public skip: number = undefined;
   public limit: number = undefined;
+
   constructor(data: Partial<ISchema>) {
     if (data.name) this.name = data.name;
     if (data.email) this.email = data.email;
@@ -28,11 +38,33 @@ export class Entity implements Required<IUser & IBaseData> {
     if (data.id) this.id = data.id;
     if (data._id) this.id = data._id;
     if (data.updated) this.updated = data.updated;
+    if (data.avatar) this.avatar = data.avatar;
+    if (data.active) this.active = data.active;
+    if (data.tokens) this.tokens = data.tokens;
+    if (data.githubId) this.githubId = data.githubId;
+    if (data.redditId) this.redditId = data.redditId;
+    if (data.googleId) this.googleId = data.googleId;
   }
   /*** When you need to filter the list of users, use this function.*/
   public filter = (data: UserContract.GetUsersQuery.Request): this => {
     if (data.skip) this.skip = data.skip || null;
     if (data.limit) this.limit = data.limit || null;
     return this;
+  };
+  /*** Values for create a user. */
+  public create = () => {
+    return {
+      password: this.password,
+      email: this.email,
+      name: this.name,
+      privateData: this.privateData,
+      roles: this.roles,
+      tokens: this.tokens,
+      active: this.active,
+      githubId: this.githubId,
+      redditId: this.redditId,
+      googleId: this.googleId,
+      avatar: this.avatar,
+    };
   };
 }

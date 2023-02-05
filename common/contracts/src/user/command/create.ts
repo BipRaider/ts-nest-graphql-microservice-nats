@@ -1,6 +1,8 @@
-import { IBaseData, IPrivateData, IUser, Roles } from '@common/interface';
-import { ObjectId } from 'mongoose';
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
+
+import { ObjectId } from 'mongoose';
+
+import { IBaseData, IPrivateData, IUser, ENUM } from '@common/interface';
 
 /*** Command for creating a `user` and based on this, the connection of servers is built. */
 export namespace CreateCommand {
@@ -17,7 +19,7 @@ export namespace CreateCommand {
     password: string;
     name: string;
     privateData?: IPrivateData;
-    roles?: Roles[];
+    roles?: ENUM.Roles[];
   }
 
   /*** These values must be returned from the service after the user has been created.*/

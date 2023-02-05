@@ -15,6 +15,7 @@
       "sourceRoot": "apps/api/src",
       "compilerOptions": {
         "tsConfigPath": "apps/api/tsconfig.app.json",
+        "webpack": true,
         "plugins": [
           {
             "name": "@nestjs/graphql",
@@ -60,6 +61,69 @@
       "sourceRoot": "apps/order/src",
       "compilerOptions": {
         "tsConfigPath": "apps/order/tsconfig.app.json"
+      }
+    },
+    "chat": {
+      "type": "application",
+      "root": "apps/chat",
+      "entryFile": "main",
+      "sourceRoot": "apps/chat/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/chat/tsconfig.app.json"
+      }
+    },
+    "email": {
+      "type": "application",
+      "root": "apps/email",
+      "entryFile": "main",
+      "sourceRoot": "apps/email/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/email/tsconfig.app.json"
+      }
+    },
+    "admin": {
+      "type": "application",
+      "root": "apps/admin",
+      "entryFile": "main",
+      "sourceRoot": "apps/admin/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/admin/tsconfig.app.json"
+      }
+    },
+    "social-auth": {
+      "type": "application",
+      "root": "apps/social-auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/social-auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/social-auth/tsconfig.app.json"
+      }
+    },
+    "exchequer": {
+      "type": "application",
+      "root": "apps/exchequer",
+      "entryFile": "main",
+      "sourceRoot": "apps/exchequer/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/exchequer/tsconfig.app.json"
+      }
+    },
+    "store": {
+      "type": "application",
+      "root": "apps/store",
+      "entryFile": "main",
+      "sourceRoot": "apps/store/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/store/tsconfig.app.json"
+      }
+    },
+    "profile": {
+      "type": "application",
+      "root": "apps/profile",
+      "entryFile": "main",
+      "sourceRoot": "apps/profile/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/profile/tsconfig.app.json"
       }
     }
   }

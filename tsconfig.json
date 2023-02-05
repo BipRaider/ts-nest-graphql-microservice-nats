@@ -12,7 +12,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": false, //if dev true
+    "sourceMap": false,
     "outDir": "./dist",
     "incremental": true,
     "skipLibCheck": true,
@@ -26,7 +26,7 @@
     "noImplicitThis": true,
     "alwaysStrict": true,
     "noUnusedParameters": false,
-    "noImplicitReturns": false, // if true `Not all code paths return a value.`
+    "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,

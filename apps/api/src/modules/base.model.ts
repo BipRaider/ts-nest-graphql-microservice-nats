@@ -9,11 +9,11 @@ import { Schema, ObjectId } from 'mongoose';
 @ObjectType()
 export class BaseModel implements IBaseData {
   @Field(() => Schema.Types.ObjectId, { nullable: true })
-  public id: ObjectId;
+  public readonly id: ObjectId;
 
   @Field(() => Date, { nullable: true })
-  public created: Date;
+  public readonly created: Date;
 
   @Field(() => Date, { nullable: true })
-  public updated: Date;
+  public readonly updated: Date;
 }

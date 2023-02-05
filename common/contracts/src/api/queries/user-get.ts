@@ -1,6 +1,8 @@
-import { IBaseData, IPrivateData, IUser, Roles } from '@common/interface';
-import { ObjectId } from 'mongoose';
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
+
+import { ObjectId } from 'mongoose';
+
+import { IBaseData, IPrivateData, IUser, ENUM } from '@common/interface';
 
 /*** Query for search the `user`
  ** And based on this, the connection of servers is built.
@@ -21,10 +23,16 @@ export namespace AuthQuery {
 
   /*** These values must be returned from the service after the user has been found.*/
   export class Response implements Required<IBaseData & Omit<IUser, 'password'>> {
+    tokens: string;
+    active: boolean;
+    githubId: string;
+    redditId: string;
+    googleId: string;
+    avatar: string;
     name: string;
     email: string;
     privateData: IPrivateData;
-    roles: Roles[];
+    roles: ENUM.Roles[];
     id: ObjectId;
     created: Date;
     updated: Date;

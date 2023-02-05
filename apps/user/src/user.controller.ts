@@ -1,4 +1,4 @@
-import { Controller, Logger } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { Ctx, MessagePattern, NatsContext, Payload } from '@nestjs/microservices';
 
 import { SendErrorUtil } from '@common/utils';

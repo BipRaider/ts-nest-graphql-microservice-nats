@@ -1,6 +1,7 @@
-import { IPrivateData, IUser, Roles } from '@common/interface';
+import { IPrivateData, IUser, ENUM } from '@common/interface';
 import { Schema, Document, Model, ObjectId } from 'mongoose';
 import { Entity } from './user.entity';
+import { PasswordUtil } from '@common/utils';
 
 /*** The `User` schema for database */
 export interface ISchema extends Document<ObjectId | string>, IUser {
@@ -31,8 +32,25 @@ export const UserSchema = new Schema<ISchema, IModel>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, immutable: true },
     password: { type: String, required: true },
-    roles: { type: [String], enum: Object.values(Roles), required: true, default: [Roles.USER] },
     privateData: { type: Schema.Types.Mixed, of: PrivateDataSchema, required: false, default: {} },
+    roles: {
+      type: [String],
+      enum: Object.values(ENUM.Roles),
+      required: true,
+      default: [ENUM.Roles.USER],
+    },
+    tokens: {
+      emailVerification: {
+        type: String,
+        //  default: PasswordUtil.randomBytes()
+        default: 'default',
+      },
+    },
+    active: { type: Boolean, default: false },
+    githubId: { type: String, required: false },
+    redditId: { type: String, required: false },
+    googleId: { type: String, required: false },
+    avatar: { type: String, required: false },
   },
   {
     timestamps: { createdAt: 'created', updatedAt: 'updated' },

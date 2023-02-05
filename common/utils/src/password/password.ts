@@ -52,4 +52,8 @@ export class PasswordUtil {
       throw new Error('Credentials invalid');
     }
   };
+
+  randomBytes = (size = 48): string => {
+    return randomBytes(size).toString('hex').slice(0, size);
+  };
 }

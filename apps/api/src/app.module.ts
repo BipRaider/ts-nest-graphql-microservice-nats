@@ -2,16 +2,15 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { PassportModule } from '@nestjs/passport';
 
-import { UsersModule } from './modules/users/users.module';
-import { ProductModule } from './modules/product/product.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { JwtUtilModule, JwtStrategyName } from '@common/utils';
 
 import { GraphQLOptionsHost } from './graphql/graphql.option';
 import { ScalarModule } from './graphql/scalar/scalar.module';
 import { AuthMiddleware } from './modules/auth/auth.middleware';
-import { PassportModule } from '@nestjs/passport';
-import { JwtUtilModule } from '@common/utils';
+import { ListModules } from './modules';
+import { RedisModule } from './providers/redis/redis.module';
 
 @Module({
   imports: [
@@ -21,14 +20,13 @@ import { JwtUtilModule } from '@common/utils';
       useClass: GraphQLOptionsHost,
     }),
     PassportModule.register({
-      defaultStrategy: 'jwt-gql',
+      defaultStrategy: JwtStrategyName.Gql,
       session: true,
     }),
+    RedisModule,
     ScalarModule,
-    UsersModule,
-    ProductModule,
-    AuthModule,
     JwtUtilModule,
+    ...ListModules,
   ],
   providers: [JwtUtilModule],
 })

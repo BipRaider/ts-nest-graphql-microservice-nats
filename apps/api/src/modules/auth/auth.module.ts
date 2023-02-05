@@ -1,22 +1,21 @@
 import { Module } from '@nestjs/common';
 
+import { ENUM } from '@common/interface';
 import { NatsModule } from '@common/libs';
-import { JwtUtilModule, PasswordModule } from '@common/utils';
+import { JwtUtilModule } from '@common/utils';
 
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
-import { UsersModule } from '../users/users.module';
+
 import { GuardsModule } from '../../guards/guards.module';
 
 @Module({
   imports: [
-    UsersModule,
-    PasswordModule,
     JwtUtilModule,
     NatsModule([
       {
-        name: 'USER_SERVICE',
-        queue: 'user',
+        name: ENUM.NatsServicesName.USER,
+        queue: ENUM.NatsServicesQueue.USER,
       },
     ]),
   ],

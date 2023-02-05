@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - tngmnradis:/data
+    networks:
+      - tngmn
+
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=redis:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - tngmn
+
+networks:
+  tngmn:
+    driver: bridge
+
+volumes:
+  tngmndata:
+  tngmnradis:

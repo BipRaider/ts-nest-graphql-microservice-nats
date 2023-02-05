@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NatsModule } from '@common/libs';
 import { PasswordModule } from '@common/utils';
+import { ENUM } from '@common/interface';
 
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
@@ -11,8 +12,8 @@ import { UsersService } from './users.service';
     PasswordModule,
     NatsModule([
       {
-        name: 'USER_SERVICE',
-        queue: 'user',
+        name: ENUM.NatsServicesName.USER,
+        queue: ENUM.NatsServicesQueue.USER,
       },
     ]),
   ],

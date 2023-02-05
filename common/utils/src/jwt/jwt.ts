@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { JwtService, JwtVerifyOptions, JwtSignOptions } from '@nestjs/jwt';
+
 import { IJwtGenerateToken, IJwtValidateToken } from '@common/interface';
 import { IJwtUtil } from './interface';
 import { InjectJwtService } from './enum';
@@ -8,38 +9,46 @@ import { InjectJwtService } from './enum';
 export class JwtUtil implements IJwtUtil {
   /*** Name refresh token in the cookie */
   public refreshTokenName = 'refresh-token';
-
+  public accessTokenName = 'access-token';
   constructor(
     @Inject(InjectJwtService.Refresh) private readonly jwtRefresh: JwtService,
     @Inject(InjectJwtService.Access) private readonly jwtAccess: JwtService,
     private readonly jwtService: JwtService,
   ) {}
 
-  generateRefreshToken = async (payload: IJwtGenerateToken, context: any): Promise<boolean> => {
-    const token = this.jwtRefresh.sign(
+  generateRefreshToken = async (payload: IJwtGenerateToken, context: any): Promise<string> => {
+    const token = await this.jwtRefresh.signAsync(
       { ...payload, iat: Math.floor(Date.now() / 1000) },
       { subject: String(payload.id || 'refresh') },
     );
     //Added to cookie refresh token.
     context.res.cookie(this.refreshTokenName, token, {
       httpOnly: true,
-      secure: false, // process.env.NODE_ENV === production,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: 1.728e8,
     });
-    return true;
+
+    return token;
   };
 
-  generateAccessToken = async (payload: IJwtGenerateToken) => {
-    const access_token = this.jwtAccess.sign(
+  generateAccessToken = async (payload: IJwtGenerateToken,context: any): Promise<string> => {
+    const token = await this.jwtAccess.signAsync(
       { ...payload, iat: Math.floor(Date.now() / 1000) },
       { subject: String(payload.id || 'access') },
     );
-    return access_token;
+    //Added to cookie access token.
+    context.res.cookie(this.accessTokenName, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1.8e6,
+    });
+
+    return token;
   };
 
   //TODO: remove any
-  generateToken = (payload: any): string => {
-    const token = this.jwtService.sign(
+  generateToken = async (payload: any): Promise<string> => {
+    const token = await this.jwtService.signAsync(
       { ...payload, iat: Math.floor(Date.now() / 1000) },
       { subject: String(payload.id) || 'jwt' },
     );
@@ -52,6 +61,7 @@ export class JwtUtil implements IJwtUtil {
   ): Promise<T | null> => {
     return await new Promise(res => {
       try {
+        // res(this.jwtService.verifyAsync(token, options));
         res(this.jwtService.verify(token, options));
       } catch {
         res(null);

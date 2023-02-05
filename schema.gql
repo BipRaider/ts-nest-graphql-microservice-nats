@@ -7,6 +7,34 @@ type PrivateData {
   lastname: String
 }
 
+type LoginUserResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  name: String
+  email: String
+  roles: [Roles!]
+  privateData: PrivateData
+  access_token: String!
+}
+
+"""Roles for Admin creating projects and users"""
+enum Roles {
+  USER
+  SELLER
+  MANAGER
+  MERCHANT
+  MODERATO
+  ADMIN
+}
+
+type RefreshTokenResponse {
+  id: ObjectID
+  email: String
+  roles: [Roles!]
+  access_token: String
+}
+
 type CreateUserResponse {
   id: ObjectID
   created: Date
@@ -23,35 +51,6 @@ type GetUserResponse {
   privateData: PrivateData
 }
 
-"""Roles for Admin creating projects and users"""
-enum Roles {
-  USER
-  ADMIN
-}
-
-type Auth {
-  id: ObjectID
-  created: Date
-  updated: Date
-  name: String
-  email: String
-  password: String
-  roles: [Roles!]
-  privateData: PrivateData
-  access_token: String
-}
-
-type LoginUserResponse {
-  id: ObjectID
-  created: Date
-  updated: Date
-  name: String
-  email: String
-  roles: [Roles!]
-  privateData: PrivateData
-  access_token: String!
-}
-
 """Date custom scalar type"""
 scalar Date
 
@@ -61,6 +60,10 @@ scalar ObjectID
 type Query {
   getUser(data: GetUserInput!): GetUserResponse!
   getUsers(data: GetUsersInput!): [GetUserResponse!]!
+  gitHubAuth(input: SocialAuthInput!): String!
+  redditAuth(input: SocialAuthInput!): String!
+  googleAuth(input: SocialAuthInput!): String!
+  getGoogleAuthURL: String!
 }
 
 input GetUserInput {
@@ -73,10 +76,14 @@ input GetUsersInput {
   limit: Int
 }
 
+input SocialAuthInput {
+  code: String
+}
+
 type Mutation {
   createUser(input: CreateUserInput!): CreateUserResponse!
   login(input: LoginUserInput!): LoginUserResponse!
-  refreshToken: Auth
+  refreshToken: RefreshTokenResponse
   logout: Boolean!
 }
 

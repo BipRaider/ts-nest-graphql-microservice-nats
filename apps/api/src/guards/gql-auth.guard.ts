@@ -1,6 +1,7 @@
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
+
 import { JwtStrategyName } from '@common/utils';
 
 /*** Validation by `access_token` then add to the `Request a user` and return the data next guard.*/

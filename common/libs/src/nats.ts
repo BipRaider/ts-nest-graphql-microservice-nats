@@ -36,6 +36,7 @@ export interface IListServiceName extends NatsDefaultOptions {
   name: string;
   queue: string;
 }
+
 type listNatsServices = (list: IListServiceName[]) => ClientsModuleOptions;
 const listNatsServices: listNatsServices = list => {
   return list.map(({ name, ...data }: IListServiceName) => {
@@ -58,6 +59,7 @@ export const NatsProvider: NatsProvider = ({ provide, ...options }): FactoryProv
     useFactory: () => ClientProxyFactory.create(NatsClient(options)),
   };
 };
+
 /*** Listening to multiple services.
  * ```ts
  *  NatsModule([{ name: 'API_SERVICE', queue: 'api'}])
@@ -66,6 +68,7 @@ export const NatsProvider: NatsProvider = ({ provide, ...options }): FactoryProv
 export type NatsModule = (list: IListServiceName[]) => DynamicModule;
 export const NatsModule: NatsModule = (list: IListServiceName[]): DynamicModule =>
   ClientsModule.register(listNatsServices(list));
+
 /*** App `Nats` microservice.
  * ```ts
  * const app = await NatsMicroservice(UserModule, { queue: 'user' });

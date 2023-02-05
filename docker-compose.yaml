@@ -19,8 +19,9 @@ services:
             context: ./
             dockerfile: ./apps/api/Dockerfile
         volumes:
-            - ./dist/apps/api:/opt/app/dist
-            - ./schema.gql:/opt/app/schema.gql
+            - /usr/app/node_modules
+            - ./dist/apps/api:/usr/app/dist
+            - ./schema.gql:/usr/app/schema.gql
         env_file:
             - ./envs/.api.env
             - ./envs/.mongo.env
@@ -30,6 +31,7 @@ services:
         depends_on:
             - nats
             - mongo
+            - redis
         networks:
             - tngmn
 
@@ -44,6 +46,7 @@ services:
             dockerfile: ./apps/product/Dockerfile
         volumes:
             - ./dist/apps/product:/opt/app/dist
+            - /opt/app/node_modules
         env_file:
             - ./envs/.product.env
             - ./envs/.mongo.env
@@ -65,6 +68,7 @@ services:
             dockerfile: ./apps/user/Dockerfile
         volumes:
             - ./dist/apps/user:/opt/app/dist
+            - /opt/app/node_modules
         env_file:
             - ./envs/.user.env
             - ./envs/.mongo.env
@@ -89,9 +93,26 @@ services:
         networks:
             - tngmn
 
+    redis:
+        extends:
+            file: ./docker/docker-compose.redis.yaml
+            service: redis
+        networks:
+            - tngmn
+
+    redis-commander:
+        extends:
+            file: ./docker/docker-compose.redis.yaml
+            service: redis-commander
+        depends_on:
+            - redis
+        networks:
+            - tngmn
+
 networks:
     tngmn:
         driver: bridge
 
 volumes:
     tngmndata:
+    tngmnradis:

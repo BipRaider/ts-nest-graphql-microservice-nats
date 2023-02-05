@@ -9,22 +9,35 @@ import { Entity } from './user.entity';
 
 @Injectable()
 export class UserService implements IUserService {
-  constructor(private readonly repository: UsersRepository, private readonly passwordUtils: PasswordUtil) {}
+  constructor(
+    private readonly repository: UsersRepository,
+    private readonly passwordUtils: PasswordUtil,
+  ) {}
 
   async create(dto: UserContract.CreateCommand.Request): Promise<Entity | SendErrorUtil> {
     try {
       const entity = new Entity(dto);
       if (!entity.email)
-        return new ErrorUtil(400).send({ error: 'Email not found.', payload: { email: entity.email } });
+        return new ErrorUtil(400).send({
+          error: 'Email not found.',
+          payload: { email: entity.email },
+        });
 
       const existed = await this.repository.find(entity);
-      if (existed) return new ErrorUtil(422).send({ error: 'User existed.', payload: { email: entity.email } });
+      if (existed)
+        return new ErrorUtil(422).send({
+          error: 'User existed.',
+          payload: { email: entity.email },
+        });
 
       const user = await this.repository.create(entity);
 
       return new Entity(user);
     } catch (error) {
-      return new ErrorUtil(502).send({ error: 'UserService.create something wrong.', payload: error });
+      return new ErrorUtil(502).send({
+        error: 'UserService.create something wrong.',
+        payload: error,
+      });
     }
   }
 
@@ -40,7 +53,10 @@ export class UserService implements IUserService {
 
       return new Entity(user);
     } catch (error) {
-      return new ErrorUtil(502).send({ error: 'UserService.find something wrong.', payload: error });
+      return new ErrorUtil(502).send({
+        error: 'UserService.find something wrong.',
+        payload: error,
+      });
     }
   }
 
@@ -51,7 +67,10 @@ export class UserService implements IUserService {
 
       return users.map(user => new Entity(user));
     } catch (error) {
-      return new ErrorUtil(502).send({ error: 'UserService.find something wrong.', payload: error });
+      return new ErrorUtil(502).send({
+        error: 'UserService.find something wrong.',
+        payload: error,
+      });
     }
   }
 

@@ -4,11 +4,9 @@ import { Response, Request, NextFunction } from 'express';
 import { JwtUtil } from '@common/utils';
 import { IJwtValidateToken } from '@common/interface';
 
-import { AuthService } from './auth.service';
-
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  constructor(private authService: AuthService, private readonly jwt: JwtUtil) {} //
+  constructor(private readonly jwt: JwtUtil) {} //
 
   async use(req: Request & { user: IJwtValidateToken; ip: string }, res: Response, next: NextFunction): Promise<void> {
     const { authorization } = req.headers;

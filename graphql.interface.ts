@@ -10,6 +10,10 @@
 
 export enum Roles {
     USER = "USER",
+    SELLER = "SELLER",
+    MANAGER = "MANAGER",
+    MERCHANT = "MERCHANT",
+    MODERATO = "MODERATO",
     ADMIN = "ADMIN"
 }
 
@@ -21,6 +25,10 @@ export interface GetUserInput {
 export interface GetUsersInput {
     skip?: Nullable<number>;
     limit?: Nullable<number>;
+}
+
+export interface SocialAuthInput {
+    code?: Nullable<string>;
 }
 
 export interface CreateUserInput {
@@ -45,6 +53,24 @@ export interface PrivateData {
     lastname?: Nullable<string>;
 }
 
+export interface LoginUserResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    name?: Nullable<string>;
+    email?: Nullable<string>;
+    roles?: Nullable<Roles[]>;
+    privateData?: Nullable<PrivateData>;
+    access_token: string;
+}
+
+export interface RefreshTokenResponse {
+    id?: Nullable<ObjectID>;
+    email?: Nullable<string>;
+    roles?: Nullable<Roles[]>;
+    access_token?: Nullable<string>;
+}
+
 export interface CreateUserResponse {
     id?: Nullable<ObjectID>;
     created?: Nullable<Date>;
@@ -61,38 +87,19 @@ export interface GetUserResponse {
     privateData?: Nullable<PrivateData>;
 }
 
-export interface Auth {
-    id?: Nullable<ObjectID>;
-    created?: Nullable<Date>;
-    updated?: Nullable<Date>;
-    name?: Nullable<string>;
-    email?: Nullable<string>;
-    password?: Nullable<string>;
-    roles?: Nullable<Roles[]>;
-    privateData?: Nullable<PrivateData>;
-    access_token?: Nullable<string>;
-}
-
-export interface LoginUserResponse {
-    id?: Nullable<ObjectID>;
-    created?: Nullable<Date>;
-    updated?: Nullable<Date>;
-    name?: Nullable<string>;
-    email?: Nullable<string>;
-    roles?: Nullable<Roles[]>;
-    privateData?: Nullable<PrivateData>;
-    access_token: string;
-}
-
 export interface IQuery {
     getUser(data: GetUserInput): GetUserResponse | Promise<GetUserResponse>;
     getUsers(data: GetUsersInput): GetUserResponse[] | Promise<GetUserResponse[]>;
+    gitHubAuth(input: SocialAuthInput): string | Promise<string>;
+    redditAuth(input: SocialAuthInput): string | Promise<string>;
+    googleAuth(input: SocialAuthInput): string | Promise<string>;
+    getGoogleAuthURL(): string | Promise<string>;
 }
 
 export interface IMutation {
     createUser(input: CreateUserInput): CreateUserResponse | Promise<CreateUserResponse>;
     login(input: LoginUserInput): LoginUserResponse | Promise<LoginUserResponse>;
-    refreshToken(): Nullable<Auth> | Promise<Nullable<Auth>>;
+    refreshToken(): Nullable<RefreshTokenResponse> | Promise<Nullable<RefreshTokenResponse>>;
     logout(): boolean | Promise<boolean>;
 }
 

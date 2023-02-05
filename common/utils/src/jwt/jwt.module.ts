@@ -20,7 +20,6 @@ export const JwtRefreshService = () => {
           audience: configService.get(JwtStrategyEnv.REFRESH_AUDIENCE) || JwtStrategyEnv.REFRESH_AUDIENCE,
           issuer: configService.get(JwtStrategyEnv.REFRESH_ISSUER) || JwtStrategyEnv.REFRESH_ISSUER,
           expiresIn: configService.get(JwtStrategyEnv.REFRESH_EXPIRES) || '2d',
-          algorithm: 'HS256',
         },
       });
     },
@@ -40,7 +39,7 @@ export const JwtAccessService = () => {
           audience: configService.get(JwtStrategyEnv.ACCESS_AUDIENCE) || JwtStrategyEnv.ACCESS_AUDIENCE,
           issuer: configService.get(JwtStrategyEnv.ACCESS_ISSUER) || JwtStrategyEnv.ACCESS_ISSUER,
           expiresIn: configService.get(JwtStrategyEnv.ACCESS_EXPIRES) || '1h',
-          algorithm: 'HS256',
+          // algorithm: configService.get(JwtStrategyEnv.ALGORITHM) || 'HS256',
         },
       });
     },
@@ -58,7 +57,6 @@ export const JwtModuleRootAsync = (): DynamicModule => {
         audience: configService.get(JwtStrategyEnv.AUDIENCE) || JwtStrategyEnv.AUDIENCE,
         issuer: configService.get(JwtStrategyEnv.ISSUER) || JwtStrategyEnv.ISSUER,
         expiresIn: configService.get(JwtStrategyEnv.EXPIRES) || '2y',
-        algorithm: 'HS256',
       },
     }),
   });
