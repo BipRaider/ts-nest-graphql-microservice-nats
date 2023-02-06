@@ -1,8 +1,19 @@
-import { NestFactory } from '@nestjs/core';
+import { Logger } from '@nestjs/common';
+
+import { NatsMicroservice } from '@common/libs';
+import { ErrorsLoggerInterceptor } from '@common/interceptor';
+import { ENUM } from '@common/interface';
+
 import { ProfileModule } from './profile.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ProfileModule);
-  await app.listen(3000);
+  const logger = new Logger('Profile');
+  const app = await NatsMicroservice(ProfileModule, { queue: ENUM.NatsServicesQueue.PROFILE });
+
+  app.useGlobalInterceptors(new ErrorsLoggerInterceptor());
+
+  app.listen();
+  logger.log('Microservice is listening...');
 }
+
 bootstrap();

@@ -17,70 +17,58 @@ export class UsersService {
     private readonly passwordUtils: PasswordUtil,
   ) {}
 
-  public createUser = async (
-    data: CreateUserInput,
-  ): Promise<UserContract.CreateCommand.Response | SendErrorUtil> => {
+  public createUser = async (data: CreateUserInput): Promise<UserContract.CreateCommand.Response | SendErrorUtil> => {
     const password = await this.passwordUtils.hash({ password: data.password });
 
     const record = UserContract.CreateCommand.build({ ...data, password });
 
-    const user: UserContract.CreateCommand.Response | SendErrorUtil = await new Promise(
-      async res => {
-        const response = this.userClient.send<
-          UserContract.CreateCommand.Response,
-          UserContract.CreateCommand.UserRecord
-        >(UserContract.CreateCommand.Pattern, record);
+    const user: UserContract.CreateCommand.Response | SendErrorUtil = await new Promise(async res => {
+      const response = this.userClient.send<UserContract.CreateCommand.Response, UserContract.CreateCommand.UserRecord>(
+        UserContract.CreateCommand.Pattern,
+        record,
+      );
 
-        response.subscribe({
-          next: async data => res(data),
-          error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
-        });
-      },
-    );
+      response.subscribe({
+        next: async data => res(data),
+        error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
+      });
+    });
 
     return user;
   };
 
-  public find = async (
-    data: GetUserInput,
-  ): Promise<UserContract.GetUserQuery.Response | SendErrorUtil> => {
+  public find = async (data: GetUserInput): Promise<UserContract.GetUserQuery.Response | SendErrorUtil> => {
     const record = UserContract.GetUserQuery.build(data);
 
-    const user: UserContract.GetUserQuery.Response | SendErrorUtil = await new Promise(
-      async res => {
-        const response = this.userClient.send<
-          UserContract.GetUserQuery.Response,
-          UserContract.GetUserQuery.UserRecord
-        >(UserContract.GetUserQuery.Pattern, record);
+    const user: UserContract.GetUserQuery.Response | SendErrorUtil = await new Promise(async res => {
+      const response = this.userClient.send<UserContract.GetUserQuery.Response, UserContract.GetUserQuery.UserRecord>(
+        UserContract.GetUserQuery.Pattern,
+        record,
+      );
 
-        response.subscribe({
-          next: async data => res(data),
-          error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
-        });
-      },
-    );
+      response.subscribe({
+        next: async data => res(data),
+        error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
+      });
+    });
 
     return user;
   };
 
-  public get = async (
-    data: GetUsersInput,
-  ): Promise<UserContract.GetUsersQuery.Response[] | SendErrorUtil> => {
+  public get = async (data: GetUsersInput): Promise<UserContract.GetUsersQuery.Response[] | SendErrorUtil> => {
     const record = UserContract.GetUsersQuery.build(data);
 
-    const user: UserContract.GetUsersQuery.Response[] | SendErrorUtil = await new Promise(
-      async res => {
-        const response = this.userClient.send<
-          UserContract.GetUsersQuery.Response[],
-          UserContract.GetUsersQuery.UserRecord
-        >(UserContract.GetUsersQuery.Pattern, record);
+    const user: UserContract.GetUsersQuery.Response[] | SendErrorUtil = await new Promise(async res => {
+      const response = this.userClient.send<
+        UserContract.GetUsersQuery.Response[],
+        UserContract.GetUsersQuery.UserRecord
+      >(UserContract.GetUsersQuery.Pattern, record);
 
-        response.subscribe({
-          next: async data => res(data),
-          error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
-        });
-      },
-    );
+      response.subscribe({
+        next: async data => res(data),
+        error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
+      });
+    });
 
     return user;
   };

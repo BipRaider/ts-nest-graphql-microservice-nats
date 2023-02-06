@@ -4,24 +4,27 @@ services:
   api:
     container_name: api
     restart: always
-    build:
-      context: ./
-      dockerfile: ../apps/api/Dockerfile
     volumes:
+      - /opt/app/node_modules
       - ../dist/apps/api:/opt/app/dist
+      - ../schema.gql:/opt/app/schema.gql
     env_file:
-      - ../envs/.api.env
       - ../envs/.mongo.env
+      - ../envs/.nats.env
+      - ../envs/.redis.env
+      - ../envs/.graphql.env
+      - ../envs/.jwt.env
+      - ../envs/.api.env
     command: npm run start:prod
     ports:
       - 8080:8080
     depends_on:
-      - nats
       - mongo
+      - nats
+      - redis
     networks:
       - tngmn
 
 networks:
   tngmn:
     driver: bridge
-

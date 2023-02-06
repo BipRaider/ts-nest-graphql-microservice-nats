@@ -9,30 +9,24 @@ import helmet from 'helmet';
 import RateLimit from 'express-rate-limit';
 import Redis from 'ioredis';
 import compression from 'compression';
+import { useContainer } from 'class-validator';
 
-import { environment } from './environment';
 import { ValidatePipe } from '@common/pipe';
 import { LoggingInterceptor, ErrorsInterceptor } from '@common/interceptor';
+import { AllExceptionsFilter } from '@common/filters';
+import { ISessionOption } from '@common/interface';
+import { envConfig, sessionConfig } from '@common/config';
 
 import { AppModule } from './app.module';
-import {
-  sessionConfig,
-  // setupSwagger
-} from './configs';
-import { ISessionOption } from './environment/environment.interface';
-import { AllExceptionsFilter } from './global-exceptions-filter/all-exceptions.filter';
-import { useContainer } from 'class-validator';
 
 const logger: Logger = new Logger('Api');
 async function bootstrap(): Promise<void> {
-  const env = environment();
-  const siteUrl: string = env.siteUrl;
-  const port = process.env['GRAPHQL_PORT'] || 3001;
+  const env = envConfig();
+  const port = env.server.port;
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
-  app.enableCors();
 
   app.use(cookieParser());
   app.use(express.json());
@@ -57,8 +51,9 @@ async function bootstrap(): Promise<void> {
 
   let redisClient: Redis;
   // // Setup session with redis
-  if (port === process.env['GRAPHQL_PORT']) {
-    redisClient = new Redis('redis://redis:6379');
+  if (port !== env.defPort) {
+    const { redis } = env;
+    redisClient = new Redis(redis.host);
   } else {
     redisClient = new Redis();
   }
@@ -91,7 +86,6 @@ async function bootstrap(): Promise<void> {
 
   await app.listen(port, async () => {
     logger.log(`Application is running on: ${await app.getUrl()}/graphql`);
-    logger.log(`Server is running at ${siteUrl}/graphql`);
   });
 }
 

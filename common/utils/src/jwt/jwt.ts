@@ -9,6 +9,7 @@ import { InjectJwtService } from './enum';
 export class JwtUtil implements IJwtUtil {
   /*** Name refresh token in the cookie */
   public refreshTokenName = 'refresh-token';
+  /*** Name access token in the cookie */
   public accessTokenName = 'access-token';
   constructor(
     @Inject(InjectJwtService.Refresh) private readonly jwtRefresh: JwtService,
@@ -31,7 +32,7 @@ export class JwtUtil implements IJwtUtil {
     return token;
   };
 
-  generateAccessToken = async (payload: IJwtGenerateToken,context: any): Promise<string> => {
+  generateAccessToken = async (payload: IJwtGenerateToken, context: any): Promise<string> => {
     const token = await this.jwtAccess.signAsync(
       { ...payload, iat: Math.floor(Date.now() / 1000) },
       { subject: String(payload.id || 'access') },
@@ -46,7 +47,6 @@ export class JwtUtil implements IJwtUtil {
     return token;
   };
 
-  //TODO: remove any
   generateToken = async (payload: any): Promise<string> => {
     const token = await this.jwtService.signAsync(
       { ...payload, iat: Math.floor(Date.now() / 1000) },

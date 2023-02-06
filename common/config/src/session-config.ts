@@ -1,10 +1,11 @@
+import Redis from 'ioredis';
 import connectRedis from 'connect-redis';
 import session from 'express-session';
 
-import { ISessionOption } from '../environment/environment.interface';
-import { REDIS_AUTH_TOKEN_SESSION } from '../providers/redis/redis.constant';
+import { ISessionOption } from '@common/interface';
+import { REDIS_AUTH_TOKEN_SESSION } from '@common/libs';
 
-export const sessionConfig = (redisClient, sessionEnv: ISessionOption) => {
+export const sessionConfig = (redisClient: Redis, sessionEnv: ISessionOption) => {
   const RedisStore = connectRedis(session);
   return {
     store: new RedisStore({

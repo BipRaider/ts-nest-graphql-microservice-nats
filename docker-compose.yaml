@@ -10,28 +10,12 @@ services:
     #         - tngmn
 
     api:
-        # extends:
-        #     file: ./docker/docker-compose.api.yaml
-        #     service: api
-        container_name: api
-        restart: always
+        extends:
+            file: ./docker/docker-compose.api.yaml
+            service: api
         build:
             context: ./
             dockerfile: ./apps/api/Dockerfile
-        volumes:
-            - /usr/app/node_modules
-            - ./dist/apps/api:/usr/app/dist
-            - ./schema.gql:/usr/app/schema.gql
-        env_file:
-            - ./envs/.api.env
-            - ./envs/.mongo.env
-        command: npm run start:prod
-        ports:
-            - 8080:8080
-        depends_on:
-            - nats
-            - mongo
-            - redis
         networks:
             - tngmn
 
@@ -45,6 +29,7 @@ services:
             context: ./
             dockerfile: ./apps/product/Dockerfile
         volumes:
+            - /usr/app/node_modules
             - ./dist/apps/product:/opt/app/dist
             - /opt/app/node_modules
         env_file:
@@ -67,6 +52,7 @@ services:
             context: ./
             dockerfile: ./apps/user/Dockerfile
         volumes:
+        - /usr/app/node_modules
             - ./dist/apps/user:/opt/app/dist
             - /opt/app/node_modules
         env_file:

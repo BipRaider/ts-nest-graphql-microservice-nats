@@ -14,7 +14,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ErrorsLoggerInterceptor());
 
   app.listen();
-  logger.log('Product microservice is listening...');
+  logger.log('Microservice is listening...');
 }
 
 bootstrap();

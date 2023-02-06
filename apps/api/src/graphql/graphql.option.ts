@@ -3,9 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
-import { ApolloServerPluginLandingPageLocalDefault, GraphQLResponse, GraphQLRequestContext } from 'apollo-server-core';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 import { ErrorUtil } from '@common/utils';
+import { envConfig } from '@common/config';
 
 import { clearPassword } from './graphql.middleware';
 
@@ -14,16 +15,13 @@ const logger = new Logger('Apollo');
 @Injectable()
 export class GraphQLOptionsHost implements GqlOptionsFactory {
   async createGqlOptions(): Promise<ApolloDriverConfig> {
+    const { graphql } = envConfig();
+    const { apollo } = graphql;
+
     return {
-      installSubscriptionHandlers: true, // is old
-      // playground: true,
-      playground: false,
+      ...graphql.apollo,
       //https://www.apollographql.com/docs/apollo-server/api/plugin/landing-pages/
-      plugins: [ApolloServerPluginLandingPageLocalDefault({})],
-      //It's need to getting schema.gql in https://studio.apollographql.com/sandbox/explorer
-      //https://www.apollographql.com/blog/graphql/security/why-you-should-disable-graphql-introspection-in-production/
-      introspection: true, // process.env.NODE_ENV !== 'production',
-      persistedQueries: false,
+      plugins: apollo.playground ? [] : [ApolloServerPluginLandingPageLocalDefault()],
       autoSchemaFile: join(process.cwd(), './schema.gql'),
       typePaths: [join(process.cwd(), './schema.gql'), join(process.cwd(), './**/*.gql')],
       subscriptions: {
@@ -74,7 +72,7 @@ export class GraphQLOptionsHost implements GqlOptionsFactory {
       },
       // formatResponse: (response: GraphQLResponse, _requestContext: GraphQLRequestContext<object>): GraphQLResponse => {
       //   logger.log('formatResponse');
-      //   // console.dir(requestContext.context);
+
       //   return response;
       // },
       formatError: (err: GraphQLError): GraphQLError => {

@@ -10,6 +10,7 @@ export enum NatsServicesName {
   CHAT = 'CHAT_SERVICE',
   EXCHEQUER = 'EXCHEQUER_SERVICE',
   SOCIAL_AUTH = 'SOCIAL_AUTH_SERVICE',
+  PROFILE = 'PROFILE_SERVICE',
 }
 
 /*** The names of the `NATS` services in the system `to catching events`.*/
@@ -24,4 +25,5 @@ export enum NatsServicesQueue {
   STORE = 'store',
   EXCHEQUER = 'exchequer',
   SOCIAL_AUTH = 'social_auth',
+  PROFILE = 'profile',
 }

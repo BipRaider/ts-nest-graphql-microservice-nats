@@ -8,6 +8,7 @@ export enum MongoCollectionNames {
   STORE = 'stores',
   EXCHEQUER = 'exchequers',
   SESSION = 'sessions',
+  PROFILE = 'profile',
 }
 
 /*** The names of mongo `schemas` in database.*/
@@ -20,4 +21,5 @@ export enum MongoSchemaNames {
   STORE = 'Store',
   EXCHEQUER = 'Exchequer',
   SESSION = 'Session',
+  PROFILE = 'Profile',
 }
