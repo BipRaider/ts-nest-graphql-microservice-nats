@@ -1,5 +1,7 @@
 import { ApolloDriverConfig } from '@nestjs/apollo';
+import { CorsOptions, CorsOptionsDelegate } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { JwtModuleOptions } from '@nestjs/jwt';
+import { Options } from 'express-rate-limit';
 
 export interface IEnvConfig {
   readonly port: number;
@@ -14,8 +16,19 @@ export interface IEnvConfig {
   readonly redis: IEnvRedisConfig;
   readonly jwt: IEnvJwtConfig;
   readonly email: IEnvEmailConfig;
+  readonly rateLimit: IEnvRateLimitConfig;
+  readonly cors?: IEnvCorsOption | CorsOptionsDelegate<any>;
 }
 
+export interface IEnvCorsOption extends Partial<CorsOptions> {
+  origin: string;
+  credentials: boolean;
+}
+
+export interface IEnvRateLimitConfig extends Partial<Options> {
+  windowMs: number;
+  max: number;
+}
 export interface IEnvGraphQlConfig {
   host: string;
   port: string;

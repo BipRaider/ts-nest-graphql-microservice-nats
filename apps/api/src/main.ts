@@ -14,14 +14,14 @@ import { useContainer } from 'class-validator';
 import { ValidatePipe } from '@common/pipe';
 import { LoggingInterceptor, ErrorsInterceptor } from '@common/interceptor';
 import { AllExceptionsFilter } from '@common/filters';
-import { ISessionOption } from '@common/interface';
+import { IEnvConfig, ISessionOption } from '@common/interface';
 import { envConfig, sessionConfig } from '@common/config';
 
 import { AppModule } from './app.module';
 
 const logger: Logger = new Logger('Api');
 async function bootstrap(): Promise<void> {
-  const env = envConfig();
+  const env: IEnvConfig = envConfig();
   const port = env.server.port;
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -30,27 +30,17 @@ async function bootstrap(): Promise<void> {
 
   app.use(cookieParser());
   app.use(express.json());
-
-  app.enableCors({
-    origin: '*',
-    credentials: true,
-  });
+  app.enableCors(env.cors);
 
   if (env.isProduction) {
     app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
     app.use(helmet());
     app.use(compression());
-
-    app.use(
-      RateLimit({
-        windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 10_000, // limit each IP to 100 requests per windowMs
-      }),
-    );
+    app.use(RateLimit(env.rateLimit));
   }
 
+  // Setup session with redis
   let redisClient: Redis;
-  // // Setup session with redis
   if (port !== env.defPort) {
     const { redis } = env;
     redisClient = new Redis(redis.host);

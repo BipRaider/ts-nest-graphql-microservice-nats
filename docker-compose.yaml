@@ -20,48 +20,22 @@ services:
             - tngmn
 
     product:
-        # extends:
-        #     file: ./docker/docker-compose.product.yaml
-        #     service: product
-        container_name: product
-        restart: always
+        extends:
+            file: ./docker/docker-compose.product.yaml
+            service: product
         build:
             context: ./
             dockerfile: ./apps/product/Dockerfile
-        volumes:
-            - /usr/app/node_modules
-            - ./dist/apps/product:/opt/app/dist
-            - /opt/app/node_modules
-        env_file:
-            - ./envs/.product.env
-            - ./envs/.mongo.env
-        command: npm run start:prod
-        depends_on:
-            - nats
-            - mongo
         networks:
             - tngmn
 
     user:
-        # extends:
-        #     file: ./docker/docker-compose.user.yaml
-        #     service: user
-        container_name: user
-        restart: always
+        extends:
+            file: ./docker/docker-compose.user.yaml
+            service: user
         build:
             context: ./
             dockerfile: ./apps/user/Dockerfile
-        volumes:
-        - /usr/app/node_modules
-            - ./dist/apps/user:/opt/app/dist
-            - /opt/app/node_modules
-        env_file:
-            - ./envs/.user.env
-            - ./envs/.mongo.env
-        command: npm run start:prod
-        depends_on:
-            - mongo
-            - nats
         networks:
             - tngmn
 
