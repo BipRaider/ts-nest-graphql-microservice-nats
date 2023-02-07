@@ -13,15 +13,15 @@ export class ProductService implements IProductService {
   public create = async (dto: ProductContract.CreateCommand.Request): Promise<SendErrorUtil | Entity> => {
     try {
       const entity = new Entity(dto);
-      if (!entity.userId && entity.storeId)
+      if (!entity.userId && entity.storeId) {
         return new ErrorUtil(400).send({
           error: 'Some properties not found.',
           payload: { userId: entity.userId, storeId: entity.storeId },
         });
+      }
 
-      const user = await this.repository.create(entity);
-
-      return new Entity(user);
+      const item = await this.repository.create(entity);
+      return new Entity(item);
     } catch (error) {
       return new ErrorUtil(502).send({
         error: 'ProductService.create something wrong.',
@@ -29,17 +29,19 @@ export class ProductService implements IProductService {
       });
     }
   };
+
   public find = async (dto: ProductContract.FindQuery.Request): Promise<SendErrorUtil | Entity> => {
     try {
       const entity = new Entity(dto);
-      const user = await this.repository.find(entity);
-      if (!user)
+      const item = await this.repository.find(entity);
+      if (!item) {
         return new ErrorUtil(404).send({
           error: 'Product not found.',
           payload: { id: entity.id },
         });
+      }
 
-      return new Entity(user);
+      return new Entity(item);
     } catch (error) {
       return new ErrorUtil(502).send({
         error: 'ProductService.find something wrong.',
@@ -47,10 +49,30 @@ export class ProductService implements IProductService {
       });
     }
   };
+
   public get = async (dto: ProductContract.GetQuery.Request): Promise<SendErrorUtil | Entity[]> => {
-    return;
+    try {
+      const entity = new Entity(dto).filter(dto);
+      const items = await this.repository.get(entity);
+      return items.map(item => new Entity(item));
+    } catch (error) {
+      return new ErrorUtil(502).send({
+        error: 'ProductService.find something wrong.',
+        payload: error,
+      });
+    }
   };
+
   public all = async (dto: ProductContract.AllQuery.Request): Promise<SendErrorUtil | Entity[]> => {
-    return;
+    try {
+      const entity = new Entity({}).filter(dto);
+      const items = await this.repository.all(entity);
+      return items.map(item => new Entity(item));
+    } catch (error) {
+      return new ErrorUtil(502).send({
+        error: 'ProductService.all something wrong.',
+        payload: error,
+      });
+    }
   };
 }
