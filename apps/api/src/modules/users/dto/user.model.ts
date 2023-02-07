@@ -12,26 +12,26 @@ registerEnumType(ENUM.Roles, {
 @ObjectType()
 export class PrivateData implements IPrivateData {
   @Field({ nullable: true })
-  firstname?: string;
+  public readonly firstname?: string;
 
   @Field({ nullable: true })
-  lastname?: string;
+  public readonly lastname?: string;
 }
 
 @ObjectType()
 export class User extends BaseModel implements IUser, IBaseData {
   @Field(() => String, { nullable: true })
-  name: string;
+  public readonly name: string;
 
   @Field(() => String, { nullable: true })
-  email: string;
+  public readonly email: string;
 
   @Field(() => String, { nullable: true })
-  password: string;
+  public readonly password: string;
 
   @Field(type => [ENUM.Roles], { nullable: true })
-  roles?: ENUM.Roles[];
+  public readonly roles?: ENUM.Roles[];
 
   @Field(type => PrivateData, { nullable: true })
-  privateData?: PrivateData;
+  public readonly privateData?: PrivateData;
 }

@@ -27,6 +27,22 @@ export interface GetUsersInput {
     limit?: Nullable<number>;
 }
 
+export interface FindProductInput {
+    id: ObjectID;
+}
+
+export interface GetProductsInput {
+    userId?: Nullable<ObjectID>;
+    storeId?: Nullable<string>;
+    skip?: Nullable<number>;
+    limit?: Nullable<number>;
+}
+
+export interface AllProductsInput {
+    skip?: Nullable<number>;
+    limit?: Nullable<number>;
+}
+
 export interface SocialAuthInput {
     code?: Nullable<string>;
 }
@@ -41,6 +57,17 @@ export interface CreateUserInput {
 export interface PrivateDataInput {
     firstname?: Nullable<string>;
     lastname?: Nullable<string>;
+}
+
+export interface CreateProductInput {
+    userId: ObjectID;
+    storeId: ObjectID;
+    price?: Nullable<number>;
+    amount?: Nullable<number>;
+    description?: Nullable<string>;
+    discount?: Nullable<number>;
+    isRemove?: Nullable<boolean>;
+    name?: Nullable<string>;
 }
 
 export interface LoginUserInput {
@@ -71,6 +98,54 @@ export interface RefreshTokenResponse {
     access_token?: Nullable<string>;
 }
 
+export interface AllProductsResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    userId?: Nullable<ObjectID>;
+    storeId?: Nullable<ObjectID>;
+    price?: Nullable<number>;
+    amount?: Nullable<number>;
+    discount?: Nullable<number>;
+    description?: Nullable<string>;
+    name?: Nullable<string>;
+    isRemove?: Nullable<boolean>;
+}
+
+export interface CreateProductResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+}
+
+export interface FindProductResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    userId?: Nullable<ObjectID>;
+    storeId?: Nullable<ObjectID>;
+    price?: Nullable<number>;
+    amount?: Nullable<number>;
+    discount?: Nullable<number>;
+    description?: Nullable<string>;
+    name?: Nullable<string>;
+    isRemove?: Nullable<boolean>;
+}
+
+export interface GetProductsResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    userId?: Nullable<ObjectID>;
+    storeId?: Nullable<ObjectID>;
+    price?: Nullable<number>;
+    amount?: Nullable<number>;
+    discount?: Nullable<number>;
+    description?: Nullable<string>;
+    name?: Nullable<string>;
+    isRemove?: Nullable<boolean>;
+}
+
 export interface CreateUserResponse {
     id?: Nullable<ObjectID>;
     created?: Nullable<Date>;
@@ -90,6 +165,9 @@ export interface GetUserResponse {
 export interface IQuery {
     getUser(data: GetUserInput): GetUserResponse | Promise<GetUserResponse>;
     getUsers(data: GetUsersInput): GetUserResponse[] | Promise<GetUserResponse[]>;
+    findProduct(data: FindProductInput): FindProductResponse | Promise<FindProductResponse>;
+    getProducts(data: GetProductsInput): GetProductsResponse[] | Promise<GetProductsResponse[]>;
+    allProducts(data: AllProductsInput): AllProductsResponse[] | Promise<AllProductsResponse[]>;
     gitHubAuth(input: SocialAuthInput): string | Promise<string>;
     redditAuth(input: SocialAuthInput): string | Promise<string>;
     googleAuth(input: SocialAuthInput): string | Promise<string>;
@@ -98,6 +176,7 @@ export interface IQuery {
 
 export interface IMutation {
     createUser(input: CreateUserInput): CreateUserResponse | Promise<CreateUserResponse>;
+    createProduct(input: CreateProductInput): CreateProductResponse | Promise<CreateProductResponse>;
     login(input: LoginUserInput): LoginUserResponse | Promise<LoginUserResponse>;
     refreshToken(): Nullable<RefreshTokenResponse> | Promise<Nullable<RefreshTokenResponse>>;
     logout(): boolean | Promise<boolean>;

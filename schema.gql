@@ -35,6 +35,54 @@ type RefreshTokenResponse {
   access_token: String
 }
 
+type AllProductsResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  userId: ObjectID
+  storeId: ObjectID
+  price: Int
+  amount: Int
+  discount: Int
+  description: String
+  name: String
+  isRemove: Boolean
+}
+
+type CreateProductResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+}
+
+type FindProductResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  userId: ObjectID
+  storeId: ObjectID
+  price: Int
+  amount: Int
+  discount: Int
+  description: String
+  name: String
+  isRemove: Boolean
+}
+
+type GetProductsResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  userId: ObjectID
+  storeId: ObjectID
+  price: Int
+  amount: Int
+  discount: Int
+  description: String
+  name: String
+  isRemove: Boolean
+}
+
 type CreateUserResponse {
   id: ObjectID
   created: Date
@@ -60,6 +108,9 @@ scalar ObjectID
 type Query {
   getUser(data: GetUserInput!): GetUserResponse!
   getUsers(data: GetUsersInput!): [GetUserResponse!]!
+  findProduct(data: FindProductInput!): FindProductResponse!
+  getProducts(data: GetProductsInput!): [GetProductsResponse!]!
+  allProducts(data: AllProductsInput!): [AllProductsResponse!]!
   gitHubAuth(input: SocialAuthInput!): String!
   redditAuth(input: SocialAuthInput!): String!
   googleAuth(input: SocialAuthInput!): String!
@@ -76,12 +127,29 @@ input GetUsersInput {
   limit: Int
 }
 
+input FindProductInput {
+  id: ObjectID!
+}
+
+input GetProductsInput {
+  userId: ObjectID
+  storeId: String
+  skip: Int
+  limit: Int
+}
+
+input AllProductsInput {
+  skip: Int
+  limit: Int
+}
+
 input SocialAuthInput {
   code: String
 }
 
 type Mutation {
   createUser(input: CreateUserInput!): CreateUserResponse!
+  createProduct(input: CreateProductInput!): CreateProductResponse!
   login(input: LoginUserInput!): LoginUserResponse!
   refreshToken: RefreshTokenResponse
   logout: Boolean!
@@ -97,6 +165,17 @@ input CreateUserInput {
 input PrivateDataInput {
   firstname: String
   lastname: String
+}
+
+input CreateProductInput {
+  userId: ObjectID!
+  storeId: ObjectID!
+  price: Int
+  amount: Int
+  description: String
+  discount: Int
+  isRemove: Boolean
+  name: String
 }
 
 input LoginUserInput {

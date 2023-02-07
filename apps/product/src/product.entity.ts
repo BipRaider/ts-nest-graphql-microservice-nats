@@ -53,6 +53,13 @@ export class Entity implements Required<IProduct & IBaseData> {
   public create = () => {
     return {
       name: this.name,
+      storeId: this.storeId,
+      userId: this.userId,
+      description: this.description,
+      discount: this.discount,
+      price: this.price,
+      amount: this.amount,
+      isRemove: this.isRemove,
     };
   };
 }

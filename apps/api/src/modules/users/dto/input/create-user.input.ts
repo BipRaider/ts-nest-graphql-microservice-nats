@@ -1,14 +1,6 @@
 import { InputType, Field, ObjectType, PartialType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNotEmptyObject,
-  IsOptional,
-  IsString,
-  Length,
-  ValidateNested,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString, Length, ValidateNested } from 'class-validator';
 
 import { UserContract } from '@common/contracts';
 

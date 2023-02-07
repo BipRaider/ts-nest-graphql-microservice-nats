@@ -16,8 +16,12 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
   //List queries func.
   @Query(returns => GetUserResponse)
-  async getUser(@Args('data') data: GetUserInput): Promise<UserContract.GetUserQuery.Response | GraphQLError> {
-    const user: UserContract.GetUserQuery.Response | SendErrorUtil = await this.usersService.find(data);
+  async getUser(
+    @Args('data') data: GetUserInput,
+  ): Promise<UserContract.GetUserQuery.Response | GraphQLError> {
+    const user: UserContract.GetUserQuery.Response | SendErrorUtil = await this.usersService.find(
+      data,
+    );
 
     if ('status' in user) return new ErrorUtil(user.status).response(user);
 
@@ -25,8 +29,12 @@ export class UsersResolver {
   }
 
   @Query(returns => [GetUserResponse])
-  async getUsers(@Args('data') data: GetUsersInput): Promise<UserContract.GetUsersQuery.Response[] | GraphQLError> {
-    const user: UserContract.GetUsersQuery.Response[] | SendErrorUtil = await this.usersService.get(data);
+  async getUsers(
+    @Args('data') data: GetUsersInput,
+  ): Promise<UserContract.GetUsersQuery.Response[] | GraphQLError> {
+    const user: UserContract.GetUsersQuery.Response[] | SendErrorUtil = await this.usersService.get(
+      data,
+    );
 
     if ('status' in user) return new ErrorUtil(user.status).response(user);
 
@@ -35,8 +43,11 @@ export class UsersResolver {
 
   //List mutation func.
   @Mutation(returns => CreateUserResponse)
-  async createUser(@Args('input') input: CreateUserInput): Promise<UserContract.CreateCommand.Response | GraphQLError> {
-    const user: UserContract.CreateCommand.Response | SendErrorUtil = await this.usersService.createUser(input);
+  async createUser(
+    @Args('input') input: CreateUserInput,
+  ): Promise<UserContract.CreateCommand.Response | GraphQLError> {
+    const user: UserContract.CreateCommand.Response | SendErrorUtil =
+      await this.usersService.create(input);
 
     if ('status' in user) return new ErrorUtil(user.status).response(user);
 

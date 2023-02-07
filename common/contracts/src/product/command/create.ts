@@ -13,15 +13,15 @@ export namespace CreateCommand {
   };
 
   /*** Must have these values to create a product.*/
-  export class Request implements IProduct {
+  export class Request implements Partial<IProduct> {
     userId: ObjectId;
     storeId: ObjectId;
-    price: number;
-    amount: number;
-    description: string;
-    discount: number;
-    isRemove: boolean;
-    name: string;
+    price?: number;
+    amount?: number;
+    description?: string;
+    discount?: number;
+    isRemove?: boolean;
+    name?: string;
   }
 
   /*** These values must be returned from the service after the user has been created.*/
