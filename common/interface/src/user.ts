@@ -1,39 +1,29 @@
 import { Nullable } from '../index';
 import { Roles } from './enum';
 
-// /** User roles in the system.*/
-// export enum Roles {
-//   /**All registered `users` have this `role`.*/
-//   USER = 'User',
-//   /**Have all the rights in the system.*/
-//   ADMIN = 'Admin',
-// }
-
 export interface IPrivateData {
   /** User name */
-  firstname?: Nullable<string>;
+  readonly firstname?: Nullable<string>;
   /** User second name */
-  lastname?: Nullable<string>;
+  readonly lastname?: Nullable<string>;
 }
 
 export interface IUser {
   /** User name.*/
-  name: string;
+  readonly name: string;
   /** User email address*/
-  email: string;
+  readonly email: string;
   /** User password*/
   password: string;
   /** User private data*/
-  privateData?: IPrivateData;
+  readonly privateData?: IPrivateData;
   /** User roles in the system.*/
-  roles?: Roles[];
+  readonly roles?: Roles[];
 
-  tokens?: string;
-  active?: boolean;
-  githubId?: string;
-  redditId?: string;
-  googleId?: string;
-  avatar?: string;
+  readonly tokens?: string;
+  readonly active?: boolean;
+  readonly githubId?: string;
+  readonly redditId?: string;
+  readonly googleId?: string;
+  readonly avatar?: string;
 }
-
-export type Timestamp = unknown;

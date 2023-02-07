@@ -9,9 +9,9 @@ export interface IBaseData {
    * Do not use this to create a new ObjectId instance, use `mongoose.Types.ObjectId`
    * instead.
    */
-  id: ObjectId;
+  readonly id: ObjectId;
   /**When the data is `created`.*/
-  created: Date;
+  readonly created: Date;
   /**When the data is `updated`.*/
-  updated: Date;
+  readonly updated: Date;
 }

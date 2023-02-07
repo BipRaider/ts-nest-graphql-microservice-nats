@@ -1,39 +1,37 @@
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
-
 import { ObjectId } from 'mongoose';
 
-import { IBaseData, IPrivateData, IUser, ENUM } from '@common/interface';
+import { IBaseData, IProduct, ENUM } from '@common/interface';
 
-/*** Query for get the `users`.
+/*** Query for get the `products`.
  ** And based on this, the connection of servers is built.
  */
-export namespace GetUsersQuery {
+export namespace AllQuery {
   /*** The connection to the service `one to one`.*/
   export const Pattern: {
     readonly cmd: string;
   } = {
-    cmd: `${ENUM.NatsServicesQueue.USER}.get`,
+    cmd: `${ENUM.NatsServicesQueue.PRODUCT}.all`,
   };
 
-  /*** Must be one of these values to get for  users.*/
+  /*** These values are needed to filter the products
+   *  that can be retrieved from the product database.*/
   export class Request {
     skip?: number;
     limit?: number;
   }
 
-  /*** These values must be returned from the service after the user has been found.*/
-  export class Response implements Required<IBaseData & Omit<IUser, 'password'>> {
-    tokens: string;
-    active: boolean;
-    githubId: string;
-    redditId: string;
-    googleId: string;
-    avatar: string;
-    name: string;
-    email: string;
-    privateData: IPrivateData;
-    roles: ENUM.Roles[];
+  /*** These values must be returned from the service after the products has been found.*/
+  export class Response implements Required<IBaseData & IProduct> {
     id: ObjectId;
+    userId: ObjectId;
+    storeId: ObjectId;
+    price: number;
+    amount: number;
+    description: string;
+    discount: number;
+    isRemove: boolean;
+    name: string;
     created: Date;
     updated: Date;
   }
@@ -47,5 +45,5 @@ export namespace GetUsersQuery {
   };
 
   /*** The data types to be sent to the service.*/
-  export type UserRecord = NatsRecord<Request, Header>;
+  export type Record = NatsRecord<Request, Header>;
 }

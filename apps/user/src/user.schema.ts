@@ -1,12 +1,11 @@
 import { IPrivateData, IUser, ENUM } from '@common/interface';
 import { Schema, Document, Model, ObjectId } from 'mongoose';
 import { Entity } from './user.entity';
-import { PasswordUtil } from '@common/utils';
 
 /*** The `User` schema for database */
 export interface ISchema extends Document<ObjectId | string>, IUser {
-  id?: ObjectId;
-  _id: Schema.Types.ObjectId;
+  readonly id?: ObjectId;
+  readonly _id: Schema.Types.ObjectId;
   readonly created?: Date;
   readonly updated?: Date;
 }

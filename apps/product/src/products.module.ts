@@ -1,15 +1,29 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { NatsModule, NatsProvider } from '@common/libs';
+import { NatsModule, NatsProvider, MongoCollection, MongoConnect } from '@common/libs';
 import { ENUM } from '@common/interface';
 
-import { ProductsController } from './products.controller';
-import { ProductsService } from './products.service';
+import { ProductController } from './products.controller';
+import { ProductService } from './products.service';
+import { ProductSchema } from './product.schema';
+import { ProductRepository } from './product.repository';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
+    MongoConnect(ENUM.MongoCollectionNames.PRODUCT),
+    MongoCollection(
+      [
+        {
+          name: ENUM.MongoSchemaNames.PRODUCT,
+          schema: ProductSchema,
+        },
+      ],
+      ENUM.MongoCollectionNames.PRODUCT,
+    ),
+
     NatsModule([
       {
         name: ENUM.NatsServicesName.API,
@@ -21,9 +35,10 @@ import { ProductsService } from './products.service';
       },
     ]),
   ],
-  controllers: [ProductsController],
+  controllers: [ProductController],
   providers: [
-    ProductsService,
+    ProductRepository,
+    ProductService,
     NatsProvider({
       provide: ENUM.NatsServicesName.PRODUCT,
       queue: ENUM.NatsServicesQueue.PRODUCT,

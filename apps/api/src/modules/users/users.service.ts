@@ -6,7 +6,6 @@ import { UserContract } from '@common/contracts';
 import { ENUM } from '@common/interface';
 
 import { CreateUserInput } from './dto/input/create-user.input';
-
 import { GetUserInput } from './dto/input/get-user.input';
 import { GetUsersInput } from './dto/input/get-users.input';
 

@@ -12,7 +12,7 @@ export namespace GetUserQuery {
   export const Pattern: {
     readonly cmd: string;
   } = {
-    cmd: 'user.find',
+    cmd: `${ENUM.NatsServicesQueue.USER}.find`,
   };
 
   /*** Must be one of these values to search for a user.*/
