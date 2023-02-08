@@ -24,13 +24,19 @@ export class UsersRepository implements IUserRepository {
     let item: ISchema | null = null;
 
     if (entity.id) item = await this.db.findById(entity.id).select({ password: 0 }).exec();
-    if (entity.email && !item) item = await this.db.findOne({ email: entity.email }).select({ password: 0 }).exec();
+    if (entity.email && !item)
+      item = await this.db.findOne({ email: entity.email }).select({ password: 0 }).exec();
 
     return item;
   };
 
   public get = async (entity?: Entity): Promise<ISchema[] | null> => {
-    return await this.db.find().skip(entity.skip).limit(entity.limit).select({ password: 0 }).exec();
+    return await this.db
+      .find()
+      .skip(entity.skip)
+      .limit(entity.limit)
+      .select({ password: 0 })
+      .exec();
   };
 
   public auth = async (entity: Entity): Promise<ISchema | null> => {

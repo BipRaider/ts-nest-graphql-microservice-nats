@@ -9,7 +9,10 @@ import { Entity } from './user.entity';
 
 @Injectable()
 export class UserService implements IUserService {
-  constructor(private readonly repository: UsersRepository, private readonly passwordUtils: PasswordUtil) {}
+  constructor(
+    private readonly repository: UsersRepository,
+    private readonly passwordUtils: PasswordUtil,
+  ) {}
 
   async create(dto: UserContract.CreateCommand.Request): Promise<Entity | SendErrorUtil> {
     try {

@@ -1,5 +1,5 @@
-import { Nullable } from '../index';
-import { Roles } from './enum';
+import { Nullable } from '../../index';
+import { Roles } from '../enum';
 
 export interface IPrivateData {
   /** User name */

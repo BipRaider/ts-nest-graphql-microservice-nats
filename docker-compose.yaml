@@ -39,6 +39,16 @@ services:
         networks:
             - tngmn
 
+    order:
+        extends:
+            file: ./docker/docker-compose.order.yaml
+            service: user
+        build:
+            context: ./
+            dockerfile: ./apps/order/Dockerfile
+        networks:
+            - tngmn
+
     mongo:
         extends:
             file: ./docker/docker-compose.mongo.yaml

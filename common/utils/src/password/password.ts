@@ -18,16 +18,28 @@ export class PasswordUtil {
   public saltLen = 16;
   public iterations = 10000;
   public digest = 'sha512';
-  public passLong = 7;
+
   /*** Password hash */
   hash = async ({ password, salt }: IHash): Promise<string> => {
     salt = salt || randomBytes(this.saltLen).toString('hex').slice(0, this.saltLen);
-    const hash = await promisify(pbkdf2)(password, salt, this.iterations, this.passwordLength, this.digest);
+    const hash = await promisify(pbkdf2)(
+      password,
+      salt,
+      this.iterations,
+      this.passwordLength,
+      this.digest,
+    );
     return [salt, this.iterations.toString(), hash.toString('hex')].join('.');
   };
 
   hashData = async ({ password, salt }: Required<IHash>): Promise<string> => {
-    const hash = await promisify(pbkdf2)(password, salt, this.iterations, this.passwordLength, this.digest);
+    const hash = await promisify(pbkdf2)(
+      password,
+      salt,
+      this.iterations,
+      this.passwordLength,
+      this.digest,
+    );
     return hash.toString('hex');
   };
   /*** Validation the password */
@@ -43,14 +55,14 @@ export class PasswordUtil {
     }
   };
   /*** Random password */
-  createPassword = (long?: number): string => {
-    return randomBytes(long || this.passLong)
+  static createPassword = (size?: number): string => {
+    return randomBytes(size || 10)
       .toString('hex')
-      .slice(0, long || this.passLong)
+      .slice(0, size || 10)
       .toUpperCase();
   };
   /*** Random byte */
-  randomBytes = (size = 48): string => {
+  static randomBytes = (size = 48): string => {
     return randomBytes(size).toString('hex').slice(0, size);
   };
 }

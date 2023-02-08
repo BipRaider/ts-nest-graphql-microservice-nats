@@ -1,4 +1,4 @@
-import { IBaseData } from './base';
+import { IBaseData } from '../base';
 
 export interface IProduct {
   /*** Who user added the product.*/
