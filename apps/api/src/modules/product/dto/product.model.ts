@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, Float } from '@nestjs/graphql';
 
 import { IBaseData, IProduct } from '@common/interface';
 
@@ -13,7 +13,7 @@ export class Product extends BaseModel implements IProduct, IBaseData {
   @Field(() => Schema.Types.ObjectId, { nullable: true })
   public readonly storeId: ObjectId;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   public readonly price: number;
 
   @Field(() => Int, { nullable: true })

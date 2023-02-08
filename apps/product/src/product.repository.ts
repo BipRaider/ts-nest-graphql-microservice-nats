@@ -22,22 +22,21 @@ export class ProductRepository implements IProductRepository {
 
   public find = async (entity: Entity): Promise<ISchema | null> => {
     let item: ISchema | null = null;
-    if (entity.id) item = await this.db.findById(entity.id).select({ password: 0 }).exec();
+    if (entity.id) item = await this.db.findById(entity.id).select({}).exec();
+
     return item;
   };
 
   public get = async (entity?: Entity): Promise<ISchema[] | null> => {
-    let item: ISchema[] | null = null;
-    if (entity.userId) {
-      item = await this.db.find({ userId: entity.userId }).skip(entity.skip).limit(entity.limit).select({}).exec();
-    }
-    if (entity.storeId) {
-      item = await this.db.find({ storeId: entity.storeId }).skip(entity.skip).limit(entity.limit).select({}).exec();
-    }
-    return item;
+    if (entity.userId && entity.storeId) return await this.findFromDB(entity);
+    if (entity.userId) return await this.findFromDB(entity);
+    if (entity.storeId) return await this.findFromDB(entity);
+    return null;
   };
 
-  public all = async (entity: Entity): Promise<ISchema[]> => {
-    return await this.db.find().skip(entity.skip).limit(entity.limit).select({}).exec();
+  public all = async (entity: Entity): Promise<ISchema[]> => await this.findFromDB(entity);
+
+  private findFromDB = async (entity: Entity): Promise<ISchema[]> => {
+    return await this.db.find(entity.find()).skip(entity.skip).limit(entity.limit).exec();
   };
 }

@@ -1,4 +1,4 @@
-import { InputType, Field, ObjectType, PartialType, Int } from '@nestjs/graphql';
+import { InputType, Field, ObjectType, PartialType, Int, Float } from '@nestjs/graphql';
 import {
   IsNotEmpty,
   IsOptional,
@@ -8,13 +8,13 @@ import {
   Max,
   Min,
   IsInt,
-  IsBoolean,
 } from 'class-validator';
+import { Schema } from 'mongoose';
 
 import { ProductContract } from '@common/contracts';
 
 import { BaseModel } from '../../../base.model';
-import { Schema } from 'mongoose';
+import { IsPrise } from '../../../../decorator';
 
 @InputType()
 export class CreateProductInput implements ProductContract.CreateCommand.Request {
@@ -28,9 +28,10 @@ export class CreateProductInput implements ProductContract.CreateCommand.Request
   @IsMongoId({ message: 'The storeId is incorrect' })
   storeId: Schema.Types.ObjectId;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   @IsOptional()
-  @IsInt({ message: 'The price is incorrect' })
+  @IsPrise(2, { message: 'The price is incorrect' })
+  @Min(0)
   @Max(10_000_000)
   price?: number;
 
@@ -38,6 +39,7 @@ export class CreateProductInput implements ProductContract.CreateCommand.Request
   @IsOptional()
   @IsInt({ message: 'The amount is incorrect' })
   @Max(10_000_000)
+  @Min(0)
   amount?: number;
 
   @Field(() => String, { nullable: true })
@@ -50,13 +52,8 @@ export class CreateProductInput implements ProductContract.CreateCommand.Request
   @IsOptional()
   @IsInt({ message: 'The discount is incorrect' })
   @Max(100)
-  @Min(1)
+  @Min(0)
   discount?: number;
-
-  @Field(() => Boolean, { nullable: true })
-  @IsOptional()
-  @IsBoolean({ message: 'The isRemove is incorrect' })
-  isRemove?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsOptional()

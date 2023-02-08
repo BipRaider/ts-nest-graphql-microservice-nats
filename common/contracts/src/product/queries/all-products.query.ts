@@ -1,5 +1,5 @@
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
-import { ObjectId } from 'mongoose';
+import { ObjectId, Schema } from 'mongoose';
 
 import { IBaseData, IProduct, ENUM } from '@common/interface';
 
@@ -16,7 +16,15 @@ export namespace AllQuery {
 
   /*** These values are needed to filter the products
    *  that can be retrieved from the product database.*/
-  export class Request {
+  export class Request implements Partial<IProduct> {
+    userId?: Schema.Types.ObjectId;
+    storeId?: Schema.Types.ObjectId;
+    name?: string;
+    price?: number;
+    amount?: number;
+    description?: string;
+    discount?: number;
+    isRemove?: boolean;
     skip?: number;
     limit?: number;
   }

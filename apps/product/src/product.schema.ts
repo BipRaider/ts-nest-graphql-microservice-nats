@@ -23,8 +23,15 @@ export const ProductSchema = new Schema<ISchema, IModel>(
   {
     userId: { type: Schema.Types.ObjectId, required: true, immutable: true },
     storeId: { type: Schema.Types.ObjectId, required: true, immutable: true },
-    name: { type: String, default: 'default name', required: true, immutable: true, maxlength: 40, minlength: 1 },
-    price: { type: Number, default: 0, required: true, max: 10_000_000 },
+    name: {
+      type: String,
+      default: 'default name',
+      required: true,
+      immutable: true,
+      maxlength: 40,
+      minlength: 1,
+    },
+    price: { type: Number, default: 0.01, required: true, max: 10_000_000 },
     amount: { type: Number, default: 0, required: true, max: 10_000_000 },
     discount: { type: Number, default: 0, required: true, min: 0, max: 100 },
     description: { type: String, default: 'description', required: true, maxlength: 200 },

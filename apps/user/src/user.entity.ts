@@ -29,31 +29,33 @@ export class Entity implements Required<IUser & IBaseData> {
   public limit: number = undefined;
 
   constructor(data: Partial<ISchema>) {
-    if (data.name) this.name = data.name;
-    if (data.email) this.email = data.email;
-    if (data.password) this.password = data.password;
-    if (data.roles) this.roles = data.roles;
-    if (data.privateData) this.privateData = data.privateData;
-    if (data.created) this.created = data.created;
-    if (data.id) this.id = data.id;
-    if (data._id) this.id = data._id;
-    if (data.updated) this.updated = data.updated;
-    if (data.avatar) this.avatar = data.avatar;
-    if (data.active) this.active = data.active;
-    if (data.tokens) this.tokens = data.tokens;
-    if (data.githubId) this.githubId = data.githubId;
-    if (data.redditId) this.redditId = data.redditId;
-    if (data.googleId) this.googleId = data.googleId;
+    //User
+    if ('name' in data) this.name = data.name;
+    if ('email' in data) this.email = data.email;
+    if ('password' in data) this.password = data.password;
+    if ('roles' in data) this.roles = data.roles;
+    if ('privateData' in data) this.privateData = data.privateData;
+    if ('avatar' in data) this.avatar = data.avatar;
+    if ('active' in data) this.active = data.active;
+    if ('tokens' in data) this.tokens = data.tokens;
+    if ('githubId' in data) this.githubId = data.githubId;
+    if ('redditId' in data) this.redditId = data.redditId;
+    if ('googleId' in data) this.googleId = data.googleId;
+    //Database
+    if ('id' in data) this.id = data.id;
+    if ('_id' in data) this.id = data._id;
+    if ('created' in data) this.created = data.created;
+    if ('updated' in data) this.updated = data.updated;
   }
   /*** When you need to filter the list of users, use this function.*/
   public filter = (data: UserContract.GetUsersQuery.Request): this => {
-    if (data.skip) this.skip = data.skip || null;
-    if (data.limit) this.limit = data.limit || null;
+    if ('skip' in data) this.skip = data.skip;
+    if ('limit' in data) this.limit = data.limit;
     return this;
   };
   /*** Values for create a user. */
-  public create = () => {
-    return {
+  public create = (): Partial<IUser & IBaseData> => {
+    const property = {
       password: this.password,
       email: this.email,
       name: this.name,
@@ -66,5 +68,15 @@ export class Entity implements Required<IUser & IBaseData> {
       googleId: this.googleId,
       avatar: this.avatar,
     };
+
+    return this.filterProperty(property);
+  };
+
+  private filterProperty = (property: Partial<IUser & IBaseData>): Partial<IUser & IBaseData> => {
+    for (const key in property) {
+      if (property[key] === null) delete property[key];
+      if (property[key] === undefined) delete property[key];
+    }
+    return property;
   };
 }

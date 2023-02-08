@@ -13,14 +13,13 @@ export namespace CreateCommand {
   };
 
   /*** Must have these values to create a product.*/
-  export class Request implements Partial<IProduct> {
+  export class Request implements Partial<Omit<IProduct, 'IsRemove'>> {
     userId: ObjectId;
     storeId: ObjectId;
     price?: number;
     amount?: number;
     description?: string;
     discount?: number;
-    isRemove?: boolean;
     name?: string;
   }
 

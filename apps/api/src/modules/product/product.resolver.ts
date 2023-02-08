@@ -16,6 +16,8 @@ import {
   GetProductsInput,
   GetProductsResponse,
 } from './dto/input';
+import { AuthRoles, AuthRole } from '../../decorator';
+import { ENUM } from '@common/interface';
 
 @Resolver(of => Product)
 export class ProductResolver {
@@ -59,6 +61,8 @@ export class ProductResolver {
 
   //List mutation func.
   @Mutation(returns => CreateProductResponse)
+  // @AuthRoles([ENUM.Roles.ADMIN, ENUM.Roles.MERCHANT])
+  @AuthRole(ENUM.Roles.USER)
   async createProduct(
     @Args('input') input: CreateProductInput,
   ): Promise<ProductContract.CreateCommand.Response | GraphQLError> {

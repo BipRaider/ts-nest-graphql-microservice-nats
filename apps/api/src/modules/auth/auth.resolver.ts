@@ -9,7 +9,12 @@ import { IJwtGenerateToken } from '@common/interface';
 import { AuthService } from './auth.service';
 
 import { Auth } from './dto/auth.model';
-import { LoginUserInput, LoginUserResponse, RefreshTokenResponse, SocialAuthInput } from './dto/input';
+import {
+  LoginUserInput,
+  LoginUserResponse,
+  RefreshTokenResponse,
+  SocialAuthInput,
+} from './dto/input';
 
 import { CurrentUser } from '../../decorator';
 import { RefreshAuthGuard } from '../../guards';
@@ -23,7 +28,9 @@ export class AuthResolver {
     @Context() context: any,
     @Args('input') input: LoginUserInput,
   ): Promise<(AuthContract.AuthQuery.Response & { access_token: string }) | GraphQLError> {
-    const user: AuthContract.AuthQuery.Response | SendErrorUtil = await this.authService.validate(input);
+    const user: AuthContract.AuthQuery.Response | SendErrorUtil = await this.authService.validate(
+      input,
+    );
     if ('status' in user) return new ErrorUtil(user.status).response(user);
 
     const token = await this.authService.generateToken(user, context);

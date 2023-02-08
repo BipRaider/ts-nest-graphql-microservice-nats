@@ -41,6 +41,14 @@ export interface GetProductsInput {
 export interface AllProductsInput {
     skip?: Nullable<number>;
     limit?: Nullable<number>;
+    isRemove?: Nullable<boolean>;
+    userId?: Nullable<ObjectID>;
+    storeId?: Nullable<ObjectID>;
+    price?: Nullable<number>;
+    amount?: Nullable<number>;
+    description?: Nullable<string>;
+    discount?: Nullable<number>;
+    name?: Nullable<string>;
 }
 
 export interface SocialAuthInput {
@@ -66,7 +74,6 @@ export interface CreateProductInput {
     amount?: Nullable<number>;
     description?: Nullable<string>;
     discount?: Nullable<number>;
-    isRemove?: Nullable<boolean>;
     name?: Nullable<string>;
 }
 

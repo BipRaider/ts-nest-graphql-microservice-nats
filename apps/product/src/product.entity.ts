@@ -27,31 +27,32 @@ export class Entity implements Required<IProduct & IBaseData> {
   public limit: number = undefined;
 
   constructor(data: Partial<ISchema>) {
-    // console.dir(Object.keys(Entity));
     //product
-    if (data.userId) this.userId = data.userId;
-    if (data.storeId) this.storeId = data.storeId;
-    if (data.price) this.price = data.price;
-    if (data.amount) this.amount = data.amount;
-    if (data.description) this.description = data.description;
-    if (data.discount) this.discount = data.discount;
-    if (data.isRemove) this.isRemove = data.isRemove;
-    if (data.name) this.name = data.name;
+    if ('userId' in data) this.userId = data.userId;
+    if ('storeId' in data) this.storeId = data.storeId;
+    if ('price' in data) this.price = data.price;
+    if ('amount' in data) this.amount = data.amount;
+    if ('description' in data) this.description = data.description;
+    if ('discount' in data) this.discount = data.discount;
+    if ('isRemove' in data) this.isRemove = data.isRemove;
+    if ('name' in data) this.name = data.name;
     //db
-    if (data.id) this.id = data.id;
-    if (data._id) this.id = data._id;
-    if (data.created) this.created = data.created;
-    if (data.updated) this.updated = data.updated;
+    if ('id' in data) this.id = data.id;
+    if ('_id' in data) this.id = data._id;
+    if ('created' in data) this.created = data.created;
+    if ('updated' in data) this.updated = data.updated;
   }
-  /*** When you need to filter the list of users, use this function.*/
-  public filter = (data: ProductContract.AllQuery.Request): this => {
-    if (data.skip) this.skip = data.skip || null;
-    if (data.limit) this.limit = data.limit || null;
+
+  /*** When you need to paginate the list of `products`, use this function.*/
+  public paginate = (data: ProductContract.AllQuery.Request): this => {
+    if ('skip' in data) this.skip = data.skip;
+    if ('limit' in data) this.limit = data.limit;
     return this;
   };
+
   /*** Values for create a user. */
-  public create = () => {
-    return {
+  public create = (): Partial<IProduct & IBaseData> => {
+    const property = {
       name: this.name,
       storeId: this.storeId,
       userId: this.userId,
@@ -59,7 +60,25 @@ export class Entity implements Required<IProduct & IBaseData> {
       discount: this.discount,
       price: this.price,
       amount: this.amount,
-      isRemove: this.isRemove,
     };
+    return this.filterProperty(property);
+  };
+
+  public find = (): Partial<IProduct & IBaseData> => {
+    const property = {
+      ...this.create(),
+      isRemove: this.isRemove || null,
+    };
+    return this.filterProperty(property);
+  };
+
+  private filterProperty = (
+    property: Partial<IProduct & IBaseData>,
+  ): Partial<IProduct & IBaseData> => {
+    for (const key in property) {
+      if (property[key] === null) delete property[key];
+      if (property[key] === undefined) delete property[key];
+    }
+    return property;
   };
 }

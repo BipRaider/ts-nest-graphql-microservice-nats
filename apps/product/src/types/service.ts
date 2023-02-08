@@ -9,7 +9,9 @@ import { Entity } from '../product.entity';
  **  Where next steps:  `controller -> request -> repository -> response -> controller`.
  */
 export interface IProductService {
-  /** The function to work and modify data for `creating` a product. */
+  /** The function to work and modify data for `creating` a product.
+   ** A product cannot be created with the same name for the same user.
+   */
   create: (dto: ProductContract.CreateCommand.Request) => Promise<Entity | SendErrorUtil>;
   /** The function to work and modify data for `finding` a product by `id`. */
   find: (dto: ProductContract.FindQuery.Request) => Promise<Entity | SendErrorUtil>;

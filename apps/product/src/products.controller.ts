@@ -53,6 +53,7 @@ export class ProductController implements IProductController {
   public async all(
     @Payload() payload: ProductContract.AllQuery.Request,
   ): Promise<SendErrorUtil | ProductContract.AllQuery.Response[]> {
+    console.dir(payload);
     const item: Entity[] | SendErrorUtil = await this.productsService.all(payload);
 
     if ('status' in item) return item;

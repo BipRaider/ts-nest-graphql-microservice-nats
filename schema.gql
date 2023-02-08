@@ -41,7 +41,7 @@ type AllProductsResponse {
   updated: Date
   userId: ObjectID
   storeId: ObjectID
-  price: Int
+  price: Float
   amount: Int
   discount: Int
   description: String
@@ -61,7 +61,7 @@ type FindProductResponse {
   updated: Date
   userId: ObjectID
   storeId: ObjectID
-  price: Int
+  price: Float
   amount: Int
   discount: Int
   description: String
@@ -75,7 +75,7 @@ type GetProductsResponse {
   updated: Date
   userId: ObjectID
   storeId: ObjectID
-  price: Int
+  price: Float
   amount: Int
   discount: Int
   description: String
@@ -141,6 +141,14 @@ input GetProductsInput {
 input AllProductsInput {
   skip: Int
   limit: Int
+  isRemove: Boolean
+  userId: ObjectID
+  storeId: ObjectID
+  price: Float
+  amount: Int
+  description: String
+  discount: Int
+  name: String
 }
 
 input SocialAuthInput {
@@ -170,11 +178,10 @@ input PrivateDataInput {
 input CreateProductInput {
   userId: ObjectID!
   storeId: ObjectID!
-  price: Int
+  price: Float
   amount: Int
   description: String
   discount: Int
-  isRemove: Boolean
   name: String
 }
 

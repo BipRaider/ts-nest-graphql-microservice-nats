@@ -10,7 +10,10 @@ import { ProductRepository } from './product.repository';
 @Injectable()
 export class ProductService implements IProductService {
   constructor(private readonly repository: ProductRepository) {}
-  public create = async (dto: ProductContract.CreateCommand.Request): Promise<SendErrorUtil | Entity> => {
+  //TODO: Update fn.A product cannot be created with the same name for the same user.
+  public create = async (
+    dto: ProductContract.CreateCommand.Request,
+  ): Promise<SendErrorUtil | Entity> => {
     try {
       const entity = new Entity(dto);
       if (!entity.userId && entity.storeId) {
@@ -52,7 +55,7 @@ export class ProductService implements IProductService {
 
   public get = async (dto: ProductContract.GetQuery.Request): Promise<SendErrorUtil | Entity[]> => {
     try {
-      const entity = new Entity(dto).filter(dto);
+      const entity = new Entity(dto).paginate(dto);
       const items = await this.repository.get(entity);
       return items.map(item => new Entity(item));
     } catch (error) {
@@ -65,7 +68,7 @@ export class ProductService implements IProductService {
 
   public all = async (dto: ProductContract.AllQuery.Request): Promise<SendErrorUtil | Entity[]> => {
     try {
-      const entity = new Entity({}).filter(dto);
+      const entity = new Entity(dto).paginate(dto);
       const items = await this.repository.all(entity);
       return items.map(item => new Entity(item));
     } catch (error) {

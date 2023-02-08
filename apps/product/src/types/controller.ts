@@ -10,9 +10,15 @@ export interface IProductController {
     payload: ProductContract.CreateCommand.Request,
   ) => Promise<ProductContract.CreateCommand.Response | SendErrorUtil>;
   /** The function to getting `user`.*/
-  find: (payload: ProductContract.FindQuery.Request) => Promise<ProductContract.FindQuery.Response | SendErrorUtil>;
+  find: (
+    payload: ProductContract.FindQuery.Request,
+  ) => Promise<ProductContract.FindQuery.Response | SendErrorUtil>;
   /** The function to getting `users`.*/
-  get: (payload: ProductContract.GetQuery.Request) => Promise<ProductContract.GetQuery.Response[] | SendErrorUtil>;
+  get: (
+    payload: ProductContract.GetQuery.Request,
+  ) => Promise<ProductContract.GetQuery.Response[] | SendErrorUtil>;
   /** The function to getting `users`.*/
-  all: (payload: ProductContract.AllQuery.Request) => Promise<ProductContract.AllQuery.Response[] | SendErrorUtil>;
+  all: (
+    payload: ProductContract.AllQuery.Request,
+  ) => Promise<ProductContract.AllQuery.Response[] | SendErrorUtil>;
 }
