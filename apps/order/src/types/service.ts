@@ -8,7 +8,7 @@ import { Entity } from '../order.entity';
  **  * Getting data from `repository` and modify them for `controller`.
  **  Where next steps:  `controller -> request -> repository -> response -> controller`.
  */
-export interface IProductService {
+export interface IOrderService {
   /** The function to work and modify data for `creating` a product.
    ** A product cannot be created with the same name for the same user.
    */

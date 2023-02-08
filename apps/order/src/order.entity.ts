@@ -6,7 +6,7 @@ import { ProductContract } from '@common/contracts';
 import { ISchema } from './order.schema';
 
 /** Class to working with the data use
- ** Always work via this class when work a data of the user.
+ ** Always work via this class when work a data of the order.
  */
 export class Entity implements Required<IOrder & IBaseData> {
   //Database properties

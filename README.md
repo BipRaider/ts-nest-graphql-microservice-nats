@@ -5,8 +5,6 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
@@ -23,26 +21,33 @@
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Node.js](http://nodejs.org) framework for building efficient and scalable server-side applications.
+[Nest](http://nestjs.com/) framework TypeScript starter repository.
+[Docker](https://www.docker.com/products/docker-desktop/) Install Docker Desktop – the fastest way to containerize applications.
 
 ## Installation
-
 ```bash
 $ npm install
 ```
 
-## Running the app
+#### Start all containers
+```bash
+$ npm run docker:up 
+```
+or
+```bash
+$ docker-compose up -d
+```
 
+## Running the app
 ```bash
 # development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$ npm run start:dev <my-app>
+```
+production
+```bash
+# production
+$ npm run start:prod <my-app>
 ```
 
 ## Test
@@ -58,16 +63,9 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Steps. To work with the application.
+ - 1 Create microservice:
+  ```bash 
+  $ nest generate app <my-app>
+  ```
+ - 2   

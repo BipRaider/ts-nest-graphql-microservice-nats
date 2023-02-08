@@ -1,7 +1,7 @@
 import { Schema, Document, Model, ObjectId } from 'mongoose';
 import { IOrder, ENUM } from '@common/interface';
 import { PasswordUtil } from '@common/utils';
-// import { Entity } from './product.entity';
+import { Entity } from './order.entity';
 
 /*** The `Product` schema for database */
 export interface ISchema extends Document<ObjectId | string>, IOrder {
@@ -17,19 +17,13 @@ export type TOrder = Pick<ISchema, '_id' | 'id' | 'created' | 'updated'> & IOrde
 export type Instance = ISchema;
 /*** The `Order` model for database. */
 export interface IModel extends Model<Instance> {
-  addition: (entity: any) => Promise<Instance>;
+  addition: (entity: Entity) => Promise<Instance>;
 }
 
 export const OrderSchema = new Schema<ISchema, IModel>(
   {
     customer: { type: Schema.Types.ObjectId, required: true, immutable: true },
-    products: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: ENUM.MongoSchemaNames.PRODUCT,
-        required: true,
-      },
-    ],
+    products: [{ type: Schema.Types.ObjectId, required: true }],
     codeOrder: {
       type: String,
       default: PasswordUtil.createPassword(10),

@@ -6,7 +6,7 @@ import { ProductContract } from '@common/contracts';
 import { ISchema } from './product.schema';
 
 /** Class to working with the data use
- ** Always work via this class when work a data of the user.
+ ** Always work via this class when work a data of the product.
  */
 export class Entity implements Required<IProduct & IBaseData> {
   //Database properties
