@@ -8,6 +8,7 @@ services:
       context: ./
       dockerfile: ../apps/order/Dockerfile
     volumes:
+      - /opt/app/node_modules
       - ../dist/apps/order:/opt/app/dist
     env_file:
       - ../envs/.mongo.env

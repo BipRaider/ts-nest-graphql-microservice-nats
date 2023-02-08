@@ -67,7 +67,7 @@ export class Entity implements Required<IProduct & IBaseData> {
   public find = (): Partial<IProduct & IBaseData> => {
     const property = {
       ...this.create(),
-      isRemove: this.isRemove || null,
+      isRemove: this.isRemove,
     };
     return this.filterProperty(property);
   };

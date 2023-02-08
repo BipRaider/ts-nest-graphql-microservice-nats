@@ -42,7 +42,7 @@ services:
     order:
         extends:
             file: ./docker/docker-compose.order.yaml
-            service: user
+            service: order
         build:
             context: ./
             dockerfile: ./apps/order/Dockerfile
