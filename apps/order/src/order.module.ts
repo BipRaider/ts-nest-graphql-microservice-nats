@@ -6,6 +6,7 @@ import { ENUM } from '@common/interface';
 
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
+import { OrderRepository } from './order.repository';
 import { OrderSchema } from './order.schema';
 
 @Module({
@@ -33,6 +34,7 @@ import { OrderSchema } from './order.schema';
   controllers: [OrderController],
   providers: [
     OrderService,
+    OrderRepository,
     NatsProvider({
       provide: ENUM.NatsServicesName.ORDER,
       queue: ENUM.NatsServicesQueue.ORDER,

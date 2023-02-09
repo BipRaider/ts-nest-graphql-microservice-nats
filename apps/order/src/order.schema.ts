@@ -1,5 +1,5 @@
 import { Schema, Document, Model, ObjectId } from 'mongoose';
-import { IOrder, ENUM } from '@common/interface';
+import { IOrder } from '@common/interface';
 import { PasswordUtil } from '@common/utils';
 import { Entity } from './order.entity';
 
@@ -38,7 +38,7 @@ export const OrderSchema = new Schema<ISchema, IModel>(
     send: { type: Boolean, default: false, required: true },
     processed: { type: Boolean, default: false, required: true },
     received: { type: Boolean, default: false, required: true },
-    purchase: { type: Boolean, default: false, required: true },
+    exchange: { type: Boolean, default: false, required: true },
     isCancel: { type: Boolean, default: false, required: true },
     isState: { type: Boolean, default: false, required: true },
   },

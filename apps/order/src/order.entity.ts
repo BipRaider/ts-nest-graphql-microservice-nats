@@ -22,7 +22,7 @@ export class Entity implements Required<IOrder & IBaseData> {
   public processed: boolean;
   public send: boolean;
   public received: boolean;
-  public purchase: boolean;
+  public exchange: boolean;
   public isCancel: boolean;
   public isState: boolean;
   //Filter properties
@@ -40,7 +40,7 @@ export class Entity implements Required<IOrder & IBaseData> {
     if ('processed' in data) this.processed = data.processed;
     if ('send' in data) this.send = data.send;
     if ('received' in data) this.received = data.received;
-    if ('purchase' in data) this.purchase = data.purchase;
+    if ('exchange' in data) this.exchange = data.exchange;
     if ('isCancel' in data) this.isCancel = data.isCancel;
     if ('isState' in data) this.isState = data.isState;
     // db
@@ -74,7 +74,7 @@ export class Entity implements Required<IOrder & IBaseData> {
       ...this.create(),
       isState: this.isState,
       isCancel: this.isCancel,
-      purchase: this.purchase,
+      exchange: this.exchange,
       received: this.received,
       processed: this.processed,
       send: this.send,
