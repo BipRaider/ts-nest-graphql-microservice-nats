@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema, ObjectId } from 'mongoose';
 
 import { IBaseData, IOrder } from '@common/interface';
 import { ProductContract } from '@common/contracts';
@@ -15,16 +15,16 @@ export class Entity implements Required<IOrder & IBaseData> {
   public updated: Date = undefined;
   //Order properties
   public price: number = undefined;
-  public customer: Schema.Types.ObjectId;
-  public products: Schema.Types.ObjectId[];
-  public codeOrder: string;
-  public paid: boolean;
-  public processed: boolean;
-  public send: boolean;
-  public received: boolean;
-  public exchange: boolean;
-  public isCancel: boolean;
-  public isState: boolean;
+  public customer: ObjectId = undefined;
+  public products: ObjectId[] = undefined;
+  public codeOrder: string = undefined;
+  public paid: boolean = undefined;
+  public processed: boolean = undefined;
+  public send: boolean = undefined;
+  public received: boolean = undefined;
+  public exchange: boolean = undefined;
+  public isCancel: boolean = undefined;
+  public isState: boolean = undefined;
   //Filter properties
   public skip: number = undefined;
   public limit: number = undefined;

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-// import { ProductContract } from '@common/contracts';
+import { OrderContract } from '@common/contracts';
 import { SendErrorUtil, ErrorUtil } from '@common/utils';
 
 import { IOrderService } from './types';
@@ -11,7 +11,9 @@ import { OrderRepository } from './order.repository';
 export class OrderService implements IOrderService {
   constructor(private readonly repository: OrderRepository) {}
 
-  public create = async (dto): Promise<SendErrorUtil | Entity> => {
+  public create = async (
+    dto: OrderContract.CreateCommand.Request,
+  ): Promise<SendErrorUtil | Entity> => {
     try {
       const entity = new Entity(dto);
       if (!entity.customer && !entity.products?.length) {
@@ -31,7 +33,7 @@ export class OrderService implements IOrderService {
     }
   };
 
-  public find = async (dto): Promise<SendErrorUtil | Entity> => {
+  public find = async (dto: OrderContract.FindQuery.Request): Promise<SendErrorUtil | Entity> => {
     try {
       const entity = new Entity(dto);
       const item = await this.repository.find(entity);
@@ -51,7 +53,7 @@ export class OrderService implements IOrderService {
     }
   };
 
-  public get = async (dto): Promise<SendErrorUtil | Entity[]> => {
+  public get = async (dto: OrderContract.GetQuery.Request): Promise<SendErrorUtil | Entity[]> => {
     try {
       const entity = new Entity(dto).paginate(dto);
       const items = await this.repository.get(entity);
@@ -64,7 +66,7 @@ export class OrderService implements IOrderService {
     }
   };
 
-  public all = async (dto): Promise<SendErrorUtil | Entity[]> => {
+  public all = async (dto: OrderContract.AllQuery.Request): Promise<SendErrorUtil | Entity[]> => {
     try {
       const entity = new Entity(dto).paginate(dto);
       const items = await this.repository.all(entity);

@@ -1,9 +1,7 @@
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
 import { ObjectId } from 'mongoose';
 
-import { IBaseData, ENUM, IOrder, IProduct, IUser } from '@common/interface';
-
-//TODO:
+import { IBaseData, ENUM, IOrder } from '@common/interface';
 
 /*** Command for: `confirm the process of the order`.
  ** And based on this, the connection of servers is built.
@@ -28,11 +26,9 @@ export namespace SendCommand {
 
   /*** These values must be returned from the service after:
    **  The order has been processed `true`.*/
-  export class Response implements Required<IBaseData & Omit<IOrder, 'customer' | 'products'>> {
-    /*** ID of the user or data. Who ordered.*/
-    customer: ObjectId | Omit<IUser, 'password'>;
-    /*** ID of the products or them data.*/
-    products: ObjectId[] | IProduct[];
+  export class Response implements Required<IBaseData & IOrder> {
+    customer: ObjectId;
+    products: ObjectId[];
     id: ObjectId;
     created: Date;
     updated: Date;

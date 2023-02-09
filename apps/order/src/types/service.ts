@@ -1,5 +1,5 @@
-import { ProductContract } from '@common/contracts';
 import { SendErrorUtil } from '@common/utils';
+import { OrderContract } from '@common/contracts';
 
 import { Entity } from '../order.entity';
 
@@ -9,14 +9,12 @@ import { Entity } from '../order.entity';
  **  Where next steps:  `controller -> request -> repository -> response -> controller`.
  */
 export interface IOrderService {
-  /** The function to work and modify data for `creating` a product.
-   ** A product cannot be created with the same name for the same user.
-   */
-  create: (dto: ProductContract.CreateCommand.Request) => Promise<Entity | SendErrorUtil>;
-  /** The function to work and modify data for `finding` a product by `id`. */
-  find: (dto: ProductContract.FindQuery.Request) => Promise<Entity | SendErrorUtil>;
-  /** The function to work and modify data for `finding` a `product` by `userId` or `storeId`.*/
-  get: (dto: ProductContract.GetQuery.Request) => Promise<Entity[] | SendErrorUtil>;
-  /** The function to work and modify data for `finding` a `product`. */
-  all: (dto: ProductContract.AllQuery.Request) => Promise<Entity[] | SendErrorUtil>;
+  /** The function to work and modify data for `creating` a order.*/
+  create: (dto: OrderContract.CreateCommand.Request) => Promise<Entity | SendErrorUtil>;
+  /** The function to work and modify data for `finding` a order by `id` or `codeOrder`.*/
+  find: (dto: OrderContract.FindQuery.Request) => Promise<Entity | SendErrorUtil>;
+  /** The function to work and modify data for `finding` a `orders` by `customer`.*/
+  get: (dto: OrderContract.GetQuery.Request) => Promise<Entity[] | SendErrorUtil>;
+  /** The function to work and modify data for `finding` a `orders`. */
+  all: (dto: OrderContract.AllQuery.Request) => Promise<Entity[] | SendErrorUtil>;
 }

@@ -1,24 +1,24 @@
-import { ProductContract } from '@common/contracts';
 import { SendErrorUtil } from '@common/utils';
+import { OrderContract } from '@common/contracts';
 
 /*** A class for working only on `requests` and `responses` via a `class services`.
  ** Where next steps: `nats -> request -> service -> response -> nats`.
  */
-export interface IProductController {
-  /** The function to creating a `user`. */
+export interface IOrderController {
+  /** The function to creating a `order`. */
   create: (
-    payload: ProductContract.CreateCommand.Request,
-  ) => Promise<ProductContract.CreateCommand.Response | SendErrorUtil>;
-  /** The function to getting `user`.*/
+    payload: OrderContract.CreateCommand.Request,
+  ) => Promise<OrderContract.CreateCommand.Response | SendErrorUtil>;
+  /** The function to getting `order`.*/
   find: (
-    payload: ProductContract.FindQuery.Request,
-  ) => Promise<ProductContract.FindQuery.Response | SendErrorUtil>;
-  /** The function to getting `users`.*/
+    payload: OrderContract.FindQuery.Request,
+  ) => Promise<OrderContract.FindQuery.Response | SendErrorUtil>;
+  /** The function to getting `orders`.*/
   get: (
-    payload: ProductContract.GetQuery.Request,
-  ) => Promise<ProductContract.GetQuery.Response[] | SendErrorUtil>;
-  /** The function to getting `users`.*/
+    payload: OrderContract.GetQuery.Request,
+  ) => Promise<OrderContract.GetQuery.Response[] | SendErrorUtil>;
+  /** The function to getting `orders`.*/
   all: (
-    payload: ProductContract.AllQuery.Request,
-  ) => Promise<ProductContract.AllQuery.Response[] | SendErrorUtil>;
+    payload: OrderContract.AllQuery.Request,
+  ) => Promise<OrderContract.AllQuery.Response[] | SendErrorUtil>;
 }

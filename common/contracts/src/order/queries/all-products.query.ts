@@ -1,7 +1,7 @@
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
 import { ObjectId } from 'mongoose';
 
-import { IBaseData, IOrder, IUser, IProduct, ENUM } from '@common/interface';
+import { IBaseData, IOrder, ENUM } from '@common/interface';
 
 /*** Query for get the `order`.
  ** And based on this, the connection of servers is built.
@@ -32,14 +32,12 @@ export namespace AllQuery {
   }
 
   /*** These values must be returned from the service after the `orders` has been found.*/
-  export class Response implements Required<IBaseData & Omit<IOrder, 'customer' | 'products'>> {
+  export class Response implements Required<IBaseData & IOrder> {
     created: Date;
     updated: Date;
     id: ObjectId;
-    /*** ID of the user or data. Who ordered. */
-    customer: ObjectId | Omit<IUser, 'password'>;
-    /*** ID of the products or them data.*/
-    products: ObjectId[] | IProduct[];
+    customer: ObjectId;
+    products: ObjectId[];
     codeOrder: string;
     price: number;
     paid: boolean;
