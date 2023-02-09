@@ -23,6 +23,28 @@ services:
         - redis
     networks:
       - tngmn
+      
+  user-prod:
+    container_name: user-prod
+    restart: always
+    build:
+      context: ./
+      dockerfile: ../apps/user/Dockerfile
+    volumes:
+      - /opt/app/node_modules
+    env_file:
+      - ../envs/.mongo.env
+      - ../envs/.nats.env
+      - ../envs/.redis.env
+      - ../envs/.jwt.env
+      - ../envs/.user.env
+    command: npm run start:prod
+    depends_on:
+        - mongo
+        - nats
+        - redis
+    networks:
+      - tngmn      
 
 networks:
   tngmn:

@@ -24,12 +24,12 @@ export namespace CreateCommand {
   /*** These values must be returned from the service after:
    **  The `order` has been `created`.*/
   export class Response implements IBaseData, Pick<IOrder, 'paid' | 'price' | 'codeOrder'> {
-    codeOrder: string;
-    price: number;
-    paid: boolean;
     id: ObjectId;
     created: Date;
     updated: Date;
+    codeOrder: string;
+    price: number;
+    paid: boolean;
   }
 
   /*** Configuration, nats header*/

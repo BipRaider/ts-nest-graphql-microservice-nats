@@ -12,11 +12,21 @@ services:
     networks:
       - tngmn
 
+  mongo-prod:
+    image: mongo
+    container_name: mongo
+    restart: always
+    volumes:
+      - tngmndata:/data/db
+    expose:
+      - '27017'
+    networks:
+      - tngmn
+
 networks:
   tngmn:
     driver: bridge
  
-
 volumes:
   tngmndata:
   

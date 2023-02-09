@@ -25,6 +25,29 @@ services:
     networks:
       - tngmn
 
+  api-prod:
+    container_name: api-prod
+    restart: always
+    volumes:
+      - /opt/app/node_modules
+      - ../schema.gql:/opt/app/schema.gql
+    env_file:
+      - ../envs/.mongo.env
+      - ../envs/.nats.env
+      - ../envs/.redis.env
+      - ../envs/.graphql.env
+      - ../envs/.jwt.env
+      - ../envs/.api.env
+    command: npm run start:prod
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongo
+      - nats
+      - redis
+    networks:
+      - tngmn
+
 networks:
   tngmn:
     driver: bridge

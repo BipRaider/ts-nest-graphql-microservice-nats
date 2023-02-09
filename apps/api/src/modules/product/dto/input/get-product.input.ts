@@ -11,7 +11,7 @@ export class GetProductsInput implements ProductContract.GetQuery.Request {
   @Field(() => Schema.Types.ObjectId, { nullable: true })
   @IsOptional()
   @IsMongoId({ message: 'The Id is incorrect' })
-  userId: ObjectId;
+  userId?: ObjectId;
 
   @Field(() => String, { nullable: true })
   @ValidateIf(prop => {

@@ -24,6 +24,28 @@ services:
     networks:
       - tngmn
 
+  order-prod:
+    container_name: order-prod
+    restart: always
+    build:
+      context: ./
+      dockerfile: ../apps/order/Dockerfile
+    volumes:
+      - /opt/app/node_modules
+    env_file:
+      - ../envs/.mongo.env
+      - ../envs/.nats.env
+      - ../envs/.redis.env
+      - ../envs/.jwt.env
+      - ../envs/.order.env
+    command: npm run start:prod
+    depends_on:
+      - nats
+      - mongo
+      - redis
+    networks:
+      - tngmn
+
 networks:
   tngmn:
     driver: bridge

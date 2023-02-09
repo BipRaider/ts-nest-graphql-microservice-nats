@@ -22,7 +22,7 @@ export class EmailService {
     await this.send({
       template: 'welcome',
       to: toEmail,
-      subject: '🥳🎉 Welcome to the Zeta Shop',
+      subject: '🥳🎉 Welcome to the Shop',
       context: {
         siteUrl: this._env.clientUrl,
       },

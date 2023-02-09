@@ -17,6 +17,8 @@ export namespace AllQuery {
   /*** These values are needed to filter the `orders`
    *  that can be retrieved from the `order` database.*/
   export class Request implements Partial<IOrder> {
+    skip?: number;
+    limit?: number;
     customer?: ObjectId;
     codeOrder?: string;
     price?: number;
@@ -27,8 +29,6 @@ export namespace AllQuery {
     purchase?: boolean;
     isCancel?: boolean;
     isState?: boolean;
-    skip?: number;
-    limit?: number;
   }
 
   /*** These values must be returned from the service after the `orders` has been found.*/
