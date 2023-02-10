@@ -29,6 +29,18 @@ import { OrderSchema } from './order.schema';
         name: ENUM.NatsServicesName.API,
         queue: ENUM.NatsServicesQueue.API,
       },
+      {
+        name: ENUM.NatsServicesName.PRODUCT,
+        queue: ENUM.NatsServicesQueue.PRODUCT,
+      },
+      {
+        name: ENUM.NatsServicesName.EXCHEQUER,
+        queue: ENUM.NatsServicesQueue.EXCHEQUER,
+      },
+      {
+        name: ENUM.NatsServicesName.EMAIL,
+        queue: ENUM.NatsServicesQueue.EMAIL,
+      },
     ]),
   ],
   controllers: [OrderController],

@@ -33,6 +33,10 @@ import { ProductRepository } from './product.repository';
         name: ENUM.NatsServicesName.ORDER,
         queue: ENUM.NatsServicesQueue.ORDER,
       },
+      {
+        name: ENUM.NatsServicesName.EXCHEQUER,
+        queue: ENUM.NatsServicesQueue.EXCHEQUER,
+      },
     ]),
   ],
   controllers: [ProductController],

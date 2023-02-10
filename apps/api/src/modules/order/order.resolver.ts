@@ -3,6 +3,7 @@ import { GraphQLError } from 'graphql';
 
 import { OrderContract } from '@common/contracts';
 import { ErrorUtil, SendErrorUtil } from '@common/utils';
+import { ENUM, IJwtGenerateToken } from '@common/interface';
 
 import { Order } from './dto/order.model';
 import { OrderService } from './order.service';
@@ -15,9 +16,10 @@ import {
   FindOrderResponse,
   GetOrdersInput,
   GetOrdersResponse,
+  PaidOrderInput,
+  PaidOrderResponse,
 } from './dto/input';
-import { AuthRole } from '../../decorator';
-import { ENUM } from '@common/interface';
+import { AuthRole, CurrentUser } from '../../decorator';
 
 @Resolver(of => Order)
 export class OrderResolver {
@@ -70,6 +72,22 @@ export class OrderResolver {
   ): Promise<OrderContract.CreateCommand.Response | GraphQLError> {
     const payload: OrderContract.CreateCommand.Response | SendErrorUtil =
       await this.orderService.create(input);
+
+    if ('status' in payload) return new ErrorUtil(payload.status).response(payload);
+
+    return payload;
+  }
+
+  @Mutation(returns => PaidOrderResponse)
+  @AuthRole(ENUM.Roles.USER)
+  async paidUpdate(
+    @Args('input') input: PaidOrderInput,
+    @CurrentUser() user: IJwtGenerateToken,
+  ): Promise<OrderContract.ReceiptPaidCommand.Response | GraphQLError> {
+    console.log('paidUpdate', user);
+
+    const payload: OrderContract.ReceiptPaidCommand.Response | SendErrorUtil =
+      await this.orderService.paid(input);
 
     if ('status' in payload) return new ErrorUtil(payload.status).response(payload);
 

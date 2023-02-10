@@ -11,6 +11,7 @@ import { Entity } from './order.entity';
 @Controller()
 export class OrderController implements IOrderController {
   constructor(private readonly orderService: OrderService) {}
+
   @MessagePattern(OrderContract.CreateCommand.Pattern)
   public async create(
     @Payload() payload: OrderContract.CreateCommand.Request,
@@ -56,6 +57,17 @@ export class OrderController implements IOrderController {
     @Payload() payload: OrderContract.AllQuery.Request,
   ): Promise<SendErrorUtil | OrderContract.AllQuery.Response[]> {
     const item: Entity[] | SendErrorUtil = await this.orderService.all(payload);
+
+    if ('status' in item) return item;
+
+    return item;
+  }
+
+  @MessagePattern(OrderContract.ReceiptPaidCommand.Pattern)
+  public async paidUpdate(
+    @Payload() payload: OrderContract.ReceiptPaidCommand.Request,
+  ): Promise<SendErrorUtil | OrderContract.ReceiptPaidCommand.Response> {
+    const item: Entity | SendErrorUtil = await this.orderService.paid(payload);
 
     if ('status' in item) return item;
 

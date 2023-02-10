@@ -1,9 +1,11 @@
 import { Schema, ObjectId } from 'mongoose';
 
-import { IBaseData, IOrder, ENUM } from '@common/interface';
+import { IBaseData, IOrder, ENUM, TUpdateOrderDB } from '@common/interface';
 import { ProductContract } from '@common/contracts';
 
 import { ISchema } from './order.schema';
+
+export type TUpdateDB = TUpdateOrderDB;
 
 /** Class to working with the data use
  ** Always work via this class when work a data of the order.
@@ -83,6 +85,20 @@ export class Entity implements Required<IOrder & IBaseData> {
     return this.filterProperty(property);
   };
 
+  public updateDB = (): Partial<TUpdateDB> => {
+    const property: TUpdateDB = {
+      isState: this.isState,
+      isCancel: this.isCancel,
+      paid: this.paid,
+      exchange: this.exchange,
+      received: this.received,
+      processed: this.processed,
+      send: this.send,
+    };
+    return this.filterProperty(property);
+  };
+
+  //Private func
   private filterProperty = (property: Partial<IOrder & IBaseData>): Partial<IOrder & IBaseData> => {
     for (const key in property) {
       if (property[key] === null) delete property[key];

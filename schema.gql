@@ -212,6 +212,23 @@ type GetOrdersResponse {
   isState: Boolean
 }
 
+type PaidOrderResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  customer: ObjectID
+  products: ObjectID
+  codeOrder: String
+  price: Float
+  paid: ORDER_PAID
+  processed: ORDER_PROCESS
+  send: ORDER_SEND
+  received: ORDER_RECEIVE
+  exchange: ORDER_EXCHANGE
+  isCancel: Boolean
+  isState: Boolean
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -304,6 +321,7 @@ type Mutation {
   refreshToken: RefreshTokenResponse
   logout: Boolean!
   createOrder(input: CreateOrderInput!): CreateOrderResponse!
+  paidUpdate(input: PaidOrderInput!): PaidOrderResponse!
 }
 
 input CreateUserInput {
@@ -336,4 +354,12 @@ input LoginUserInput {
 input CreateOrderInput {
   customer: ObjectID!
   products: [ObjectID!]!
+}
+
+input PaidOrderInput {
+  codeReceipt: String
+  paidDate: Date
+  customer: ObjectID
+  codeOrder: String
+  paid: ORDER_PAID
 }

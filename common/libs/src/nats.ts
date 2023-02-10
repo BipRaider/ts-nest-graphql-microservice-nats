@@ -1,6 +1,12 @@
 import { FactoryProvider, DynamicModule } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { Transport, ClientProxyFactory, ClientsModuleOptions, ClientsModule, NatsOptions } from '@nestjs/microservices';
+import {
+  Transport,
+  ClientProxyFactory,
+  ClientsModuleOptions,
+  ClientsModule,
+  NatsOptions,
+} from '@nestjs/microservices';
 
 type NatsDefaultOptions = NatsOptions['options'];
 export type NatsClientOptions = NatsDefaultOptions & {
@@ -52,7 +58,9 @@ const listNatsServices: listNatsServices = list => {
  * NatsProvider({ provide: 'USER_SERVICE', queue: 'user' })
  * ```
  */
-export type NatsProvider = (options: { provide: string; queue: string } & NatsDefaultOptions) => FactoryProvider;
+export type NatsProvider = (
+  options: { provide: string; queue: string } & NatsDefaultOptions,
+) => FactoryProvider;
 export const NatsProvider: NatsProvider = ({ provide, ...options }): FactoryProvider => {
   return {
     provide: provide.toUpperCase(),

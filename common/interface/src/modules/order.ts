@@ -32,3 +32,7 @@ export interface IOrder {
   /*** State of the order.*/
   readonly isState: boolean;
 }
+
+export type TUpdateOrderDB = Required<
+  Pick<IOrder, 'exchange' | 'paid' | 'processed' | 'received' | 'send' | 'isCancel' | 'isState'>
+>;

@@ -5,6 +5,7 @@ services:
     image: "redis:alpine"
     restart: always
     ports:
+      # listing outside : listing inside
       - "6379:6379"
     volumes:
       - tngmnradis:/data
@@ -29,6 +30,7 @@ services:
     environment:
       - REDIS_HOSTS=redis:redis:6379
     ports:
+      # listing outside : listing inside
       - "8081:8081"
     depends_on:
       - redis

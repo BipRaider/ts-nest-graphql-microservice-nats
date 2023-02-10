@@ -1,4 +1,5 @@
 declare namespace Express {
+  //TODO:
   interface Request {
     session?: {
       authToken?: {

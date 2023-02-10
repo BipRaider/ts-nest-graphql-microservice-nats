@@ -32,7 +32,12 @@ export const OrderSchema = new Schema<ISchema, IModel>(
       maxlength: 14,
     },
 
-    price: { type: Number, default: 0.01, required: true },
+    price: {
+      type: Number,
+      default: 0.01,
+      // immutable: true,
+      required: true,
+    },
     //State order.
     paid: {
       type: String,

@@ -8,6 +8,7 @@ services:
     volumes:
       - tngmndata:/data/db
     ports:
+      # listing outside : listing inside
       - '27017:27017'
     networks:
       - tngmn
@@ -23,10 +24,38 @@ services:
     networks:
       - tngmn
 
+  exchequer-mongo:
+    image: mongo
+    container_name: exchequer-mongo
+    restart: always
+    volumes:
+      - tngmndataexchequer:/data/db
+    ports:
+      # listing outside : listing inside
+      - '27018:27017'
+    networks:
+      - tngmn-exchequer
+
+  exchequer-mongo-prod:
+    image: mongo
+    container_name: exchequer-mongo
+    restart: always
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+    #   - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - tngmndataexchequer:/data/db
+    expose:
+      - '27017'
+    networks:
+      - tngmn-exchequer
+
 networks:
   tngmn:
     driver: bridge
- 
+  tngmn-exchequer:
+    driver: bridge
+
 volumes:
   tngmndata:
-  
+  tngmndataexchequer:

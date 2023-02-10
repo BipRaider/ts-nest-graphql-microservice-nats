@@ -33,6 +33,12 @@ export class OrderRepository implements IOrderRepository {
 
   public all = async (entity: Entity): Promise<ISchema[]> => await this.findFromDB(entity);
 
+  public update = async (entity: Entity): Promise<ISchema | null> => {
+    if (!entity.id) return null;
+    const set = entity.updateDB();
+    return await this.db.findByIdAndUpdate(entity.id, { $set: set }, { new: true }).exec();
+  };
+
   private findFromDB = async (entity: Entity): Promise<ISchema[]> => {
     return await this.db.find(entity.find()).skip(entity.skip).limit(entity.limit).exec();
   };

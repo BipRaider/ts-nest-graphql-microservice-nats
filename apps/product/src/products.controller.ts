@@ -12,6 +12,12 @@ import { Entity } from './product.entity';
 export class ProductController implements IProductController {
   constructor(private readonly productsService: ProductService) {}
 
+  // @MessagePattern(`${ENUM.NatsServicesQueue.EXCHEQUER}.*`)
+  // async getDateOrder(@Payload() payload: unknown) {
+  //   console.log(`payload:`, { payload });
+  //   return 'sss';
+  // }
+
   @MessagePattern(ProductContract.CreateCommand.Pattern)
   public async create(
     @Payload() payload: ProductContract.CreateCommand.Request,

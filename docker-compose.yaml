@@ -49,12 +49,31 @@ services:
         networks:
             - tngmn
 
+    exchequer:
+        extends:
+            file: ./docker/docker-compose.exchequer.yaml
+            service: exchequer
+        build:
+            context: ./
+            dockerfile: ./apps/exchequer/Dockerfile
+        networks:
+            - tngmn
+            - tngmn-exchequer
+
+    # providers
     mongo:
         extends:
             file: ./docker/docker-compose.mongo.yaml
             service: mongo
         networks:
             - tngmn
+
+    exchequer-mongo:
+        extends:
+            file: ./docker/docker-compose.mongo.yaml
+            service: exchequer-mongo
+        networks:
+            - tngmn-exchequer
 
     nats:
         extends:
@@ -82,7 +101,10 @@ services:
 networks:
     tngmn:
         driver: bridge
+    tngmn-exchequer:
+        driver: bridge
 
 volumes:
     tngmndata:
     tngmnradis:
+    tngmndataexchequer:

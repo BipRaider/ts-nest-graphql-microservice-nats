@@ -27,3 +27,5 @@ export interface IUser {
   readonly googleId?: string;
   readonly avatar?: string;
 }
+
+export type TUpdateUserDB = Required<Omit<IUser, 'email'>>;

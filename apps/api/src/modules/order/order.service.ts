@@ -4,7 +4,13 @@ import { ClientNats } from '@nestjs/microservices';
 import { ENUM } from '@common/interface';
 import { OrderContract } from '@common/contracts';
 import { ErrorUtil, SendErrorUtil } from '@common/utils';
-import { AllOrdersInput, CreateOrderInput, FindOrderInput, GetOrdersInput } from './dto/input';
+import {
+  AllOrdersInput,
+  CreateOrderInput,
+  FindOrderInput,
+  GetOrdersInput,
+  PaidOrderInput,
+} from './dto/input';
 
 @Injectable()
 export class OrderService {
@@ -87,6 +93,28 @@ export class OrderService {
           OrderContract.AllQuery.Response[],
           OrderContract.AllQuery.Record
         >(OrderContract.AllQuery.Pattern, record);
+
+        response.subscribe({
+          next: async data => res(data),
+          error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
+        });
+      },
+    );
+
+    return payload;
+  };
+
+  public paid = async (
+    data: PaidOrderInput,
+  ): Promise<OrderContract.ReceiptPaidCommand.Response | SendErrorUtil> => {
+    const record = OrderContract.ReceiptPaidCommand.build(data);
+
+    const payload: OrderContract.ReceiptPaidCommand.Response | SendErrorUtil = await new Promise(
+      async res => {
+        const response = this.orderClient.send<
+          OrderContract.ReceiptPaidCommand.Response,
+          OrderContract.ReceiptPaidCommand.Record
+        >(OrderContract.ReceiptPaidCommand.Pattern, record);
 
         response.subscribe({
           next: async data => res(data),

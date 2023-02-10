@@ -1,10 +1,11 @@
 import { Schema } from 'mongoose';
 
-import { IBaseData, IPrivateData, IUser, ENUM } from '@common/interface';
+import { IBaseData, IPrivateData, IUser, TUpdateUserDB, ENUM } from '@common/interface';
 import { UserContract } from '@common/contracts';
 
 import { ISchema } from './user.schema';
 
+export type TUpdateDB = TUpdateUserDB;
 /** Class to working with the data use
  ** Always work via this class when work a data of the user.
  */
@@ -60,6 +61,21 @@ export class Entity implements Required<IUser & IBaseData> {
       email: this.email,
       name: this.name,
       privateData: this.privateData,
+      tokens: this.tokens,
+      githubId: this.githubId,
+      redditId: this.redditId,
+      googleId: this.googleId,
+      avatar: this.avatar,
+    };
+
+    return this.filterProperty(property);
+  };
+
+  public updateDB = (): Partial<TUpdateDB> => {
+    const property: TUpdateDB = {
+      password: this.password,
+      name: this.name,
+      privateData: this.privateData,
       roles: this.roles,
       tokens: this.tokens,
       active: this.active,
@@ -72,10 +88,12 @@ export class Entity implements Required<IUser & IBaseData> {
     return this.filterProperty(property);
   };
 
+  //Private func
   private filterProperty = (property: Partial<IUser & IBaseData>): Partial<IUser & IBaseData> => {
     for (const key in property) {
       if (property[key] === null) delete property[key];
       if (property[key] === undefined) delete property[key];
+      if (typeof property[key] === 'object') this.filterProperty(property[key]);
     }
     return property;
   };

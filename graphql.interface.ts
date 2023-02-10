@@ -161,6 +161,14 @@ export interface CreateOrderInput {
     products: ObjectID[];
 }
 
+export interface PaidOrderInput {
+    codeReceipt?: Nullable<string>;
+    paidDate?: Nullable<Date>;
+    customer?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+    paid?: Nullable<ORDER_PAID>;
+}
+
 export interface PrivateData {
     firstname?: Nullable<string>;
     lastname?: Nullable<string>;
@@ -308,6 +316,23 @@ export interface GetOrdersResponse {
     isState?: Nullable<boolean>;
 }
 
+export interface PaidOrderResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    customer?: Nullable<ObjectID>;
+    products?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+    price?: Nullable<number>;
+    paid?: Nullable<ORDER_PAID>;
+    processed?: Nullable<ORDER_PROCESS>;
+    send?: Nullable<ORDER_SEND>;
+    received?: Nullable<ORDER_RECEIVE>;
+    exchange?: Nullable<ORDER_EXCHANGE>;
+    isCancel?: Nullable<boolean>;
+    isState?: Nullable<boolean>;
+}
+
 export interface IQuery {
     getUser(data: GetUserInput): GetUserResponse | Promise<GetUserResponse>;
     getUsers(data: GetUsersInput): GetUserResponse[] | Promise<GetUserResponse[]>;
@@ -330,6 +355,7 @@ export interface IMutation {
     refreshToken(): Nullable<RefreshTokenResponse> | Promise<Nullable<RefreshTokenResponse>>;
     logout(): boolean | Promise<boolean>;
     createOrder(input: CreateOrderInput): CreateOrderResponse | Promise<CreateOrderResponse>;
+    paidUpdate(input: PaidOrderInput): PaidOrderResponse | Promise<PaidOrderResponse>;
 }
 
 export type ObjectID = unknown;

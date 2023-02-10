@@ -15,7 +15,7 @@ export class ErrorsLoggerInterceptor implements NestInterceptor {
       .handle()
       .pipe(
         map(data => {
-          if ('status' in data) {
+          if (data?.status) {
             log = true;
             status = data.status;
           }

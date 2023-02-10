@@ -46,4 +46,20 @@ export class UsersRepository implements IUserRepository {
 
     return item;
   };
+
+  public update = async (entity: Entity): Promise<ISchema | null> => {
+    if (!entity.id) return null;
+    const set = entity.updateDB();
+
+    return await this.db
+      .findByIdAndUpdate(
+        entity.id,
+        {
+          $set: set,
+          $addToSet: { roles: entity.roles },
+        },
+        { new: true },
+      )
+      .exec();
+  };
 }

@@ -1,10 +1,11 @@
 import { Schema } from 'mongoose';
 
-import { IBaseData, IProduct } from '@common/interface';
+import { IBaseData, IProduct, TUpdateProductDB } from '@common/interface';
 import { ProductContract } from '@common/contracts';
 
 import { ISchema } from './product.schema';
 
+export type TUpdateDB = TUpdateProductDB;
 /** Class to working with the data use
  ** Always work via this class when work a data of the product.
  */
@@ -72,6 +73,18 @@ export class Entity implements Required<IProduct & IBaseData> {
     return this.filterProperty(property);
   };
 
+  public updateDB = (): Partial<TUpdateDB> => {
+    const property: TUpdateDB = {
+      description: this.description,
+      discount: this.discount,
+      price: this.price,
+      amount: this.amount,
+      isRemove: this.isRemove,
+    };
+    return this.filterProperty(property);
+  };
+
+  //Private func
   private filterProperty = (
     property: Partial<IProduct & IBaseData>,
   ): Partial<IProduct & IBaseData> => {

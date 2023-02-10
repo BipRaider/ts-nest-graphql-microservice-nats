@@ -35,6 +35,10 @@ import { UsersRepository } from './user.repository';
         name: ENUM.NatsServicesName.ORDER,
         queue: ENUM.NatsServicesQueue.ORDER,
       },
+      {
+        name: ENUM.NatsServicesName.EMAIL,
+        queue: ENUM.NatsServicesQueue.EMAIL,
+      },
     ]),
   ],
   controllers: [UserController],

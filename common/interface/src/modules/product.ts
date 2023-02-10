@@ -18,3 +18,6 @@ export interface IProduct {
   /*** The product has been removed or not.*/
   readonly isRemove: boolean;
 }
+export type TUpdateProductDB = Required<
+  Pick<IProduct, 'amount' | 'description' | 'isRemove' | 'price' | 'discount'>
+>;
