@@ -99,6 +99,119 @@ type GetUserResponse {
   privateData: PrivateData
 }
 
+type AllOrdersResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  customer: ObjectID
+  products: ObjectID
+  codeOrder: String
+  price: Float
+  paid: ORDER_PAID
+  processed: ORDER_PROCESS
+  send: ORDER_SEND
+  received: ORDER_RECEIVE
+  exchange: ORDER_EXCHANGE
+  isCancel: Boolean
+  isState: Boolean
+}
+
+"""State variables of payment."""
+enum ORDER_PAID {
+  expectation
+  paid
+  check
+  ok
+  incomplete
+  mistake
+  refund
+  no_refund
+}
+
+"""State variables of process."""
+enum ORDER_PROCESS {
+  unused
+  expectation
+  check
+  complete
+  incomplete
+  cancel
+  mistake
+}
+
+"""State variables of send."""
+enum ORDER_SEND {
+  unused
+  expectation
+  check
+  send
+  stop
+  cancel
+}
+
+"""State variables of receive."""
+enum ORDER_RECEIVE {
+  unused
+  expectation
+  check
+  complete
+  exchange
+  fake
+}
+
+"""State variables of exchange."""
+enum ORDER_EXCHANGE {
+  unused
+  expectation
+  check
+  ok
+  no_refund
+  refundable
+}
+
+type CreateOrderResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  codeOrder: String
+  price: Float
+  paid: ORDER_PAID
+}
+
+type FindOrderResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  customer: ObjectID
+  products: ObjectID
+  codeOrder: String
+  price: Float
+  paid: ORDER_PAID
+  processed: ORDER_PROCESS
+  send: ORDER_SEND
+  received: ORDER_RECEIVE
+  exchange: ORDER_EXCHANGE
+  isCancel: Boolean
+  isState: Boolean
+}
+
+type GetOrdersResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  customer: ObjectID
+  products: ObjectID
+  codeOrder: String
+  price: Float
+  paid: ORDER_PAID
+  processed: ORDER_PROCESS
+  send: ORDER_SEND
+  received: ORDER_RECEIVE
+  exchange: ORDER_EXCHANGE
+  isCancel: Boolean
+  isState: Boolean
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -115,6 +228,9 @@ type Query {
   redditAuth(input: SocialAuthInput!): String!
   googleAuth(input: SocialAuthInput!): String!
   getGoogleAuthURL: String!
+  findOrder(data: FindOrderInput!): FindOrderResponse!
+  getOrders(data: GetOrdersInput!): [GetOrdersResponse!]!
+  allOrders(data: AllOrdersInput!): [AllOrdersResponse!]!
 }
 
 input GetUserInput {
@@ -155,12 +271,39 @@ input SocialAuthInput {
   code: String
 }
 
+input FindOrderInput {
+  id: ObjectID
+  codeOrder: String
+}
+
+input GetOrdersInput {
+  customer: ObjectID
+  skip: Int
+  limit: Int
+}
+
+input AllOrdersInput {
+  skip: Int
+  limit: Int
+  customer: ObjectID
+  codeOrder: String
+  price: Float
+  paid: ORDER_PAID
+  processed: ORDER_PROCESS
+  send: ORDER_SEND
+  received: ORDER_RECEIVE
+  exchange: ORDER_EXCHANGE
+  isCancel: Boolean
+  isState: Boolean
+}
+
 type Mutation {
   createUser(input: CreateUserInput!): CreateUserResponse!
   createProduct(input: CreateProductInput!): CreateProductResponse!
   login(input: LoginUserInput!): LoginUserResponse!
   refreshToken: RefreshTokenResponse
   logout: Boolean!
+  createOrder(input: CreateOrderInput!): CreateOrderResponse!
 }
 
 input CreateUserInput {
@@ -188,4 +331,9 @@ input CreateProductInput {
 input LoginUserInput {
   password: String!
   email: String!
+}
+
+input CreateOrderInput {
+  customer: ObjectID!
+  products: [ObjectID!]!
 }

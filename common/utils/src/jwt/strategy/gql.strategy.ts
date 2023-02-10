@@ -20,7 +20,7 @@ export class GqlStrategy extends PassportStrategy(Strategy, JwtStrategyName.Gql)
   }
 
   async validate(payload: any, done: any): Promise<any> {
-    console.log('GqlStrategy--2-step-->');
+    // console.log('GqlStrategy--2-step-->');
     done(null, payload);
     return payload;
   }

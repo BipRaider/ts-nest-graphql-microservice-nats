@@ -8,10 +8,13 @@ import {
   Length,
   Max,
   IsMongoId,
+  IsEnum,
 } from 'class-validator';
 import { Schema, ObjectId } from 'mongoose';
 
+import { ENUM } from '@common/interface';
 import { OrderContract } from '@common/contracts';
+
 import { IsPrise } from '../../../../decorator';
 
 import { Order } from '../order.model';
@@ -37,8 +40,8 @@ export class AllOrdersInput implements OrderContract.AllQuery.Request {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  @IsString({ message: 'The description is incorrect' })
-  @Length(10, 10)
+  @IsString({ message: 'The codeOrder is incorrect' })
+  @Length(14, 14)
   public readonly codeOrder?: string;
 
   @Field(() => Float, { nullable: true })
@@ -48,30 +51,46 @@ export class AllOrdersInput implements OrderContract.AllQuery.Request {
   @Max(10_000_000)
   public price?: number;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => ENUM.ORDER.PAID, { nullable: true })
   @IsOptional()
-  @IsBoolean({ message: 'The isRemove is incorrect' })
-  public paid?: boolean;
+  @IsEnum(ENUM.ORDER.PAID, {
+    message: `The paid is incorrect and should have: ${Object.values(ENUM.ORDER.PAID).toString()}`,
+  })
+  public paid?: ENUM.ORDER.PAID;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => ENUM.ORDER.PROCESS, { nullable: true })
   @IsOptional()
-  @IsBoolean({ message: 'The isRemove is incorrect' })
-  public processed?: boolean;
+  @IsEnum(ENUM.ORDER.PROCESS, {
+    message: `The processed is incorrect and should have: ${Object.values(
+      ENUM.ORDER.PROCESS,
+    ).toString()}`,
+  })
+  public processed?: ENUM.ORDER.PROCESS;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => ENUM.ORDER.SEND, { nullable: true })
   @IsOptional()
-  @IsBoolean({ message: 'The isRemove is incorrect' })
-  public send?: boolean;
+  @IsEnum(ENUM.ORDER.SEND, {
+    message: `The send is incorrect and should have: ${Object.values(ENUM.ORDER.SEND).toString()}`,
+  })
+  public send?: ENUM.ORDER.SEND;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => ENUM.ORDER.RECEIVE, { nullable: true })
   @IsOptional()
-  @IsBoolean({ message: 'The isRemove is incorrect' })
-  public received?: boolean;
+  @IsEnum(ENUM.ORDER.RECEIVE, {
+    message: `The received is incorrect and should have: ${Object.values(
+      ENUM.ORDER.RECEIVE,
+    ).toString()}`,
+  })
+  public received?: ENUM.ORDER.RECEIVE;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => ENUM.ORDER.EXCHANGE, { nullable: true })
   @IsOptional()
-  @IsBoolean({ message: 'The isRemove is incorrect' })
-  public exchange?: boolean;
+  @IsEnum(ENUM.ORDER.EXCHANGE, {
+    message: `The exchange is incorrect and should have: ${Object.values(
+      ENUM.ORDER.EXCHANGE,
+    ).toString()}`,
+  })
+  public exchange?: ENUM.ORDER.EXCHANGE;
 
   @Field(() => Boolean, { nullable: true })
   @IsOptional()

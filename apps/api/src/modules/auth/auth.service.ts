@@ -15,13 +15,15 @@ export class AuthService {
     private readonly jwt: JwtUtil,
   ) {}
 
-  public validate = async (data: LoginUserInput): Promise<AuthContract.AuthQuery.Response | SendErrorUtil> => {
+  public validate = async (
+    data: LoginUserInput,
+  ): Promise<AuthContract.AuthQuery.Response | SendErrorUtil> => {
     const record = AuthContract.AuthQuery.build(data);
 
-    const response = this.userClient.send<AuthContract.AuthQuery.Response, AuthContract.AuthQuery.UserRecord>(
-      AuthContract.AuthQuery.Pattern,
-      record,
-    );
+    const response = this.userClient.send<
+      AuthContract.AuthQuery.Response,
+      AuthContract.AuthQuery.UserRecord
+    >(AuthContract.AuthQuery.Pattern, record);
 
     const user: AuthContract.AuthQuery.Response | SendErrorUtil = await new Promise(async res => {
       response.subscribe({

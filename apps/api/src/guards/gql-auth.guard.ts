@@ -10,7 +10,7 @@ export class GqlAuthGuard extends AuthGuard(JwtStrategyName.Gql) {
   getRequest(context: ExecutionContext): any {
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
-    console.log('GqlAuthGuard--1-step-->');
+    // console.log('GqlAuthGuard--1-step-->');
     return req;
   }
 }

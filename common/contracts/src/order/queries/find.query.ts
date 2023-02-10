@@ -29,11 +29,11 @@ export namespace FindQuery {
     products: ObjectId[];
     codeOrder: string;
     price: number;
-    paid: boolean;
-    processed: boolean;
-    send: boolean;
-    received: boolean;
-    exchange: boolean;
+    processed: ENUM.ORDER.PROCESS;
+    paid: ENUM.ORDER.PAID;
+    send: ENUM.ORDER.SEND;
+    received: ENUM.ORDER.RECEIVE;
+    exchange: ENUM.ORDER.EXCHANGE;
     isCancel: boolean;
     isState: boolean;
   }

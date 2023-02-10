@@ -1,5 +1,5 @@
 import { InputType, Field, ObjectType, PartialType } from '@nestjs/graphql';
-import { IsNotEmpty, IsMongoId, IsString, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsMongoId, IsString, ValidateIf, Length } from 'class-validator';
 import { Schema, ObjectId } from 'mongoose';
 
 import { OrderContract } from '@common/contracts';
@@ -16,11 +16,12 @@ export class FindOrderInput implements OrderContract.FindQuery.Request {
   @Field(() => String, { nullable: true })
   @ValidateIf(prop => (prop.id ? false : true))
   @IsNotEmpty()
-  @IsString({ message: 'The Id is incorrect' })
+  @IsString({ message: 'The codeOrder is incorrect' })
+  @Length(14, 14)
   codeOrder: string;
 }
 
 @ObjectType()
-export class FindProductResponse
+export class FindOrderResponse
   extends PartialType(Order)
   implements Partial<OrderContract.GetQuery.Response> {}

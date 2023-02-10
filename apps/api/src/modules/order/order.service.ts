@@ -7,8 +7,8 @@ import { ErrorUtil, SendErrorUtil } from '@common/utils';
 import { AllOrdersInput, CreateOrderInput, FindOrderInput, GetOrdersInput } from './dto/input';
 
 @Injectable()
-export class ProductService {
-  constructor(@Inject(ENUM.NatsServicesName.PRODUCT) private readonly productClient: ClientNats) {}
+export class OrderService {
+  constructor(@Inject(ENUM.NatsServicesName.ORDER) private readonly orderClient: ClientNats) {}
 
   public create = async (
     data: CreateOrderInput,
@@ -17,7 +17,7 @@ export class ProductService {
 
     const payload: OrderContract.CreateCommand.Response | SendErrorUtil = await new Promise(
       async res => {
-        const response = this.productClient.send<
+        const response = this.orderClient.send<
           OrderContract.CreateCommand.Response,
           OrderContract.CreateCommand.Record
         >(OrderContract.CreateCommand.Pattern, record);
@@ -39,7 +39,7 @@ export class ProductService {
 
     const payload: OrderContract.FindQuery.Response | SendErrorUtil = await new Promise(
       async res => {
-        const response = this.productClient.send<
+        const response = this.orderClient.send<
           OrderContract.FindQuery.Response,
           OrderContract.FindQuery.Record
         >(OrderContract.FindQuery.Pattern, record);
@@ -61,7 +61,7 @@ export class ProductService {
 
     const payload: OrderContract.GetQuery.Response[] | SendErrorUtil = await new Promise(
       async res => {
-        const response = this.productClient.send<
+        const response = this.orderClient.send<
           OrderContract.GetQuery.Response[],
           OrderContract.GetQuery.Record
         >(OrderContract.GetQuery.Pattern, record);
@@ -83,7 +83,7 @@ export class ProductService {
 
     const payload: OrderContract.AllQuery.Response[] | SendErrorUtil = await new Promise(
       async res => {
-        const response = this.productClient.send<
+        const response = this.orderClient.send<
           OrderContract.AllQuery.Response[],
           OrderContract.AllQuery.Record
         >(OrderContract.AllQuery.Pattern, record);

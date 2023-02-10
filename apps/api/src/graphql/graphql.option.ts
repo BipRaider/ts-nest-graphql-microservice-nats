@@ -76,7 +76,7 @@ export class GraphQLOptionsHost implements GqlOptionsFactory {
       //   return response;
       // },
       formatError: (err: GraphQLError): GraphQLError => {
-        logger.error(err.name);
+        logger.error(err);
         delete err.stack;
         return new ErrorUtil().sendClient(err);
       },

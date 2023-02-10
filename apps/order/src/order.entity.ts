@@ -1,6 +1,6 @@
 import { Schema, ObjectId } from 'mongoose';
 
-import { IBaseData, IOrder } from '@common/interface';
+import { IBaseData, IOrder, ENUM } from '@common/interface';
 import { ProductContract } from '@common/contracts';
 
 import { ISchema } from './order.schema';
@@ -18,11 +18,11 @@ export class Entity implements Required<IOrder & IBaseData> {
   public customer: ObjectId = undefined;
   public products: ObjectId[] = undefined;
   public codeOrder: string = undefined;
-  public paid: boolean = undefined;
-  public processed: boolean = undefined;
-  public send: boolean = undefined;
-  public received: boolean = undefined;
-  public exchange: boolean = undefined;
+  public paid: ENUM.ORDER.PAID = undefined;
+  public processed: ENUM.ORDER.PROCESS = undefined;
+  public send: ENUM.ORDER.SEND = undefined;
+  public received: ENUM.ORDER.RECEIVE = undefined;
+  public exchange: ENUM.ORDER.EXCHANGE = undefined;
   public isCancel: boolean = undefined;
   public isState: boolean = undefined;
   //Filter properties
@@ -61,7 +61,6 @@ export class Entity implements Required<IOrder & IBaseData> {
   public create = (): Partial<IOrder & IBaseData> => {
     const property = {
       price: this.price,
-      paid: this.paid,
       customer: this.customer,
       codeOrder: this.codeOrder,
       products: this.products,
@@ -72,6 +71,7 @@ export class Entity implements Required<IOrder & IBaseData> {
   public find = (): Partial<IOrder & IBaseData> => {
     const property = {
       ...this.create(),
+      paid: this.paid,
       isState: this.isState,
       isCancel: this.isCancel,
       exchange: this.exchange,
@@ -79,6 +79,7 @@ export class Entity implements Required<IOrder & IBaseData> {
       processed: this.processed,
       send: this.send,
     };
+
     return this.filterProperty(property);
   };
 

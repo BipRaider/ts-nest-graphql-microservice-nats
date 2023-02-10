@@ -16,7 +16,8 @@ export namespace ReceiptPaidCommand {
 
   /*** These values must be:
    **  For pay of the order.*/
-  export class Request implements Required<Pick<IOrder, 'codeOrder' | 'customer'>> {
+  export class Request implements Required<Pick<IOrder, 'codeOrder' | 'customer' | 'paid'>> {
+    paid: ENUM.ORDER.PAID;
     /*** Get bank receipt code.*/
     codeReceipt: string;
     /*** Date when paid the order.*/
@@ -37,11 +38,11 @@ export namespace ReceiptPaidCommand {
     updated: Date;
     codeOrder: string;
     price: number;
-    processed: boolean;
-    paid: boolean;
-    send: boolean;
-    received: boolean;
-    exchange: boolean;
+    processed: ENUM.ORDER.PROCESS;
+    paid: ENUM.ORDER.PAID;
+    send: ENUM.ORDER.SEND;
+    received: ENUM.ORDER.RECEIVE;
+    exchange: ENUM.ORDER.EXCHANGE;
     isCancel: boolean;
     isState: boolean;
   }

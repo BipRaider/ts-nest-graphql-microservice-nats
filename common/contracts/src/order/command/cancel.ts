@@ -36,11 +36,11 @@ export namespace CancelCommand {
     updated: Date;
     codeOrder: string;
     price: number;
-    processed: boolean;
-    paid: boolean;
-    send: boolean;
-    received: boolean;
-    exchange: boolean;
+    processed: ENUM.ORDER.PROCESS;
+    paid: ENUM.ORDER.PAID;
+    send: ENUM.ORDER.SEND;
+    received: ENUM.ORDER.RECEIVE;
+    exchange: ENUM.ORDER.EXCHANGE;
     isCancel: boolean;
     isState: boolean;
   }

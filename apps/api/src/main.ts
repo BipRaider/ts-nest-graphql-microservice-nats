@@ -67,7 +67,7 @@ async function bootstrap(): Promise<void> {
 
   app.useGlobalInterceptors(new LoggingInterceptor(), new ErrorsInterceptor());
 
-  // // Custom exceptions filter
+  // Custom exceptions filter
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
   useContainer(app.select(AppModule), { fallbackOnErrors: true });

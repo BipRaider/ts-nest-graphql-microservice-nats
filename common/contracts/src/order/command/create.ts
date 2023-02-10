@@ -29,7 +29,7 @@ export namespace CreateCommand {
     updated: Date;
     codeOrder: string;
     price: number;
-    paid: boolean;
+    paid: ENUM.ORDER.PAID;
   }
 
   /*** Configuration, nats header*/

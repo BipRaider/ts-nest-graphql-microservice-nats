@@ -20,6 +20,7 @@ export namespace ReceivedCommand {
    **  For processing of the order.*/
   export class Request implements Required<Pick<IOrder, 'codeOrder'>> {
     codeOrder: string;
+    received: ENUM.ORDER.RECEIVE;
   }
 
   /*** These values must be returned from the service after:
@@ -32,11 +33,11 @@ export namespace ReceivedCommand {
     updated: Date;
     codeOrder: string;
     price: number;
-    processed: boolean;
-    paid: boolean;
-    send: boolean;
-    received: boolean;
-    exchange: boolean;
+    processed: ENUM.ORDER.PROCESS;
+    paid: ENUM.ORDER.PAID;
+    send: ENUM.ORDER.SEND;
+    received: ENUM.ORDER.RECEIVE;
+    exchange: ENUM.ORDER.EXCHANGE;
     isCancel: boolean;
     isState: boolean;
   }

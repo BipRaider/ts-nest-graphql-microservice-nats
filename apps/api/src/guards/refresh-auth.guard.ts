@@ -10,7 +10,7 @@ export class RefreshAuthGuard extends AuthGuard(JwtStrategyName.Refresh) {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
-    console.log('RefreshAuthGuard--1-step-->');
+    // console.log('RefreshAuthGuard--1-step-->');
     return req;
   }
 }

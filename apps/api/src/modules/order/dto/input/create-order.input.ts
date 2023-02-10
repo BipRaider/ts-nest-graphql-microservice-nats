@@ -1,4 +1,4 @@
-import { InputType, Field, ObjectType, PartialType, OmitType } from '@nestjs/graphql';
+import { InputType, Field, ObjectType, PartialType, PickType } from '@nestjs/graphql';
 import { IsNotEmpty, IsMongoId, IsArray } from 'class-validator';
 import { Schema, ObjectId } from 'mongoose';
 
@@ -23,10 +23,6 @@ export class CreateOrderInput implements OrderContract.CreateCommand.Request {
 @ObjectType()
 export class CreateOrderResponse
   extends PartialType(
-    OmitType(Order, ['paid', 'price', 'codeOrder', 'id', 'created', 'updated'] as const),
+    PickType(Order, ['paid', 'price', 'codeOrder', 'id', 'created', 'updated'] as const),
   )
-  implements Partial<OrderContract.CreateCommand.Response>
-{
-  @Field(() => Date, { nullable: true })
-  public readonly updated: Date;
-}
+  implements Partial<OrderContract.CreateCommand.Response> {}

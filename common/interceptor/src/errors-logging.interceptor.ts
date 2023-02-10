@@ -19,7 +19,6 @@ export class ErrorsLoggerInterceptor implements NestInterceptor {
             log = true;
             status = data.status;
           }
-
           return data;
         }),
       )

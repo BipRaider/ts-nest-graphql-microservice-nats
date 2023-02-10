@@ -17,6 +17,54 @@ export enum Roles {
     ADMIN = "ADMIN"
 }
 
+export enum ORDER_PAID {
+    expectation = "expectation",
+    paid = "paid",
+    check = "check",
+    ok = "ok",
+    incomplete = "incomplete",
+    mistake = "mistake",
+    refund = "refund",
+    no_refund = "no_refund"
+}
+
+export enum ORDER_PROCESS {
+    unused = "unused",
+    expectation = "expectation",
+    check = "check",
+    complete = "complete",
+    incomplete = "incomplete",
+    cancel = "cancel",
+    mistake = "mistake"
+}
+
+export enum ORDER_SEND {
+    unused = "unused",
+    expectation = "expectation",
+    check = "check",
+    send = "send",
+    stop = "stop",
+    cancel = "cancel"
+}
+
+export enum ORDER_RECEIVE {
+    unused = "unused",
+    expectation = "expectation",
+    check = "check",
+    complete = "complete",
+    exchange = "exchange",
+    fake = "fake"
+}
+
+export enum ORDER_EXCHANGE {
+    unused = "unused",
+    expectation = "expectation",
+    check = "check",
+    ok = "ok",
+    no_refund = "no_refund",
+    refundable = "refundable"
+}
+
 export interface GetUserInput {
     id?: Nullable<ObjectID>;
     email?: Nullable<string>;
@@ -55,6 +103,32 @@ export interface SocialAuthInput {
     code?: Nullable<string>;
 }
 
+export interface FindOrderInput {
+    id?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+}
+
+export interface GetOrdersInput {
+    customer?: Nullable<ObjectID>;
+    skip?: Nullable<number>;
+    limit?: Nullable<number>;
+}
+
+export interface AllOrdersInput {
+    skip?: Nullable<number>;
+    limit?: Nullable<number>;
+    customer?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+    price?: Nullable<number>;
+    paid?: Nullable<ORDER_PAID>;
+    processed?: Nullable<ORDER_PROCESS>;
+    send?: Nullable<ORDER_SEND>;
+    received?: Nullable<ORDER_RECEIVE>;
+    exchange?: Nullable<ORDER_EXCHANGE>;
+    isCancel?: Nullable<boolean>;
+    isState?: Nullable<boolean>;
+}
+
 export interface CreateUserInput {
     name: string;
     email: string;
@@ -80,6 +154,11 @@ export interface CreateProductInput {
 export interface LoginUserInput {
     password: string;
     email: string;
+}
+
+export interface CreateOrderInput {
+    customer: ObjectID;
+    products: ObjectID[];
 }
 
 export interface PrivateData {
@@ -169,6 +248,66 @@ export interface GetUserResponse {
     privateData?: Nullable<PrivateData>;
 }
 
+export interface AllOrdersResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    customer?: Nullable<ObjectID>;
+    products?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+    price?: Nullable<number>;
+    paid?: Nullable<ORDER_PAID>;
+    processed?: Nullable<ORDER_PROCESS>;
+    send?: Nullable<ORDER_SEND>;
+    received?: Nullable<ORDER_RECEIVE>;
+    exchange?: Nullable<ORDER_EXCHANGE>;
+    isCancel?: Nullable<boolean>;
+    isState?: Nullable<boolean>;
+}
+
+export interface CreateOrderResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    codeOrder?: Nullable<string>;
+    price?: Nullable<number>;
+    paid?: Nullable<ORDER_PAID>;
+}
+
+export interface FindOrderResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    customer?: Nullable<ObjectID>;
+    products?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+    price?: Nullable<number>;
+    paid?: Nullable<ORDER_PAID>;
+    processed?: Nullable<ORDER_PROCESS>;
+    send?: Nullable<ORDER_SEND>;
+    received?: Nullable<ORDER_RECEIVE>;
+    exchange?: Nullable<ORDER_EXCHANGE>;
+    isCancel?: Nullable<boolean>;
+    isState?: Nullable<boolean>;
+}
+
+export interface GetOrdersResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    customer?: Nullable<ObjectID>;
+    products?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+    price?: Nullable<number>;
+    paid?: Nullable<ORDER_PAID>;
+    processed?: Nullable<ORDER_PROCESS>;
+    send?: Nullable<ORDER_SEND>;
+    received?: Nullable<ORDER_RECEIVE>;
+    exchange?: Nullable<ORDER_EXCHANGE>;
+    isCancel?: Nullable<boolean>;
+    isState?: Nullable<boolean>;
+}
+
 export interface IQuery {
     getUser(data: GetUserInput): GetUserResponse | Promise<GetUserResponse>;
     getUsers(data: GetUsersInput): GetUserResponse[] | Promise<GetUserResponse[]>;
@@ -179,6 +318,9 @@ export interface IQuery {
     redditAuth(input: SocialAuthInput): string | Promise<string>;
     googleAuth(input: SocialAuthInput): string | Promise<string>;
     getGoogleAuthURL(): string | Promise<string>;
+    findOrder(data: FindOrderInput): FindOrderResponse | Promise<FindOrderResponse>;
+    getOrders(data: GetOrdersInput): GetOrdersResponse[] | Promise<GetOrdersResponse[]>;
+    allOrders(data: AllOrdersInput): AllOrdersResponse[] | Promise<AllOrdersResponse[]>;
 }
 
 export interface IMutation {
@@ -187,6 +329,7 @@ export interface IMutation {
     login(input: LoginUserInput): LoginUserResponse | Promise<LoginUserResponse>;
     refreshToken(): Nullable<RefreshTokenResponse> | Promise<Nullable<RefreshTokenResponse>>;
     logout(): boolean | Promise<boolean>;
+    createOrder(input: CreateOrderInput): CreateOrderResponse | Promise<CreateOrderResponse>;
 }
 
 export type ObjectID = unknown;
