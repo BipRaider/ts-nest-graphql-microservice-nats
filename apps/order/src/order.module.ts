@@ -10,6 +10,7 @@ import { OrderRepository } from './order.repository';
 import { OrderSchema } from './order.schema';
 import { OrderPaymentService } from './order.paid.service';
 import { OrderProcessService } from './order.process.service';
+import { OrderSendService } from './order.send.service';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { OrderProcessService } from './order.process.service';
     OrderRepository,
     OrderPaymentService,
     OrderProcessService,
+    OrderSendService,
     NatsProvider({
       provide: ENUM.NatsServicesName.ORDER,
       queue: ENUM.NatsServicesQueue.ORDER,

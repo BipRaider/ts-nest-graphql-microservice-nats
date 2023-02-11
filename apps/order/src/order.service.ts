@@ -11,6 +11,7 @@ import { Entity } from './order.entity';
 import { OrderRepository } from './order.repository';
 import { OrderPaymentService } from './order.paid.service';
 import { OrderProcessService } from './order.process.service';
+import { OrderSendService } from './order.send.service';
 
 @Injectable()
 export class OrderService implements IOrderService {
@@ -18,6 +19,7 @@ export class OrderService implements IOrderService {
     private readonly repository: OrderRepository,
     private readonly paymentService: OrderPaymentService,
     private readonly processService: OrderProcessService,
+    private readonly sendService: OrderSendService,
     @Inject(ENUM.NatsServicesName.API) private readonly apiClient: ClientNats,
     @Inject(ENUM.NatsServicesName.EXCHEQUER) private readonly exchequerClient: ClientNats,
     @Inject(ENUM.NatsServicesName.PRODUCT) private readonly productClient: ClientNats,
@@ -148,31 +150,28 @@ export class OrderService implements IOrderService {
       const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
       if ('status' in expect) return expect;
 
-      if (dto.processed === ENUM.ORDER.PROCESS.unused) {
-        console.log(ENUM.ORDER.PROCESS.unused);
-      }
       if (dto.processed === ENUM.ORDER.PROCESS.expectation) {
-        console.log(ENUM.ORDER.PROCESS.expectation);
+        this.processService.expectation(dto, expect);
       }
       if (dto.processed === ENUM.ORDER.PROCESS.check) {
-        console.log(ENUM.ORDER.PROCESS.check);
+        this.processService.check(dto, expect);
       }
       if (dto.processed === ENUM.ORDER.PROCESS.complete) {
-        console.log(ENUM.ORDER.PROCESS.complete);
+        this.processService.complete(dto, expect);
       }
       if (dto.processed === ENUM.ORDER.PROCESS.incomplete) {
-        console.log(ENUM.ORDER.PROCESS.incomplete);
+        this.processService.incomplete(dto, expect);
       }
       if (dto.processed === ENUM.ORDER.PROCESS.cancel) {
-        console.log(ENUM.ORDER.PROCESS.cancel);
+        this.processService.cancel(dto, expect);
       }
       if (dto.processed === ENUM.ORDER.PROCESS.mistake) {
-        console.log(ENUM.ORDER.PROCESS.mistake);
+        this.processService.mistake(dto, expect);
       }
       if (item === null) {
         item = new ErrorUtil(404).send({
           error: 'Process cannot be changed.',
-          payload: { paid: dto.processed, codeOrder: dto.codeOrder },
+          payload: { processed: dto.processed, codeOrder: dto.codeOrder },
         });
       }
 
@@ -189,22 +188,35 @@ export class OrderService implements IOrderService {
 
   public send = async (dto: OrderContract.SendCommand.Request): Promise<SendErrorUtil | Entity> => {
     try {
-      const item = await this.repository.findOrder(dto);
+      let item: SendErrorUtil | Entity;
+      const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
+      if ('status' in expect) return expect;
+
+      if (dto.send === ENUM.ORDER.SEND.expectation) {
+        this.sendService.expectation(dto, expect);
+      }
+      if (dto.send === ENUM.ORDER.SEND.check) {
+        this.sendService.check(dto, expect);
+      }
+      if (dto.send === ENUM.ORDER.SEND.send) {
+        this.sendService.send(dto, expect);
+      }
+      if (dto.send === ENUM.ORDER.SEND.stop) {
+        this.sendService.stop(dto, expect);
+      }
+      if (dto.send === ENUM.ORDER.SEND.cancel) {
+        this.sendService.cancel(dto, expect);
+      }
+      if (item === null) {
+        item = new ErrorUtil(404).send({
+          error: 'Send cannot be changed.',
+          payload: { send: dto.send, codeOrder: dto.codeOrder },
+        });
+      }
+
       if ('status' in item) return item;
 
-      if (item.send === ENUM.ORDER.SEND.unused) console.log(ENUM.ORDER.SEND.unused);
-      if (item.send === ENUM.ORDER.SEND.expectation) console.log(ENUM.ORDER.SEND.expectation);
-      if (item.send === ENUM.ORDER.SEND.check) console.log(ENUM.ORDER.SEND.check);
-      if (item.send === ENUM.ORDER.SEND.send) console.log(ENUM.ORDER.SEND.send);
-      if (item.send === ENUM.ORDER.SEND.stop) console.log(ENUM.ORDER.SEND.stop);
-      if (item.send === ENUM.ORDER.SEND.cancel) console.log(ENUM.ORDER.SEND.cancel);
-
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.send`, {
-        ...dto,
-        orderId: item.id,
-      });
-
-      return new Entity(item);
+      return item;
     } catch (error) {
       return new ErrorUtil(502).send({
         error: 'OrderService.send something wrong.',
@@ -217,23 +229,26 @@ export class OrderService implements IOrderService {
     dto: OrderContract.ReceivedCommand.Request,
   ): Promise<SendErrorUtil | Entity> => {
     try {
-      const item = await this.repository.findOrder(dto);
+      let item: SendErrorUtil | Entity;
+      const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
+      if ('status' in expect) return expect;
+
+      if (dto.received === ENUM.ORDER.RECEIVE.expectation)
+        console.log(ENUM.ORDER.RECEIVE.expectation);
+      if (dto.received === ENUM.ORDER.RECEIVE.check) console.log(ENUM.ORDER.RECEIVE.check);
+      if (dto.received === ENUM.ORDER.RECEIVE.complete) console.log(ENUM.ORDER.RECEIVE.complete);
+      if (dto.received === ENUM.ORDER.RECEIVE.exchange) console.log(ENUM.ORDER.RECEIVE.exchange);
+      if (dto.received === ENUM.ORDER.RECEIVE.fake) console.log(ENUM.ORDER.RECEIVE.fake);
+      if (item === null) {
+        item = new ErrorUtil(404).send({
+          error: 'Receive cannot be changed.',
+          payload: { receive: dto.received, codeOrder: dto.codeOrder },
+        });
+      }
+
       if ('status' in item) return item;
 
-      if (item.received === ENUM.ORDER.RECEIVE.unused) console.log(ENUM.ORDER.RECEIVE.unused);
-      if (item.received === ENUM.ORDER.RECEIVE.expectation)
-        console.log(ENUM.ORDER.RECEIVE.expectation);
-      if (item.received === ENUM.ORDER.RECEIVE.check) console.log(ENUM.ORDER.RECEIVE.check);
-      if (item.received === ENUM.ORDER.RECEIVE.complete) console.log(ENUM.ORDER.RECEIVE.complete);
-      if (item.received === ENUM.ORDER.RECEIVE.exchange) console.log(ENUM.ORDER.RECEIVE.exchange);
-      if (item.received === ENUM.ORDER.RECEIVE.fake) console.log(ENUM.ORDER.RECEIVE.fake);
-
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.receive`, {
-        ...dto,
-        orderId: item.id,
-      });
-
-      return new Entity(item);
+      return item;
     } catch (error) {
       return new ErrorUtil(502).send({
         error: 'OrderService.receive something wrong.',
@@ -246,24 +261,27 @@ export class OrderService implements IOrderService {
     dto: OrderContract.ExchangeCommand.Request,
   ): Promise<SendErrorUtil | Entity> => {
     try {
-      const item = await this.repository.findOrder(dto);
-      if ('status' in item) return item;
+      let item: SendErrorUtil | Entity;
+      const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
+      if ('status' in expect) return expect;
 
-      if (item.exchange === ENUM.ORDER.EXCHANGE.unused) console.log(ENUM.ORDER.EXCHANGE.unused);
-      if (item.exchange === ENUM.ORDER.EXCHANGE.expectation)
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.expectation)
         console.log(ENUM.ORDER.EXCHANGE.expectation);
-      if (item.exchange === ENUM.ORDER.EXCHANGE.check) console.log(ENUM.ORDER.EXCHANGE.check);
-      if (item.exchange === ENUM.ORDER.EXCHANGE.ok) console.log(ENUM.ORDER.EXCHANGE.ok);
-      if (item.exchange === ENUM.ORDER.EXCHANGE.refundable)
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.check) console.log(ENUM.ORDER.EXCHANGE.check);
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.ok) console.log(ENUM.ORDER.EXCHANGE.ok);
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.refundable)
         console.log(ENUM.ORDER.EXCHANGE.refundable);
-
-      if (item.exchange === ENUM.ORDER.EXCHANGE.no_refund)
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.no_refund)
         console.log(ENUM.ORDER.EXCHANGE.no_refund);
 
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.exchange`, {
-        ...dto,
-        orderId: item.id,
-      });
+      if (item === null) {
+        item = new ErrorUtil(404).send({
+          error: 'Exchange cannot be changed.',
+          payload: { exchange: dto.exchange, codeOrder: dto.codeOrder },
+        });
+      }
+
+      if ('status' in item) return item;
 
       return item;
     } catch (error) {
