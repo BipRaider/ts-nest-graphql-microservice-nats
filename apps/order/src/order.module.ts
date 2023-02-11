@@ -8,6 +8,7 @@ import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { OrderRepository } from './order.repository';
 import { OrderSchema } from './order.schema';
+import { OrderPaidService } from './order.paid.service';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { OrderSchema } from './order.schema';
   providers: [
     OrderService,
     OrderRepository,
+    OrderPaidService,
     NatsProvider({
       provide: ENUM.NatsServicesName.ORDER,
       queue: ENUM.NatsServicesQueue.ORDER,

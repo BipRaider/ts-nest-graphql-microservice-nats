@@ -8,11 +8,14 @@ import { ENUM } from '@common/interface';
 import { IOrderService } from './types';
 import { Entity } from './order.entity';
 import { OrderRepository } from './order.repository';
+import { OrderPaidService } from './order.paid.service';
+import { ISchema } from './order.schema';
 
 @Injectable()
 export class OrderService implements IOrderService {
   constructor(
     private readonly repository: OrderRepository,
+    private readonly paidService: OrderPaidService,
     @Inject(ENUM.NatsServicesName.API) private readonly apiClient: ClientNats,
     @Inject(ENUM.NatsServicesName.EXCHEQUER) private readonly exchequerClient: ClientNats,
     @Inject(ENUM.NatsServicesName.PRODUCT) private readonly productClient: ClientNats,
@@ -87,28 +90,39 @@ export class OrderService implements IOrderService {
     }
   };
 
+  // modify order
   public paid = async (
     dto: OrderContract.ReceiptPaidCommand.Request,
   ): Promise<SendErrorUtil | Entity> => {
     try {
-      const entity = new Entity(dto);
-      const exist = await this.repository.find(entity);
-      if (!exist) {
-        return new ErrorUtil(404).send({
-          error: 'Order not found.',
-          payload: { codeOrder: entity.codeOrder },
-        });
+      let item: SendErrorUtil | Entity;
+      const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
+      if ('status' in expect) return expect;
+
+      if (dto.paid === ENUM.ORDER.PAID.expectation) {
+        item = await this.paidService.expectation(dto, expect);
+      }
+      if (dto.paid === ENUM.ORDER.PAID.paid) {
+        item = await this.paidService.paid(dto, expect);
+      }
+      if (dto.paid === ENUM.ORDER.PAID.check) {
+        item = await this.paidService.check(dto, expect);
+      }
+      if (dto.paid === ENUM.ORDER.PAID.ok) {
+        item = await this.paidService.ok(dto, expect);
+      }
+      if (dto.paid === ENUM.ORDER.PAID.incomplete) {
+        item = await this.paidService.incomplete(dto, expect);
+      }
+      if (dto.paid === ENUM.ORDER.PAID.refund) {
+        item = await this.paidService.refund(dto, expect);
+      }
+      if (dto.paid === ENUM.ORDER.PAID.no_refund) {
+        item = await this.paidService.noRefund(dto, expect);
       }
 
-      const item = new Entity({ ...exist, ...dto, id: exist._id });
-      const itemNew = await this.repository.update(item);
-
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.paid`, {
-        ...dto,
-        orderId: itemNew.id,
-      });
-
-      return new Entity(itemNew);
+      if ('status' in item) return item;
+      return new Entity(item);
     } catch (error) {
       return new ErrorUtil(502).send({
         error: 'OrderService.paid something wrong.',
@@ -121,27 +135,28 @@ export class OrderService implements IOrderService {
     dto: OrderContract.ProcessedCommand.Request,
   ): Promise<SendErrorUtil | Entity> => {
     try {
-      const entity = new Entity(dto);
-      const exist = await this.repository.find(entity);
-      if (!exist) {
-        return new ErrorUtil(404).send({
-          error: 'Order not found.',
-          payload: { codeOrder: entity.codeOrder },
-        });
-      }
+      const item = await this.repository.findOrder(dto);
+      if ('status' in item) return item;
 
-      const item = new Entity({ ...exist, ...dto, id: exist._id });
-      const itemNew = await this.repository.update(item);
+      if (item.processed === ENUM.ORDER.PROCESS.unused) console.log(ENUM.ORDER.PROCESS.unused);
+      if (item.processed === ENUM.ORDER.PROCESS.expectation)
+        console.log(ENUM.ORDER.PROCESS.expectation);
+      if (item.processed === ENUM.ORDER.PROCESS.check) console.log(ENUM.ORDER.PROCESS.check);
+      if (item.processed === ENUM.ORDER.PROCESS.complete) console.log(ENUM.ORDER.PROCESS.complete);
+      if (item.processed === ENUM.ORDER.PROCESS.incomplete)
+        console.log(ENUM.ORDER.PROCESS.incomplete);
+      if (item.processed === ENUM.ORDER.PROCESS.cancel) console.log(ENUM.ORDER.PROCESS.cancel);
+      if (item.processed === ENUM.ORDER.PROCESS.mistake) console.log(ENUM.ORDER.PROCESS.mistake);
 
       this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.processed`, {
         ...dto,
-        orderId: itemNew.id,
+        orderId: item.id,
       });
 
-      return new Entity(itemNew);
+      return new Entity(item);
     } catch (error) {
       return new ErrorUtil(502).send({
-        error: 'OrderService.paid something wrong.',
+        error: 'OrderService.processed something wrong.',
         payload: error,
       });
     }
@@ -149,27 +164,25 @@ export class OrderService implements IOrderService {
 
   public send = async (dto: OrderContract.SendCommand.Request): Promise<SendErrorUtil | Entity> => {
     try {
-      const entity = new Entity(dto);
-      const exist = await this.repository.find(entity);
-      if (!exist) {
-        return new ErrorUtil(404).send({
-          error: 'Order not found.',
-          payload: { codeOrder: entity.codeOrder },
-        });
-      }
+      const item = await this.repository.findOrder(dto);
+      if ('status' in item) return item;
 
-      const item = new Entity({ ...exist, ...dto, id: exist._id });
-      const itemNew = await this.repository.update(item);
+      if (item.send === ENUM.ORDER.SEND.unused) console.log(ENUM.ORDER.SEND.unused);
+      if (item.send === ENUM.ORDER.SEND.expectation) console.log(ENUM.ORDER.SEND.expectation);
+      if (item.send === ENUM.ORDER.SEND.check) console.log(ENUM.ORDER.SEND.check);
+      if (item.send === ENUM.ORDER.SEND.send) console.log(ENUM.ORDER.SEND.send);
+      if (item.send === ENUM.ORDER.SEND.stop) console.log(ENUM.ORDER.SEND.stop);
+      if (item.send === ENUM.ORDER.SEND.cancel) console.log(ENUM.ORDER.SEND.cancel);
 
       this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.send`, {
         ...dto,
-        orderId: itemNew.id,
+        orderId: item.id,
       });
 
-      return new Entity(itemNew);
+      return new Entity(item);
     } catch (error) {
       return new ErrorUtil(502).send({
-        error: 'OrderService.paid something wrong.',
+        error: 'OrderService.send something wrong.',
         payload: error,
       });
     }
@@ -179,27 +192,26 @@ export class OrderService implements IOrderService {
     dto: OrderContract.ReceivedCommand.Request,
   ): Promise<SendErrorUtil | Entity> => {
     try {
-      const entity = new Entity(dto);
-      const exist = await this.repository.find(entity);
-      if (!exist) {
-        return new ErrorUtil(404).send({
-          error: 'Order not found.',
-          payload: { codeOrder: entity.codeOrder },
-        });
-      }
+      const item = await this.repository.findOrder(dto);
+      if ('status' in item) return item;
 
-      const item = new Entity({ ...exist, ...dto, id: exist._id });
-      const itemNew = await this.repository.update(item);
+      if (item.received === ENUM.ORDER.RECEIVE.unused) console.log(ENUM.ORDER.RECEIVE.unused);
+      if (item.received === ENUM.ORDER.RECEIVE.expectation)
+        console.log(ENUM.ORDER.RECEIVE.expectation);
+      if (item.received === ENUM.ORDER.RECEIVE.check) console.log(ENUM.ORDER.RECEIVE.check);
+      if (item.received === ENUM.ORDER.RECEIVE.complete) console.log(ENUM.ORDER.RECEIVE.complete);
+      if (item.received === ENUM.ORDER.RECEIVE.exchange) console.log(ENUM.ORDER.RECEIVE.exchange);
+      if (item.received === ENUM.ORDER.RECEIVE.fake) console.log(ENUM.ORDER.RECEIVE.fake);
 
       this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.receive`, {
         ...dto,
-        orderId: itemNew.id,
+        orderId: item.id,
       });
 
-      return new Entity(itemNew);
+      return new Entity(item);
     } catch (error) {
       return new ErrorUtil(502).send({
-        error: 'OrderService.paid something wrong.',
+        error: 'OrderService.receive something wrong.',
         payload: error,
       });
     }
@@ -209,27 +221,29 @@ export class OrderService implements IOrderService {
     dto: OrderContract.ExchangeCommand.Request,
   ): Promise<SendErrorUtil | Entity> => {
     try {
-      const entity = new Entity(dto);
-      const exist = await this.repository.find(entity);
-      if (!exist) {
-        return new ErrorUtil(404).send({
-          error: 'Order not found.',
-          payload: { codeOrder: entity.codeOrder },
-        });
-      }
+      const item = await this.repository.findOrder(dto);
+      if ('status' in item) return item;
 
-      const item = new Entity({ ...exist, ...dto, id: exist._id });
-      const itemNew = await this.repository.update(item);
+      if (item.exchange === ENUM.ORDER.EXCHANGE.unused) console.log(ENUM.ORDER.EXCHANGE.unused);
+      if (item.exchange === ENUM.ORDER.EXCHANGE.expectation)
+        console.log(ENUM.ORDER.EXCHANGE.expectation);
+      if (item.exchange === ENUM.ORDER.EXCHANGE.check) console.log(ENUM.ORDER.EXCHANGE.check);
+      if (item.exchange === ENUM.ORDER.EXCHANGE.ok) console.log(ENUM.ORDER.EXCHANGE.ok);
+      if (item.exchange === ENUM.ORDER.EXCHANGE.refundable)
+        console.log(ENUM.ORDER.EXCHANGE.refundable);
+
+      if (item.exchange === ENUM.ORDER.EXCHANGE.no_refund)
+        console.log(ENUM.ORDER.EXCHANGE.no_refund);
 
       this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.exchange`, {
         ...dto,
-        orderId: itemNew.id,
+        orderId: item.id,
       });
 
-      return new Entity(itemNew);
+      return item;
     } catch (error) {
       return new ErrorUtil(502).send({
-        error: 'OrderService.paid something wrong.',
+        error: 'OrderService.exchange something wrong.',
         payload: error,
       });
     }

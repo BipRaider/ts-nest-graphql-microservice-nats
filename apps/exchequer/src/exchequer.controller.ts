@@ -9,33 +9,33 @@ import { ENUM } from '@common/interface';
 export class ExchequerController {
   constructor(private readonly exchequerService: ExchequerService) {}
 
-  @EventPattern(`${ENUM.NatsServicesQueue.EXCHEQUER}.*`)
+  @EventPattern(`${ENUM.NatsServicesQueue.EXCHEQUER}.paid.*`)
   async eventOrder(@Payload() payload: unknown) {
     console.log(`eventOrder:`, { payload });
     return 'sss';
   }
 
-  @MessagePattern(`${ENUM.NatsServicesQueue.EXCHEQUER}.*`)
+  @MessagePattern(`${ENUM.NatsServicesQueue.EXCHEQUER}.paid.*`)
   async getDateOrder(@Payload() payload: unknown) {
     console.log(`payload:`, { payload });
     return 'sss';
   }
 
-  @MessagePattern(`${ENUM.NatsServicesQueue.PRODUCT}.*`)
+  @MessagePattern(`${ENUM.NatsServicesQueue.PRODUCT}.**`)
   getDateProduct(@Payload() payload: unknown, @Ctx() context: NatsContext) {
     console.log(`Subject: ${context.getSubject()}`);
     console.log(`payload:`, { payload });
     return;
   }
 
-  @MessagePattern(`${ENUM.NatsServicesQueue.API}.*`)
+  @MessagePattern(`${ENUM.NatsServicesQueue.API}.**`)
   getDateAPI(@Payload() payload: unknown, @Ctx() context: NatsContext) {
     console.log(`Subject: ${context.getSubject()}`);
     console.log(`payload:`, { payload });
     return;
   }
 
-  @MessagePattern(`${ENUM.NatsServicesQueue.ADMIN}.*`)
+  @MessagePattern(`${ENUM.NatsServicesQueue.ADMIN}.**`)
   getDateAdmin(@Payload() payload: unknown, @Ctx() context: NatsContext) {
     console.log(`Subject: ${context.getSubject()}`);
     console.log(`payload:`, { payload });
