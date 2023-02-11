@@ -6,16 +6,18 @@ import { SendErrorUtil, ErrorUtil } from '@common/utils';
 import { ENUM } from '@common/interface';
 
 import { IOrderService } from './types';
+import { ISchema } from './order.schema';
 import { Entity } from './order.entity';
 import { OrderRepository } from './order.repository';
 import { OrderPaymentService } from './order.paid.service';
-import { ISchema } from './order.schema';
+import { OrderProcessService } from './order.process.service';
 
 @Injectable()
 export class OrderService implements IOrderService {
   constructor(
     private readonly repository: OrderRepository,
     private readonly paymentService: OrderPaymentService,
+    private readonly processService: OrderProcessService,
     @Inject(ENUM.NatsServicesName.API) private readonly apiClient: ClientNats,
     @Inject(ENUM.NatsServicesName.EXCHEQUER) private readonly exchequerClient: ClientNats,
     @Inject(ENUM.NatsServicesName.PRODUCT) private readonly productClient: ClientNats,
@@ -95,7 +97,7 @@ export class OrderService implements IOrderService {
     dto: OrderContract.ReceiptPaidCommand.Request,
   ): Promise<SendErrorUtil | Entity> => {
     try {
-      let item: SendErrorUtil | Entity;
+      let item: SendErrorUtil | Entity = null;
       const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
       if ('status' in expect) return expect;
 
@@ -120,9 +122,16 @@ export class OrderService implements IOrderService {
       if (dto.paid === ENUM.ORDER.PAID.no_refund) {
         item = await this.paymentService.noRefund(dto, expect);
       }
+      if (item === null) {
+        item = new ErrorUtil(404).send({
+          error: 'Payment cannot be changed.',
+          payload: { paid: dto.paid, codeOrder: dto.codeOrder },
+        });
+      }
 
       if ('status' in item) return item;
-      return new Entity(item);
+
+      return item;
     } catch (error) {
       return new ErrorUtil(502).send({
         error: 'OrderService.paid something wrong.',
@@ -135,25 +144,41 @@ export class OrderService implements IOrderService {
     dto: OrderContract.ProcessedCommand.Request,
   ): Promise<SendErrorUtil | Entity> => {
     try {
-      const item = await this.repository.findOrder(dto);
+      let item: SendErrorUtil | Entity;
+      const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
+      if ('status' in expect) return expect;
+
+      if (dto.processed === ENUM.ORDER.PROCESS.unused) {
+        console.log(ENUM.ORDER.PROCESS.unused);
+      }
+      if (dto.processed === ENUM.ORDER.PROCESS.expectation) {
+        console.log(ENUM.ORDER.PROCESS.expectation);
+      }
+      if (dto.processed === ENUM.ORDER.PROCESS.check) {
+        console.log(ENUM.ORDER.PROCESS.check);
+      }
+      if (dto.processed === ENUM.ORDER.PROCESS.complete) {
+        console.log(ENUM.ORDER.PROCESS.complete);
+      }
+      if (dto.processed === ENUM.ORDER.PROCESS.incomplete) {
+        console.log(ENUM.ORDER.PROCESS.incomplete);
+      }
+      if (dto.processed === ENUM.ORDER.PROCESS.cancel) {
+        console.log(ENUM.ORDER.PROCESS.cancel);
+      }
+      if (dto.processed === ENUM.ORDER.PROCESS.mistake) {
+        console.log(ENUM.ORDER.PROCESS.mistake);
+      }
+      if (item === null) {
+        item = new ErrorUtil(404).send({
+          error: 'Process cannot be changed.',
+          payload: { paid: dto.processed, codeOrder: dto.codeOrder },
+        });
+      }
+
       if ('status' in item) return item;
 
-      if (item.processed === ENUM.ORDER.PROCESS.unused) console.log(ENUM.ORDER.PROCESS.unused);
-      if (item.processed === ENUM.ORDER.PROCESS.expectation)
-        console.log(ENUM.ORDER.PROCESS.expectation);
-      if (item.processed === ENUM.ORDER.PROCESS.check) console.log(ENUM.ORDER.PROCESS.check);
-      if (item.processed === ENUM.ORDER.PROCESS.complete) console.log(ENUM.ORDER.PROCESS.complete);
-      if (item.processed === ENUM.ORDER.PROCESS.incomplete)
-        console.log(ENUM.ORDER.PROCESS.incomplete);
-      if (item.processed === ENUM.ORDER.PROCESS.cancel) console.log(ENUM.ORDER.PROCESS.cancel);
-      if (item.processed === ENUM.ORDER.PROCESS.mistake) console.log(ENUM.ORDER.PROCESS.mistake);
-
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.processed`, {
-        ...dto,
-        orderId: item.id,
-      });
-
-      return new Entity(item);
+      return item;
     } catch (error) {
       return new ErrorUtil(502).send({
         error: 'OrderService.processed something wrong.',

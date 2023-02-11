@@ -22,5 +22,7 @@ declare namespace NodeJS {
     //Cookie
     /*** The salt for cookie like `somesecretverystrong`.*/
     readonly COOKIE_SECRET: string;
+    /*** Time when product cannot be refund.*/
+    readonly TIME_NO_REFUND: string;
   }
 }

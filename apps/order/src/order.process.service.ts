@@ -5,13 +5,13 @@ import { OrderContract } from '@common/contracts';
 import { SendErrorUtil, ErrorUtil } from '@common/utils';
 import { ENUM } from '@common/interface';
 
-// import { IOrderPaidService } from './types';
+// import { IOrderProcessService } from './types';
 import { Entity } from './order.entity';
 import { OrderRepository } from './order.repository';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class OrderPaymentService {
+export class OrderProcessService {
   constructor(
     private readonly repository: OrderRepository,
     private readonly configService: ConfigService,
@@ -21,39 +21,35 @@ export class OrderPaymentService {
     @Inject(ENUM.NatsServicesName.EMAIL) private readonly emailClient: ClientNats,
   ) {}
 
-  /*** step 1 to exchequer*/
+  /*** step 2 to exchequer*/
   public readonly expectation = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
+    dto: OrderContract.ProcessedCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
-
-    if (item.paid === ENUM.ORDER.PAID.mistake) {
+    // When order paid.
+    if (
+      item.processed === ENUM.ORDER.PROCESS.unused &&
+      item.paid === ENUM.ORDER.PAID.ok &&
+      !item.isCancel
+    ) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        paid: ENUM.ORDER.PAID.expectation,
+        processed: ENUM.ORDER.PROCESS.expectation,
       });
     }
 
-    return this.returnOrder(dto, item, expect);
-  };
-  /*** step 2 to exchequer*/
-  public readonly paid = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
-    item: Entity,
-  ): Promise<SendErrorUtil | Entity> => {
-    let expect: SendErrorUtil | Entity = null;
-
-    const found: boolean = [
-      ENUM.ORDER.PAID.expectation,
-      ENUM.ORDER.PAID.incomplete,
-      ENUM.ORDER.PAID.paid,
-    ].some(v => item.paid.includes(v));
-
-    if (found) {
+    // When exchange.
+    if (
+      item.processed === ENUM.ORDER.PROCESS.complete &&
+      item.send === ENUM.ORDER.SEND.send &&
+      item.received === ENUM.ORDER.RECEIVE.exchange
+    ) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        paid: ENUM.ORDER.PAID.paid,
+        processed: ENUM.ORDER.PROCESS.expectation,
+        send: ENUM.ORDER.SEND.expectation,
+        received: ENUM.ORDER.RECEIVE.expectation,
       });
     }
 
@@ -62,14 +58,19 @@ export class OrderPaymentService {
 
   /*** step 3 from exchequer*/
   public readonly check = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
+    dto: OrderContract.ProcessedCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
-    if (item.paid === ENUM.ORDER.PAID.paid || item.paid === ENUM.ORDER.PAID.mistake) {
+
+    if (
+      item.processed === ENUM.ORDER.PROCESS.expectation &&
+      item.paid === ENUM.ORDER.PAID.ok &&
+      !item.isCancel
+    ) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        paid: ENUM.ORDER.PAID.check,
+        processed: ENUM.ORDER.PROCESS.check,
       });
     }
 
@@ -77,17 +78,21 @@ export class OrderPaymentService {
   };
 
   /*** step 4 from exchequer*/
-  public readonly ok = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
+  public readonly complete = async (
+    dto: OrderContract.ProcessedCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
 
-    if (item.paid === ENUM.ORDER.PAID.check) {
+    if (
+      item.processed === ENUM.ORDER.PROCESS.check &&
+      item.paid === ENUM.ORDER.PAID.ok &&
+      !item.isCancel
+    ) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        paid: ENUM.ORDER.PAID.ok,
-        processed: ENUM.ORDER.PROCESS.expectation,
+        processed: ENUM.ORDER.PROCESS.complete,
+        send: ENUM.ORDER.SEND.expectation,
       });
     }
 
@@ -96,97 +101,57 @@ export class OrderPaymentService {
 
   /*** step 5 from exchequer*/
   public readonly incomplete = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
+    dto: OrderContract.ProcessedCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
 
-    if (item.paid === ENUM.ORDER.PAID.check) {
+    if (
+      item.processed === ENUM.ORDER.PROCESS.check &&
+      item.paid === ENUM.ORDER.PAID.ok &&
+      !item.isCancel
+    ) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        paid: ENUM.ORDER.PAID.incomplete,
+        processed: ENUM.ORDER.PROCESS.incomplete,
       });
     }
 
     return this.returnOrder(dto, item, expect);
   };
 
-  /*** step 6 from exchequer*/
+  /*** step 6 from exchequer to user.*/
+  public readonly cancel = async (
+    dto: OrderContract.ProcessedCommand.Request,
+    item: Entity,
+  ): Promise<SendErrorUtil | Entity> => {
+    let expect: SendErrorUtil | Entity = null;
+
+    if (item.paid === ENUM.ORDER.PAID.ok && item.isCancel) {
+      expect = await this.repository.updateOrder({
+        id: item.id,
+        processed: ENUM.ORDER.PROCESS.cancel,
+      });
+    }
+
+    return this.returnOrder(dto, item, expect);
+  };
+
+  /*** step 7 from exchequer*/
   public readonly mistake = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
+    dto: OrderContract.ProcessedCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
 
-    if (item.paid === ENUM.ORDER.PAID.check) {
+    if (
+      item.processed === ENUM.ORDER.PROCESS.check &&
+      item.paid === ENUM.ORDER.PAID.ok &&
+      !item.isCancel
+    ) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        paid: ENUM.ORDER.PAID.mistake,
-      });
-    }
-
-    return this.returnOrder(dto, item, expect);
-  };
-
-  /*** step 7 from exchequer to user.*/
-  public readonly refund = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
-    item: Entity,
-  ): Promise<SendErrorUtil | Entity> => {
-    let expect: SendErrorUtil | Entity = null;
-
-    const foundPid: boolean = [
-      ENUM.ORDER.PAID.ok,
-      ENUM.ORDER.PAID.incomplete,
-      ENUM.ORDER.PAID.mistake,
-      ENUM.ORDER.PAID.check,
-    ].some(v => item.paid.includes(v));
-
-    if (foundPid || item.processed === ENUM.ORDER.PROCESS.mistake) {
-      expect = await this.repository.updateOrder({
-        id: item.id,
-        paid: ENUM.ORDER.PAID.refund,
-        isCancel: true,
-      });
-    }
-
-    if (item.isCancel && !item.isState) {
-      expect = await this.repository.updateOrder({
-        id: item.id,
-        paid: ENUM.ORDER.PAID.refund,
-      });
-    }
-
-    return this.returnOrder(dto, item, expect);
-  };
-
-  /*** step 8 to exchequer.*/
-  public readonly noRefund = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
-    item: Entity,
-  ): Promise<SendErrorUtil | Entity> => {
-    let expect: SendErrorUtil | Entity = null;
-
-    if (item.received === ENUM.ORDER.RECEIVE.complete) {
-      const now: number = Date.now();
-      const created: number = new Date(item.created).getTime();
-      const timeNoRefund: number | string =
-        this.configService.get('TIME_NO_REFUND') || 14 * 24 * 60 * 60;
-      const time: number = now - created;
-
-      if (time > Number(timeNoRefund)) {
-        expect = await this.repository.updateOrder({
-          id: item.id,
-          paid: ENUM.ORDER.PAID.no_refund,
-          isState: true,
-        });
-      }
-    }
-
-    if (item.isState && !item.isCancel) {
-      expect = await this.repository.updateOrder({
-        id: item.id,
-        paid: ENUM.ORDER.PAID.no_refund,
+        processed: ENUM.ORDER.PROCESS.mistake,
       });
     }
 
@@ -196,7 +161,7 @@ export class OrderPaymentService {
   //------------------Private func-------------
   /*** `check` errors and return `err` or `entity` */
   private returnOrder = async (
-    dto: OrderContract.ReceiptPaidCommand.Request,
+    dto: OrderContract.ProcessedCommand.Request,
     item: Entity,
     expect: SendErrorUtil | Entity,
   ): Promise<SendErrorUtil | Entity> => {
@@ -215,16 +180,17 @@ export class OrderPaymentService {
 
   /*** If all checks went well. Send event to nats.*/
   private emitPaidEvent = (
-    dto: OrderContract.ReceiptPaidCommand.Request,
+    dto: OrderContract.ProcessedCommand.Request,
     item: Entity,
   ): Promise<void> => {
-    this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.order.payment.${item.paid}`, {
+    this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.order.process.${item.paid}`, {
       ...dto,
+      processTime: Date.now(),
       item,
     });
 
-    if (item.paid === ENUM.ORDER.PAID.ok) {
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.PRODUCT}.order.reserve`, {
+    if (item.processed === ENUM.ORDER.PROCESS.complete) {
+      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.PRODUCT}.order.get`, {
         ...dto,
         item,
       });

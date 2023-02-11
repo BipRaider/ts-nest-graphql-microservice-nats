@@ -49,17 +49,23 @@ export const envConfig = (): IEnvConfig => {
       access: {
         secret: process.env[ENUM.JwtStrategyEnv.ACCESS_SECRET] || ENUM.JwtStrategyEnv.ACCESS_SECRET,
         signOptions: {
-          audience: process.env[ENUM.JwtStrategyEnv.ACCESS_AUDIENCE] || ENUM.JwtStrategyEnv.ACCESS_AUDIENCE,
-          issuer: process.env[ENUM.JwtStrategyEnv.ACCESS_ISSUER] || ENUM.JwtStrategyEnv.ACCESS_ISSUER,
+          audience:
+            process.env[ENUM.JwtStrategyEnv.ACCESS_AUDIENCE] || ENUM.JwtStrategyEnv.ACCESS_AUDIENCE,
+          issuer:
+            process.env[ENUM.JwtStrategyEnv.ACCESS_ISSUER] || ENUM.JwtStrategyEnv.ACCESS_ISSUER,
           expiresIn: process.env[ENUM.JwtStrategyEnv.ACCESS_EXPIRES] || '1h',
           algorithm: (process.env[ENUM.JwtStrategyEnv.ALGORITHM] as Algorithm) || 'HS256',
         },
       },
       refresh: {
-        secret: process.env[ENUM.JwtStrategyEnv.REFRESH_SECRET] || ENUM.JwtStrategyEnv.REFRESH_SECRET,
+        secret:
+          process.env[ENUM.JwtStrategyEnv.REFRESH_SECRET] || ENUM.JwtStrategyEnv.REFRESH_SECRET,
         signOptions: {
-          audience: process.env[ENUM.JwtStrategyEnv.REFRESH_AUDIENCE] || ENUM.JwtStrategyEnv.REFRESH_AUDIENCE,
-          issuer: process.env[ENUM.JwtStrategyEnv.REFRESH_ISSUER] || ENUM.JwtStrategyEnv.REFRESH_ISSUER,
+          audience:
+            process.env[ENUM.JwtStrategyEnv.REFRESH_AUDIENCE] ||
+            ENUM.JwtStrategyEnv.REFRESH_AUDIENCE,
+          issuer:
+            process.env[ENUM.JwtStrategyEnv.REFRESH_ISSUER] || ENUM.JwtStrategyEnv.REFRESH_ISSUER,
           expiresIn: process.env[ENUM.JwtStrategyEnv.REFRESH_EXPIRES] || '2d',
           algorithm: (process.env[ENUM.JwtStrategyEnv.ALGORITHM] as Algorithm) || 'HS256',
         },
@@ -97,6 +103,9 @@ export const envConfig = (): IEnvConfig => {
     cors: {
       origin: '*',
       credentials: true,
+    },
+    order: {
+      noRefund: process.env['TIME_NO_REFUND'] || 14 * 24 * 60 * 60,
     },
   };
 };

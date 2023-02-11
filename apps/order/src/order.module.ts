@@ -9,11 +9,11 @@ import { OrderService } from './order.service';
 import { OrderRepository } from './order.repository';
 import { OrderSchema } from './order.schema';
 import { OrderPaymentService } from './order.paid.service';
+import { OrderProcessService } from './order.process.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-
     MongoConnect(ENUM.MongoCollectionNames.ORDER),
     MongoCollection(
       [
@@ -49,6 +49,7 @@ import { OrderPaymentService } from './order.paid.service';
     OrderService,
     OrderRepository,
     OrderPaymentService,
+    OrderProcessService,
     NatsProvider({
       provide: ENUM.NatsServicesName.ORDER,
       queue: ENUM.NatsServicesQueue.ORDER,

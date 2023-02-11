@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { Ctx, EventPattern, MessagePattern, NatsContext, Payload } from '@nestjs/microservices';
+import { Ctx, MessagePattern, NatsContext, Payload } from '@nestjs/microservices';
 
 import { ExchequerService } from './exchequer.service';
 
@@ -9,33 +9,31 @@ import { ENUM } from '@common/interface';
 export class ExchequerController {
   constructor(private readonly exchequerService: ExchequerService) {}
 
-  @EventPattern(`${ENUM.NatsServicesQueue.EXCHEQUER}.paid.*`)
-  async eventOrder(@Payload() payload: unknown) {
-    console.log(`eventOrder:`, { payload });
-    return 'sss';
-  }
-
-  @MessagePattern(`${ENUM.NatsServicesQueue.EXCHEQUER}.paid.*`)
-  async getDateOrder(@Payload() payload: unknown) {
+  @MessagePattern(`${ENUM.NatsServicesQueue.EXCHEQUER}.order.payment.*`)
+  async getPaymentOrder(@Payload() payload: unknown, @Ctx() context: NatsContext) {
+    console.log(`Subject: ${context.getSubject()}`);
+    console.log(`getHeaders: ${context.getHeaders()}`);
+    console.log(`getArgByIndex: ${context.getArgByIndex(1)}`);
+    console.log(`getArgs: ${context.getArgs()}`);
     console.log(`payload:`, { payload });
-    return 'sss';
+    return 'ok';
   }
 
-  @MessagePattern(`${ENUM.NatsServicesQueue.PRODUCT}.**`)
+  @MessagePattern(`${ENUM.NatsServicesQueue.PRODUCT}.*`)
   getDateProduct(@Payload() payload: unknown, @Ctx() context: NatsContext) {
     console.log(`Subject: ${context.getSubject()}`);
     console.log(`payload:`, { payload });
     return;
   }
 
-  @MessagePattern(`${ENUM.NatsServicesQueue.API}.**`)
+  @MessagePattern(`${ENUM.NatsServicesQueue.API}.*`)
   getDateAPI(@Payload() payload: unknown, @Ctx() context: NatsContext) {
     console.log(`Subject: ${context.getSubject()}`);
     console.log(`payload:`, { payload });
     return;
   }
 
-  @MessagePattern(`${ENUM.NatsServicesQueue.ADMIN}.**`)
+  @MessagePattern(`${ENUM.NatsServicesQueue.ADMIN}.*`)
   getDateAdmin(@Payload() payload: unknown, @Ctx() context: NatsContext) {
     console.log(`Subject: ${context.getSubject()}`);
     console.log(`payload:`, { payload });
