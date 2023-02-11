@@ -183,7 +183,7 @@ export class OrderProcessService {
   ): Promise<SendErrorUtil | Entity> => {
     if (!expect) {
       return new ErrorUtil(403).send({
-        error: 'Payment cannot be changed.',
+        error: 'Process cannot be changed.',
         payload: { paid: item.paid, codeOrder: item.codeOrder },
       });
     }
