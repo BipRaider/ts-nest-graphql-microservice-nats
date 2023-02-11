@@ -8,14 +8,14 @@ import { ENUM } from '@common/interface';
 import { IOrderService } from './types';
 import { Entity } from './order.entity';
 import { OrderRepository } from './order.repository';
-import { OrderPaidService } from './order.paid.service';
+import { OrderPaymentService } from './order.paid.service';
 import { ISchema } from './order.schema';
 
 @Injectable()
 export class OrderService implements IOrderService {
   constructor(
     private readonly repository: OrderRepository,
-    private readonly paidService: OrderPaidService,
+    private readonly paymentService: OrderPaymentService,
     @Inject(ENUM.NatsServicesName.API) private readonly apiClient: ClientNats,
     @Inject(ENUM.NatsServicesName.EXCHEQUER) private readonly exchequerClient: ClientNats,
     @Inject(ENUM.NatsServicesName.PRODUCT) private readonly productClient: ClientNats,
@@ -100,25 +100,25 @@ export class OrderService implements IOrderService {
       if ('status' in expect) return expect;
 
       if (dto.paid === ENUM.ORDER.PAID.expectation) {
-        item = await this.paidService.expectation(dto, expect);
+        item = await this.paymentService.expectation(dto, expect);
       }
       if (dto.paid === ENUM.ORDER.PAID.paid) {
-        item = await this.paidService.paid(dto, expect);
+        item = await this.paymentService.paid(dto, expect);
       }
       if (dto.paid === ENUM.ORDER.PAID.check) {
-        item = await this.paidService.check(dto, expect);
+        item = await this.paymentService.check(dto, expect);
       }
       if (dto.paid === ENUM.ORDER.PAID.ok) {
-        item = await this.paidService.ok(dto, expect);
+        item = await this.paymentService.ok(dto, expect);
       }
       if (dto.paid === ENUM.ORDER.PAID.incomplete) {
-        item = await this.paidService.incomplete(dto, expect);
+        item = await this.paymentService.incomplete(dto, expect);
       }
       if (dto.paid === ENUM.ORDER.PAID.refund) {
-        item = await this.paidService.refund(dto, expect);
+        item = await this.paymentService.refund(dto, expect);
       }
       if (dto.paid === ENUM.ORDER.PAID.no_refund) {
-        item = await this.paidService.noRefund(dto, expect);
+        item = await this.paymentService.noRefund(dto, expect);
       }
 
       if ('status' in item) return item;

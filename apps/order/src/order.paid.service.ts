@@ -10,7 +10,7 @@ import { Entity } from './order.entity';
 import { OrderRepository } from './order.repository';
 
 @Injectable()
-export class OrderPaidService {
+export class OrderPaymentService {
   constructor(
     private readonly repository: OrderRepository,
     @Inject(ENUM.NatsServicesName.API) private readonly apiClient: ClientNats,
