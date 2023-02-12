@@ -11,6 +11,8 @@ import { OrderSchema } from './order.schema';
 import { OrderPaymentService } from './order.paid.service';
 import { OrderProcessService } from './order.process.service';
 import { OrderSendService } from './order.send.service';
+import { OrderReceiveService } from './order.receive.service';
+import { OrderExchangeService } from './order.exchange.service';
 
 @Module({
   imports: [
@@ -52,6 +54,8 @@ import { OrderSendService } from './order.send.service';
     OrderPaymentService,
     OrderProcessService,
     OrderSendService,
+    OrderReceiveService,
+    OrderExchangeService,
     NatsProvider({
       provide: ENUM.NatsServicesName.ORDER,
       queue: ENUM.NatsServicesQueue.ORDER,

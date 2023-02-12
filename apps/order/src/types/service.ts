@@ -13,6 +13,9 @@ export interface IOrderService {
    ** * `creating` a order.*/
   create: (dto: OrderContract.CreateCommand.Request) => Promise<Entity | SendErrorUtil>;
   /*** The function to work and modify data for:
+   ** * `update` a order by `id` .*/
+  update: (dto: OrderContract.UpdateCommand.Request) => Promise<Entity | SendErrorUtil>;
+  /*** The function to work and modify data for:
    ** * `finding` a order by `id` or `codeOrder`.*/
   find: (dto: OrderContract.FindQuery.Request) => Promise<Entity | SendErrorUtil>;
   /*** The function to work and modify data for:
@@ -21,6 +24,7 @@ export interface IOrderService {
   /*** The function to work and modify data for:
    ** * `finding` a `orders`. */
   all: (dto: OrderContract.AllQuery.Request) => Promise<Entity[] | SendErrorUtil>;
+
   /*** The function  modify data for:
    ** * `updating` the `order`. */
   paid: (dto: OrderContract.ReceiptPaidCommand.Request) => Promise<Entity | SendErrorUtil>;

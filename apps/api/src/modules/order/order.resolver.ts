@@ -18,6 +18,8 @@ import {
   GetOrdersResponse,
   PaidOrderInput,
   PaidOrderResponse,
+  UpdateOrderInput,
+  UpdateOrderResponse,
 } from './dto/input';
 import { AuthRole, CurrentUser } from '../../decorator';
 
@@ -88,6 +90,22 @@ export class OrderResolver {
 
     const payload: OrderContract.ReceiptPaidCommand.Response | SendErrorUtil =
       await this.orderService.paid(input);
+
+    if ('status' in payload) return new ErrorUtil(payload.status).response(payload);
+
+    return payload;
+  }
+
+  @Mutation(returns => UpdateOrderResponse)
+  @AuthRole(ENUM.Roles.USER)
+  async orderUpdate(
+    @Args('input') input: UpdateOrderInput,
+    @CurrentUser() user: IJwtGenerateToken,
+  ): Promise<OrderContract.UpdateCommand.Response | GraphQLError> {
+    console.log('orderUpdate', user);
+
+    const payload: OrderContract.UpdateCommand.Response | SendErrorUtil =
+      await this.orderService.update(input);
 
     if ('status' in payload) return new ErrorUtil(payload.status).response(payload);
 

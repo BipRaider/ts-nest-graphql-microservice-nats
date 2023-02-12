@@ -141,13 +141,13 @@ export class OrderReceiveService {
   };
 
   /*** step 6 from exchequer to user.*/
-  public readonly fake = async (
+  public readonly mistake = async (
     dto: OrderContract.ReceivedCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
 
-    const fake: boolean = [
+    const mistake: boolean = [
       item.paid === ENUM.ORDER.PAID.ok,
       item.processed === ENUM.ORDER.PROCESS.complete,
       item.send === ENUM.ORDER.SEND.send,
@@ -155,10 +155,10 @@ export class OrderReceiveService {
       item.isCancel,
     ].every(v => v === true);
 
-    if (fake) {
+    if (mistake) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        received: ENUM.ORDER.RECEIVE.fake,
+        received: ENUM.ORDER.RECEIVE.mistake,
         processed: ENUM.ORDER.PROCESS.expectation,
         send: ENUM.ORDER.SEND.expectation,
         exchange: ENUM.ORDER.EXCHANGE.expectation,

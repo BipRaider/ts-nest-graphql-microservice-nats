@@ -21,9 +21,9 @@
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
-[Node.js](http://nodejs.org) framework for building efficient and scalable server-side applications.
-[Nest](http://nestjs.com/) framework TypeScript starter repository.
-[Docker](https://www.docker.com/products/docker-desktop/) Install Docker Desktop – the fastest way to containerize applications.
+- [Node.js](http://nodejs.org) framework for building efficient and scalable server-side applications.
+- [Nest](http://nestjs.com/) framework TypeScript starter repository.
+- [Docker](https://www.docker.com/products/docker-desktop/) Install Docker Desktop – the fastest way to containerize applications.
 
 ## Installation
 ```bash

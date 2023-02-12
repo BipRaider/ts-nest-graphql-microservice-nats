@@ -11,3 +11,4 @@ export * from './received';
 export * from './exchange';
 export * from './cancel';
 export * from './state';
+export * from './update';

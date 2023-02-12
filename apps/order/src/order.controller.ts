@@ -63,6 +63,17 @@ export class OrderController implements IOrderController {
     return item;
   }
 
+  @MessagePattern(OrderContract.UpdateCommand.Pattern)
+  public async update(
+    @Payload() payload: OrderContract.UpdateCommand.Request,
+  ): Promise<SendErrorUtil | OrderContract.UpdateCommand.Response> {
+    const item: Entity | SendErrorUtil = await this.orderService.update(payload);
+
+    if ('status' in item) return item;
+
+    return item;
+  }
+
   @MessagePattern(OrderContract.ReceiptPaidCommand.Pattern)
   public async paidUpdate(
     @Payload() payload: OrderContract.ReceiptPaidCommand.Request,

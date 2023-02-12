@@ -53,7 +53,7 @@ export enum ORDER_RECEIVE {
     check = "check",
     complete = "complete",
     exchange = "exchange",
-    fake = "fake"
+    mistake = "mistake"
 }
 
 export enum ORDER_EXCHANGE {
@@ -167,6 +167,17 @@ export interface PaidOrderInput {
     customer?: Nullable<ObjectID>;
     codeOrder?: Nullable<string>;
     paid?: Nullable<ORDER_PAID>;
+}
+
+export interface UpdateOrderInput {
+    id: ObjectID;
+    paid?: Nullable<ORDER_PAID>;
+    processed?: Nullable<ORDER_PROCESS>;
+    send?: Nullable<ORDER_SEND>;
+    received?: Nullable<ORDER_RECEIVE>;
+    exchange?: Nullable<ORDER_EXCHANGE>;
+    isCancel?: Nullable<boolean>;
+    isState?: Nullable<boolean>;
 }
 
 export interface PrivateData {
@@ -333,6 +344,23 @@ export interface PaidOrderResponse {
     isState?: Nullable<boolean>;
 }
 
+export interface UpdateOrderResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    customer?: Nullable<ObjectID>;
+    products?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+    price?: Nullable<number>;
+    paid?: Nullable<ORDER_PAID>;
+    processed?: Nullable<ORDER_PROCESS>;
+    send?: Nullable<ORDER_SEND>;
+    received?: Nullable<ORDER_RECEIVE>;
+    exchange?: Nullable<ORDER_EXCHANGE>;
+    isCancel?: Nullable<boolean>;
+    isState?: Nullable<boolean>;
+}
+
 export interface IQuery {
     getUser(data: GetUserInput): GetUserResponse | Promise<GetUserResponse>;
     getUsers(data: GetUsersInput): GetUserResponse[] | Promise<GetUserResponse[]>;
@@ -356,6 +384,7 @@ export interface IMutation {
     logout(): boolean | Promise<boolean>;
     createOrder(input: CreateOrderInput): CreateOrderResponse | Promise<CreateOrderResponse>;
     paidUpdate(input: PaidOrderInput): PaidOrderResponse | Promise<PaidOrderResponse>;
+    orderUpdate(input: UpdateOrderInput): UpdateOrderResponse | Promise<UpdateOrderResponse>;
 }
 
 export type ObjectID = unknown;

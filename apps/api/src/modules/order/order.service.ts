@@ -10,6 +10,7 @@ import {
   FindOrderInput,
   GetOrdersInput,
   PaidOrderInput,
+  UpdateOrderInput,
 } from './dto/input';
 
 @Injectable()
@@ -93,6 +94,28 @@ export class OrderService {
           OrderContract.AllQuery.Response[],
           OrderContract.AllQuery.Record
         >(OrderContract.AllQuery.Pattern, record);
+
+        response.subscribe({
+          next: async data => res(data),
+          error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
+        });
+      },
+    );
+
+    return payload;
+  };
+
+  public update = async (
+    data: UpdateOrderInput,
+  ): Promise<OrderContract.UpdateCommand.Response | SendErrorUtil> => {
+    const record = OrderContract.UpdateCommand.build(data);
+
+    const payload: OrderContract.UpdateCommand.Response | SendErrorUtil = await new Promise(
+      async res => {
+        const response = this.orderClient.send<
+          OrderContract.UpdateCommand.Response,
+          OrderContract.UpdateCommand.Record
+        >(OrderContract.UpdateCommand.Pattern, record);
 
         response.subscribe({
           next: async data => res(data),

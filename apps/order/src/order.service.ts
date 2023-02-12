@@ -12,6 +12,8 @@ import { OrderRepository } from './order.repository';
 import { OrderPaymentService } from './order.paid.service';
 import { OrderProcessService } from './order.process.service';
 import { OrderSendService } from './order.send.service';
+import { OrderReceiveService } from './order.receive.service';
+import { OrderExchangeService } from './order.exchange.service';
 
 @Injectable()
 export class OrderService implements IOrderService {
@@ -20,10 +22,8 @@ export class OrderService implements IOrderService {
     private readonly paymentService: OrderPaymentService,
     private readonly processService: OrderProcessService,
     private readonly sendService: OrderSendService,
-    @Inject(ENUM.NatsServicesName.API) private readonly apiClient: ClientNats,
-    @Inject(ENUM.NatsServicesName.EXCHEQUER) private readonly exchequerClient: ClientNats,
-    @Inject(ENUM.NatsServicesName.PRODUCT) private readonly productClient: ClientNats,
-    @Inject(ENUM.NatsServicesName.EMAIL) private readonly emailClient: ClientNats,
+    private readonly receiveService: OrderReceiveService,
+    private readonly exchangeService: OrderExchangeService,
   ) {}
 
   public create = async (
@@ -89,6 +89,29 @@ export class OrderService implements IOrderService {
     } catch (error) {
       return new ErrorUtil(502).send({
         error: 'OrderService.all something wrong.',
+        payload: error,
+      });
+    }
+  };
+
+  public update = async (
+    dto: OrderContract.UpdateCommand.Request,
+  ): Promise<SendErrorUtil | Entity> => {
+    try {
+      const entity = new Entity(dto);
+      const itemNew = await this.repository.update(entity);
+
+      if (!itemNew) {
+        return new ErrorUtil(404).send({
+          error: 'Order not found.',
+          payload: { id: entity.id },
+        });
+      }
+
+      return new Entity(itemNew);
+    } catch (error) {
+      return new ErrorUtil(502).send({
+        error: 'OrderService.update something wrong.',
         payload: error,
       });
     }
@@ -233,12 +256,21 @@ export class OrderService implements IOrderService {
       const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
       if ('status' in expect) return expect;
 
-      if (dto.received === ENUM.ORDER.RECEIVE.expectation)
-        console.log(ENUM.ORDER.RECEIVE.expectation);
-      if (dto.received === ENUM.ORDER.RECEIVE.check) console.log(ENUM.ORDER.RECEIVE.check);
-      if (dto.received === ENUM.ORDER.RECEIVE.complete) console.log(ENUM.ORDER.RECEIVE.complete);
-      if (dto.received === ENUM.ORDER.RECEIVE.exchange) console.log(ENUM.ORDER.RECEIVE.exchange);
-      if (dto.received === ENUM.ORDER.RECEIVE.fake) console.log(ENUM.ORDER.RECEIVE.fake);
+      if (dto.received === ENUM.ORDER.RECEIVE.expectation) {
+        item = await this.receiveService.expectation(dto, expect);
+      }
+      if (dto.received === ENUM.ORDER.RECEIVE.check) {
+        item = await this.receiveService.check(dto, expect);
+      }
+      if (dto.received === ENUM.ORDER.RECEIVE.complete) {
+        item = await this.receiveService.complete(dto, expect);
+      }
+      if (dto.received === ENUM.ORDER.RECEIVE.exchange) {
+        item = await this.receiveService.exchange(dto, expect);
+      }
+      if (dto.received === ENUM.ORDER.RECEIVE.mistake) {
+        item = await this.receiveService.mistake(dto, expect);
+      }
       if (item === null) {
         item = new ErrorUtil(404).send({
           error: 'Receive cannot be changed.',
@@ -265,15 +297,21 @@ export class OrderService implements IOrderService {
       const expect: SendErrorUtil | Entity = await this.repository.findOrder(dto);
       if ('status' in expect) return expect;
 
-      if (dto.exchange === ENUM.ORDER.EXCHANGE.expectation)
-        console.log(ENUM.ORDER.EXCHANGE.expectation);
-      if (dto.exchange === ENUM.ORDER.EXCHANGE.check) console.log(ENUM.ORDER.EXCHANGE.check);
-      if (dto.exchange === ENUM.ORDER.EXCHANGE.ok) console.log(ENUM.ORDER.EXCHANGE.ok);
-      if (dto.exchange === ENUM.ORDER.EXCHANGE.refundable)
-        console.log(ENUM.ORDER.EXCHANGE.refundable);
-      if (dto.exchange === ENUM.ORDER.EXCHANGE.no_refund)
-        console.log(ENUM.ORDER.EXCHANGE.no_refund);
-
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.expectation) {
+        item = await this.exchangeService.expectation(dto, expect);
+      }
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.check) {
+        item = await this.exchangeService.check(dto, expect);
+      }
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.ok) {
+        item = await this.exchangeService.ok(dto, expect);
+      }
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.refundable) {
+        item = await this.exchangeService.refundable(dto, expect);
+      }
+      if (dto.exchange === ENUM.ORDER.EXCHANGE.no_refund) {
+        item = await this.exchangeService.noRefund(dto, expect);
+      }
       if (item === null) {
         item = new ErrorUtil(404).send({
           error: 'Exchange cannot be changed.',

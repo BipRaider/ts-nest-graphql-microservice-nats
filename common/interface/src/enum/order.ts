@@ -61,7 +61,7 @@ export enum RECEIVE {
   /*** 4 */
   exchange = 'exchange',
   /*** 5 */
-  fake = 'fake',
+  mistake = 'mistake',
 }
 
 export enum EXCHANGE {
@@ -74,7 +74,7 @@ export enum EXCHANGE {
   /*** 4 */
   ok = 'ok',
   /*** 5 */
-  no_refund = 'no-refund',
-  /*** 5 */
+  no_refund = 'no_refund',
+  /*** 6 */
   refundable = 'refundable',
 }

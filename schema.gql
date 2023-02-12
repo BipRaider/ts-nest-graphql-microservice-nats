@@ -156,7 +156,7 @@ enum ORDER_RECEIVE {
   check
   complete
   exchange
-  fake
+  mistake
 }
 
 """State variables of exchange."""
@@ -213,6 +213,23 @@ type GetOrdersResponse {
 }
 
 type PaidOrderResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  customer: ObjectID
+  products: ObjectID
+  codeOrder: String
+  price: Float
+  paid: ORDER_PAID
+  processed: ORDER_PROCESS
+  send: ORDER_SEND
+  received: ORDER_RECEIVE
+  exchange: ORDER_EXCHANGE
+  isCancel: Boolean
+  isState: Boolean
+}
+
+type UpdateOrderResponse {
   id: ObjectID
   created: Date
   updated: Date
@@ -322,6 +339,7 @@ type Mutation {
   logout: Boolean!
   createOrder(input: CreateOrderInput!): CreateOrderResponse!
   paidUpdate(input: PaidOrderInput!): PaidOrderResponse!
+  orderUpdate(input: UpdateOrderInput!): UpdateOrderResponse!
 }
 
 input CreateUserInput {
@@ -362,4 +380,15 @@ input PaidOrderInput {
   customer: ObjectID
   codeOrder: String
   paid: ORDER_PAID
+}
+
+input UpdateOrderInput {
+  id: ObjectID!
+  paid: ORDER_PAID
+  processed: ORDER_PROCESS
+  send: ORDER_SEND
+  received: ORDER_RECEIVE
+  exchange: ORDER_EXCHANGE
+  isCancel: Boolean
+  isState: Boolean
 }
