@@ -14,11 +14,23 @@ export namespace GetQuery {
     cmd: `${ENUM.NatsServicesQueue.ORDER}.get`,
   };
 
-  /*** Must be one of these values `customer` to get for `order`.*/
+  /*** These values are needed:
+   **  It is a bridge between a `Client app` and a an `API service`.
+   **  For `get` the orders by `customer`.
+   */
   export class Request implements Partial<Pick<IOrder, 'customer'>> {
     customer: ObjectId;
     skip?: number;
     limit?: number;
+  }
+
+  /*** Must be one of these values `customer` to get for `order`.*/
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `Order service`.
+   **  For `get` the orders by `customer` from database.
+   */
+  export class Payload extends Request {
+    finderId: ObjectId;
   }
 
   /*** These values must be returned from the service after the `order` has been found.*/

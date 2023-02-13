@@ -15,7 +15,7 @@ export class UserController implements IUserController {
 
   @MessagePattern(UserContract.CreateCommand.Pattern)
   public async create(
-    @Payload() payload: UserContract.CreateCommand.Request,
+    @Payload() payload: UserContract.CreateCommand.Payload,
   ): Promise<UserContract.CreateCommand.Response | SendErrorUtil> {
     const user: Entity | SendErrorUtil = await this.usersService.create(payload);
 
@@ -30,7 +30,7 @@ export class UserController implements IUserController {
 
   @MessagePattern(UserContract.GetUserQuery.Pattern)
   public async find(
-    @Payload() payload: UserContract.GetUserQuery.Request,
+    @Payload() payload: UserContract.GetUserQuery.Payload,
   ): Promise<UserContract.GetUserQuery.Response | SendErrorUtil> {
     const user: Entity | SendErrorUtil = await this.usersService.find(payload);
 
@@ -41,7 +41,7 @@ export class UserController implements IUserController {
 
   @MessagePattern(UserContract.GetUsersQuery.Pattern)
   public async get(
-    @Payload() payload?: UserContract.GetUsersQuery.Request,
+    @Payload() payload?: UserContract.GetUsersQuery.Payload,
   ): Promise<UserContract.GetUserQuery.Response[] | SendErrorUtil> {
     const user: Entity[] | SendErrorUtil = await this.usersService.get(payload);
 
@@ -52,7 +52,7 @@ export class UserController implements IUserController {
 
   @MessagePattern(AuthContract.AuthQuery.Pattern)
   public async auth(
-    @Payload() payload?: AuthContract.AuthQuery.Request,
+    @Payload() payload?: AuthContract.AuthQuery.Payload,
   ): Promise<AuthContract.AuthQuery.Response | SendErrorUtil> {
     const user: Entity | SendErrorUtil = await this.usersService.auth(payload);
 

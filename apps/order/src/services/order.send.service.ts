@@ -5,13 +5,13 @@ import { OrderContract } from '@common/contracts';
 import { SendErrorUtil, ErrorUtil } from '@common/utils';
 import { ENUM } from '@common/interface';
 
-// import { IOrderReceiveService } from './types';
-import { Entity } from './order.entity';
-import { OrderRepository } from './order.repository';
+// import { IOrderSendService } from './types';
+import { Entity } from '../order.entity';
+import { OrderRepository } from '../order.repository';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class OrderReceiveService {
+export class OrderSendService {
   constructor(
     private readonly repository: OrderRepository,
     private readonly configService: ConfigService,
@@ -23,7 +23,7 @@ export class OrderReceiveService {
 
   /*** step 1-2 to exchequer*/
   public readonly expectation = async (
-    dto: OrderContract.ReceivedCommand.Request,
+    dto: OrderContract.SendCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
@@ -31,15 +31,14 @@ export class OrderReceiveService {
     const unused: boolean = [
       item.paid === ENUM.ORDER.PAID.ok,
       item.processed === ENUM.ORDER.PROCESS.complete,
-      item.send === ENUM.ORDER.SEND.send,
-      item.received === ENUM.ORDER.RECEIVE.unused,
+      item.send === ENUM.ORDER.SEND.unused,
       !item.isCancel,
     ].every(v => v === true);
 
     if (unused) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        received: ENUM.ORDER.RECEIVE.expectation,
+        send: ENUM.ORDER.SEND.expectation,
       });
     }
 
@@ -54,7 +53,7 @@ export class OrderReceiveService {
     if (exchange) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        received: ENUM.ORDER.RECEIVE.expectation,
+        send: ENUM.ORDER.SEND.expectation,
       });
     }
 
@@ -63,7 +62,7 @@ export class OrderReceiveService {
 
   /*** step 3 from exchequer*/
   public readonly check = async (
-    dto: OrderContract.ReceivedCommand.Request,
+    dto: OrderContract.SendCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
@@ -71,15 +70,14 @@ export class OrderReceiveService {
     const expectation: boolean = [
       item.paid === ENUM.ORDER.PAID.ok,
       item.processed === ENUM.ORDER.PROCESS.complete,
-      item.send === ENUM.ORDER.SEND.send,
-      item.received === ENUM.ORDER.RECEIVE.expectation,
+      item.send === ENUM.ORDER.SEND.expectation,
       !item.isCancel,
     ].every(v => v === true);
 
     if (expectation) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        received: ENUM.ORDER.RECEIVE.check,
+        send: ENUM.ORDER.SEND.check,
       });
     }
 
@@ -87,8 +85,8 @@ export class OrderReceiveService {
   };
 
   /*** step 4 from exchequer*/
-  public readonly complete = async (
-    dto: OrderContract.ReceivedCommand.Request,
+  public readonly send = async (
+    dto: OrderContract.SendCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
@@ -96,8 +94,7 @@ export class OrderReceiveService {
     const check: boolean = [
       item.paid === ENUM.ORDER.PAID.ok,
       item.processed === ENUM.ORDER.PROCESS.complete,
-      item.send === ENUM.ORDER.SEND.send,
-      item.received === ENUM.ORDER.RECEIVE.check,
+      item.send === ENUM.ORDER.SEND.check,
       !item.isCancel,
     ].every(v => v === true);
 
@@ -105,7 +102,7 @@ export class OrderReceiveService {
       expect = await this.repository.updateOrder({
         id: item.id,
         send: ENUM.ORDER.SEND.send,
-        received: ENUM.ORDER.RECEIVE.complete,
+        received: ENUM.ORDER.RECEIVE.expectation,
       });
     }
 
@@ -113,8 +110,8 @@ export class OrderReceiveService {
   };
 
   /*** step 5 from exchequer*/
-  public readonly exchange = async (
-    dto: OrderContract.ReceivedCommand.Request,
+  public readonly stop = async (
+    dto: OrderContract.SendCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
@@ -122,18 +119,14 @@ export class OrderReceiveService {
     const check: boolean = [
       item.paid === ENUM.ORDER.PAID.ok,
       item.processed === ENUM.ORDER.PROCESS.complete,
-      item.send === ENUM.ORDER.SEND.send,
-      item.received === ENUM.ORDER.RECEIVE.check,
+      item.send === ENUM.ORDER.SEND.check,
       !item.isCancel,
     ].every(v => v === true);
 
     if (check) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        received: ENUM.ORDER.RECEIVE.exchange,
-        send: ENUM.ORDER.SEND.expectation,
-        processed: ENUM.ORDER.PROCESS.expectation,
-        exchange: ENUM.ORDER.EXCHANGE.expectation,
+        send: ENUM.ORDER.SEND.stop,
       });
     }
 
@@ -141,27 +134,18 @@ export class OrderReceiveService {
   };
 
   /*** step 6 from exchequer to user.*/
-  public readonly mistake = async (
-    dto: OrderContract.ReceivedCommand.Request,
+  public readonly cancel = async (
+    dto: OrderContract.SendCommand.Request,
     item: Entity,
   ): Promise<SendErrorUtil | Entity> => {
     let expect: SendErrorUtil | Entity = null;
 
-    const mistake: boolean = [
-      item.paid === ENUM.ORDER.PAID.ok,
-      item.processed === ENUM.ORDER.PROCESS.complete,
-      item.send === ENUM.ORDER.SEND.send,
-      item.received === ENUM.ORDER.RECEIVE.check,
-      item.isCancel,
-    ].every(v => v === true);
-
-    if (mistake) {
+    if (item.paid === ENUM.ORDER.PAID.ok && item.isCancel) {
       expect = await this.repository.updateOrder({
         id: item.id,
-        received: ENUM.ORDER.RECEIVE.mistake,
+        send: ENUM.ORDER.SEND.cancel,
         processed: ENUM.ORDER.PROCESS.expectation,
-        send: ENUM.ORDER.SEND.expectation,
-        exchange: ENUM.ORDER.EXCHANGE.expectation,
+        paid: ENUM.ORDER.PAID.refund, //TODO:
       });
     }
 
@@ -171,30 +155,27 @@ export class OrderReceiveService {
   //------------------Private func-------------
   /*** `check` errors and return `err` or `entity` */
   private returnOrder = async (
-    dto: OrderContract.ReceivedCommand.Request,
+    dto: OrderContract.SendCommand.Request,
     item: Entity,
     expect: SendErrorUtil | Entity,
   ): Promise<SendErrorUtil | Entity> => {
     if (!expect) {
       return new ErrorUtil(403).send({
-        error: 'Receive cannot be changed.',
+        error: 'Send cannot be changed.',
         payload: { paid: item.paid, codeOrder: item.codeOrder },
       });
     }
 
     if ('status' in expect) return expect;
 
-    this.emitPaidEvent(dto, expect);
+    this.emitEvent(dto, expect);
     return expect;
   };
 
   /*** If all checks went well. Send event to nats.*/
-  private emitPaidEvent = (
-    dto: OrderContract.ReceivedCommand.Request,
-    item: Entity,
-  ): Promise<void> => {
+  private emitEvent = (dto: OrderContract.SendCommand.Request, item: Entity): Promise<void> => {
     this.exchequerClient.emit(
-      `${ENUM.NatsServicesQueue.EXCHEQUER}.order.receive.${item.received}`,
+      `${ENUM.NatsServicesQueue.EXCHEQUER}.${ENUM.NatsServicesQueue.ORDER}.send.${item.send}`,
       {
         ...dto,
         processTime: Date.now(),
@@ -203,10 +184,13 @@ export class OrderReceiveService {
     );
 
     if (item.processed === ENUM.ORDER.PROCESS.complete) {
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.PRODUCT}.order.get`, {
-        ...dto,
-        item,
-      });
+      this.exchequerClient.emit(
+        `${ENUM.NatsServicesQueue.PRODUCT}.${ENUM.NatsServicesQueue.ORDER}.get`,
+        {
+          ...dto,
+          item,
+        },
+      );
     }
 
     return;

@@ -1,45 +1,58 @@
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
-
 import { ObjectId } from 'mongoose';
 
 import { IBaseData, IPrivateData, IUser, ENUM } from '@common/interface';
 
-/*** Command for: `creating a user`.
- ** And based on this, the connection of servers is built.
+/*** Command for: `updating a user`.
+ ** And based on this,the connection of servers is built.
  */
-export namespace CreateCommand {
+export namespace UpdateCommand {
   /*** The connection to the service `one to one`.*/
   export const Pattern: {
     readonly cmd: string;
   } = {
-    cmd: `${ENUM.NatsServicesQueue.USER}.create`,
+    cmd: `${ENUM.NatsServicesQueue.USER}.update`,
   };
 
   /*** These values must be:
    **  It is a bridge between a `Client app` and a an `API service`.
-   **  For create `the user`.
+   **  For update of `the user`.
    */
   export class Request
-    implements Pick<IUser, 'email' | 'password' | 'name' | 'privateData' | 'roles'>
+    implements Partial<Pick<IUser, 'name' | 'avatar' | 'privateData' | 'password'>>
   {
-    email: string;
-    password: string;
-    name: string;
+    name?: string;
+    password?: string;
     privateData?: IPrivateData;
-    roles?: ENUM.Roles[];
+    avatar?: string;
   }
 
   /*** These values must be:
    **  It is a bridge between an `API service` and a `User service`.
-   **  For create `the user` in database.
+   **  For update of `the user` in database.
    */
-  export class Payload extends Request implements IUser {}
-
-  /*** These values must be returned from the service after the user has been created.*/
-  export class Response implements IBaseData {
+  export class Payload extends Request implements Pick<IBaseData, 'id'> {
     id: ObjectId;
+  }
+
+  /*** These values must be returned from the service after the products has been found.*/
+  export class Response
+    implements
+      Required<
+        IBaseData &
+          Omit<
+            IUser,
+            'password' | 'active' | 'githubId' | 'redditId' | 'googleId' | 'tokens' | 'roles'
+          >
+      >
+  {
     created: Date;
     updated: Date;
+    name: string;
+    email: string;
+    privateData: IPrivateData;
+    avatar: string;
+    id: ObjectId;
   }
 
   /*** Configuration, nats header*/

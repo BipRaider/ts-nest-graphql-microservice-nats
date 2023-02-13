@@ -8,11 +8,6 @@ import { Order } from '../order.model';
 
 @InputType()
 export class CreateOrderInput implements OrderContract.CreateCommand.Request {
-  @Field(() => Schema.Types.ObjectId)
-  @IsNotEmpty()
-  @IsMongoId({ message: 'The customer is incorrect' })
-  customer: ObjectId;
-
   @Field(() => [Schema.Types.ObjectId])
   @IsNotEmpty()
   @IsArray({ message: 'The products is incorrect' })

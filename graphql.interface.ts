@@ -141,14 +141,29 @@ export interface PrivateDataInput {
     lastname?: Nullable<string>;
 }
 
+export interface UpdateUserInput {
+    name?: Nullable<string>;
+    password?: Nullable<string>;
+    privateData?: Nullable<PrivateDataInput>;
+    avatar?: Nullable<string>;
+}
+
 export interface CreateProductInput {
-    userId: ObjectID;
+    name: string;
     storeId: ObjectID;
     price?: Nullable<number>;
     amount?: Nullable<number>;
     description?: Nullable<string>;
     discount?: Nullable<number>;
-    name?: Nullable<string>;
+}
+
+export interface UpdateProductInput {
+    id: ObjectID;
+    isRemove?: Nullable<boolean>;
+    price?: Nullable<number>;
+    amount?: Nullable<number>;
+    description?: Nullable<string>;
+    discount?: Nullable<number>;
 }
 
 export interface LoginUserInput {
@@ -157,16 +172,7 @@ export interface LoginUserInput {
 }
 
 export interface CreateOrderInput {
-    customer: ObjectID;
     products: ObjectID[];
-}
-
-export interface PaidOrderInput {
-    codeReceipt?: Nullable<string>;
-    paidDate?: Nullable<Date>;
-    customer?: Nullable<ObjectID>;
-    codeOrder?: Nullable<string>;
-    paid?: Nullable<ORDER_PAID>;
 }
 
 export interface UpdateOrderInput {
@@ -178,6 +184,14 @@ export interface UpdateOrderInput {
     exchange?: Nullable<ORDER_EXCHANGE>;
     isCancel?: Nullable<boolean>;
     isState?: Nullable<boolean>;
+}
+
+export interface PaidOrderInput {
+    codeReceipt?: Nullable<string>;
+    paidDate?: Nullable<Date>;
+    customer?: Nullable<ObjectID>;
+    codeOrder?: Nullable<string>;
+    paid?: Nullable<ORDER_PAID>;
 }
 
 export interface PrivateData {
@@ -251,6 +265,20 @@ export interface GetProductsResponse {
     isRemove?: Nullable<boolean>;
 }
 
+export interface UpdateProductResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    userId?: Nullable<ObjectID>;
+    storeId?: Nullable<ObjectID>;
+    price?: Nullable<number>;
+    amount?: Nullable<number>;
+    discount?: Nullable<number>;
+    description?: Nullable<string>;
+    name?: Nullable<string>;
+    isRemove?: Nullable<boolean>;
+}
+
 export interface CreateUserResponse {
     id?: Nullable<ObjectID>;
     created?: Nullable<Date>;
@@ -258,6 +286,26 @@ export interface CreateUserResponse {
 }
 
 export interface GetUserResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    name?: Nullable<string>;
+    email?: Nullable<string>;
+    roles?: Nullable<Roles[]>;
+    privateData?: Nullable<PrivateData>;
+}
+
+export interface UpdateUserResponse {
+    id?: Nullable<ObjectID>;
+    created?: Nullable<Date>;
+    updated?: Nullable<Date>;
+    name?: Nullable<string>;
+    email?: Nullable<string>;
+    roles?: Nullable<Roles[]>;
+    privateData?: Nullable<PrivateData>;
+}
+
+export interface GetUsersResponse {
     id?: Nullable<ObjectID>;
     created?: Nullable<Date>;
     updated?: Nullable<Date>;
@@ -362,8 +410,8 @@ export interface UpdateOrderResponse {
 }
 
 export interface IQuery {
-    getUser(data: GetUserInput): GetUserResponse | Promise<GetUserResponse>;
-    getUsers(data: GetUsersInput): GetUserResponse[] | Promise<GetUserResponse[]>;
+    getUser(input: GetUserInput): GetUserResponse | Promise<GetUserResponse>;
+    getUsers(input: GetUsersInput): GetUsersResponse[] | Promise<GetUsersResponse[]>;
     findProduct(data: FindProductInput): FindProductResponse | Promise<FindProductResponse>;
     getProducts(data: GetProductsInput): GetProductsResponse[] | Promise<GetProductsResponse[]>;
     allProducts(data: AllProductsInput): AllProductsResponse[] | Promise<AllProductsResponse[]>;
@@ -371,20 +419,22 @@ export interface IQuery {
     redditAuth(input: SocialAuthInput): string | Promise<string>;
     googleAuth(input: SocialAuthInput): string | Promise<string>;
     getGoogleAuthURL(): string | Promise<string>;
-    findOrder(data: FindOrderInput): FindOrderResponse | Promise<FindOrderResponse>;
-    getOrders(data: GetOrdersInput): GetOrdersResponse[] | Promise<GetOrdersResponse[]>;
-    allOrders(data: AllOrdersInput): AllOrdersResponse[] | Promise<AllOrdersResponse[]>;
+    findOrder(input: FindOrderInput): FindOrderResponse | Promise<FindOrderResponse>;
+    getOrders(input: GetOrdersInput): GetOrdersResponse[] | Promise<GetOrdersResponse[]>;
+    allOrders(input: AllOrdersInput): AllOrdersResponse[] | Promise<AllOrdersResponse[]>;
 }
 
 export interface IMutation {
     createUser(input: CreateUserInput): CreateUserResponse | Promise<CreateUserResponse>;
+    updateUser(input: UpdateUserInput): UpdateUserResponse | Promise<UpdateUserResponse>;
     createProduct(input: CreateProductInput): CreateProductResponse | Promise<CreateProductResponse>;
+    updateProduct(input: UpdateProductInput): UpdateProductResponse | Promise<UpdateProductResponse>;
     login(input: LoginUserInput): LoginUserResponse | Promise<LoginUserResponse>;
     refreshToken(): Nullable<RefreshTokenResponse> | Promise<Nullable<RefreshTokenResponse>>;
     logout(): boolean | Promise<boolean>;
     createOrder(input: CreateOrderInput): CreateOrderResponse | Promise<CreateOrderResponse>;
-    paidUpdate(input: PaidOrderInput): PaidOrderResponse | Promise<PaidOrderResponse>;
-    orderUpdate(input: UpdateOrderInput): UpdateOrderResponse | Promise<UpdateOrderResponse>;
+    updateOrder(input: UpdateOrderInput): UpdateOrderResponse | Promise<UpdateOrderResponse>;
+    updateOrderPaid(input: PaidOrderInput): PaidOrderResponse | Promise<PaidOrderResponse>;
 }
 
 export type ObjectID = unknown;

@@ -78,4 +78,27 @@ export class ProductService implements IProductService {
       });
     }
   };
+
+  public update = async (
+    dto: ProductContract.UpdateCommand.Request,
+  ): Promise<SendErrorUtil | Entity> => {
+    try {
+      const entity = new Entity(dto);
+      const item = await this.repository.update(entity);
+
+      if (!item) {
+        return new ErrorUtil(404).send({
+          error: 'Product not found.',
+          payload: { id: entity.id },
+        });
+      }
+
+      return new Entity(item);
+    } catch (error) {
+      return new ErrorUtil(502).send({
+        error: 'ProductService.all something wrong.',
+        payload: error,
+      });
+    }
+  };
 }

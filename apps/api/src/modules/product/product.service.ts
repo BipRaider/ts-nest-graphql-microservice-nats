@@ -4,21 +4,15 @@ import { ClientNats } from '@nestjs/microservices';
 import { ENUM } from '@common/interface';
 import { ProductContract } from '@common/contracts';
 import { ErrorUtil, SendErrorUtil } from '@common/utils';
-import {
-  AllProductsInput,
-  CreateProductInput,
-  FindProductInput,
-  GetProductsInput,
-} from './dto/input';
 
 @Injectable()
 export class ProductService {
   constructor(@Inject(ENUM.NatsServicesName.PRODUCT) private readonly productClient: ClientNats) {}
 
   public create = async (
-    data: CreateProductInput,
+    data: ProductContract.CreateCommand.Payload,
   ): Promise<ProductContract.CreateCommand.Response | SendErrorUtil> => {
-    const record = ProductContract.CreateCommand.build({ ...data });
+    const record = ProductContract.CreateCommand.build(data);
 
     const payload: ProductContract.CreateCommand.Response | SendErrorUtil = await new Promise(
       async res => {
@@ -37,8 +31,30 @@ export class ProductService {
     return payload;
   };
 
+  public update = async (
+    data: ProductContract.UpdateCommand.Payload,
+  ): Promise<ProductContract.UpdateCommand.Response | SendErrorUtil> => {
+    const record = ProductContract.UpdateCommand.build(data);
+
+    const payload: ProductContract.UpdateCommand.Response | SendErrorUtil = await new Promise(
+      async res => {
+        const response = this.productClient.send<
+          ProductContract.UpdateCommand.Response,
+          ProductContract.UpdateCommand.Record
+        >(ProductContract.UpdateCommand.Pattern, record);
+
+        response.subscribe({
+          next: async data => res(data),
+          error: err => res(new ErrorUtil(502).send({ error: err.message, payload: err })),
+        });
+      },
+    );
+
+    return payload;
+  };
+
   public find = async (
-    data: FindProductInput,
+    data: ProductContract.FindQuery.Payload,
   ): Promise<ProductContract.FindQuery.Response | SendErrorUtil> => {
     const record = ProductContract.FindQuery.build(data);
 
@@ -60,7 +76,7 @@ export class ProductService {
   };
 
   public get = async (
-    data: GetProductsInput,
+    data: ProductContract.GetQuery.Payload,
   ): Promise<ProductContract.GetQuery.Response[] | SendErrorUtil> => {
     const record = ProductContract.GetQuery.build(data);
 
@@ -82,7 +98,7 @@ export class ProductService {
   };
 
   public all = async (
-    data: AllProductsInput,
+    data: ProductContract.AllQuery.Payload,
   ): Promise<ProductContract.AllQuery.Response[] | SendErrorUtil> => {
     const record = ProductContract.AllQuery.build(data);
 

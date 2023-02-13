@@ -17,7 +17,8 @@ export const JwtRefreshService = () => {
       return new JwtService({
         secret: configService.get(JwtStrategyEnv.REFRESH_SECRET) || JwtStrategyEnv.REFRESH_SECRET,
         signOptions: {
-          audience: configService.get(JwtStrategyEnv.REFRESH_AUDIENCE) || JwtStrategyEnv.REFRESH_AUDIENCE,
+          audience:
+            configService.get(JwtStrategyEnv.REFRESH_AUDIENCE) || JwtStrategyEnv.REFRESH_AUDIENCE,
           issuer: configService.get(JwtStrategyEnv.REFRESH_ISSUER) || JwtStrategyEnv.REFRESH_ISSUER,
           expiresIn: configService.get(JwtStrategyEnv.REFRESH_EXPIRES) || '2d',
           algorithm: configService.get(JwtStrategyEnv.ALGORITHM) || 'HS256',
@@ -37,7 +38,8 @@ export const JwtAccessService = () => {
       return new JwtService({
         secret: configService.get(JwtStrategyEnv.ACCESS_SECRET) || JwtStrategyEnv.ACCESS_SECRET,
         signOptions: {
-          audience: configService.get(JwtStrategyEnv.ACCESS_AUDIENCE) || JwtStrategyEnv.ACCESS_AUDIENCE,
+          audience:
+            configService.get(JwtStrategyEnv.ACCESS_AUDIENCE) || JwtStrategyEnv.ACCESS_AUDIENCE,
           issuer: configService.get(JwtStrategyEnv.ACCESS_ISSUER) || JwtStrategyEnv.ACCESS_ISSUER,
           expiresIn: configService.get(JwtStrategyEnv.ACCESS_EXPIRES) || '1h',
           algorithm: configService.get(JwtStrategyEnv.ALGORITHM) || 'HS256',
@@ -72,7 +74,14 @@ export const JwtModuleRootAsync = (): DynamicModule => {
     }),
     JwtModuleRootAsync(),
   ],
-  providers: [GqlStrategy, JwtRefreshStrategy, JwtAccessStrategy, JwtUtil, JwtRefreshService(), JwtAccessService()],
+  providers: [
+    GqlStrategy,
+    JwtRefreshStrategy,
+    JwtAccessStrategy,
+    JwtUtil,
+    JwtRefreshService(),
+    JwtAccessService(),
+  ],
   exports: [GqlStrategy, JwtRefreshStrategy, JwtAccessStrategy, JwtUtil],
 })
 export class JwtUtilModule {}

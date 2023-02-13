@@ -20,7 +20,7 @@ export class JwtUtil implements IJwtUtil {
   generateRefreshToken = async (payload: IJwtGenerateToken, context: any): Promise<string> => {
     const token = await this.jwtRefresh.signAsync(
       { ...payload, iat: Math.floor(Date.now() / 1000) },
-      { subject: String(payload.id || 'refresh') },
+      { subject: String(payload.id || null) },
     );
     //Added to cookie refresh token.
     context.res.cookie(this.refreshTokenName, token, {
@@ -35,7 +35,7 @@ export class JwtUtil implements IJwtUtil {
   generateAccessToken = async (payload: IJwtGenerateToken, context: any): Promise<string> => {
     const token = await this.jwtAccess.signAsync(
       { ...payload, iat: Math.floor(Date.now() / 1000) },
-      { subject: String(payload.id || 'access') },
+      { subject: String(payload.id || null) },
     );
     //Added to cookie access token.
     context.res.cookie(this.accessTokenName, token, {
@@ -47,10 +47,10 @@ export class JwtUtil implements IJwtUtil {
     return token;
   };
 
-  generateToken = async (payload: any): Promise<string> => {
+  generateToken = async (payload: unknown, subject: string): Promise<string> => {
     const token = await this.jwtService.signAsync(
-      { ...payload, iat: Math.floor(Date.now() / 1000) },
-      { subject: String(payload.id) || 'jwt' },
+      { payload, iat: Math.floor(Date.now() / 1000) },
+      { subject: subject || null },
     );
     return token;
   };

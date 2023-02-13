@@ -6,8 +6,8 @@ import { SendErrorUtil, ErrorUtil } from '@common/utils';
 import { ENUM } from '@common/interface';
 
 // import { IOrderPaidService } from './types';
-import { Entity } from './order.entity';
-import { OrderRepository } from './order.repository';
+import { Entity } from '../order.entity';
+import { OrderRepository } from '../order.repository';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -209,25 +209,31 @@ export class OrderPaymentService {
 
     if ('status' in expect) return expect;
 
-    this.emitPaidEvent(dto, expect);
+    this.emitEvent(dto, expect);
     return expect;
   };
 
   /*** If all checks went well. Send event to nats.*/
-  private emitPaidEvent = (
+  private emitEvent = (
     dto: OrderContract.ReceiptPaidCommand.Request,
     item: Entity,
   ): Promise<void> => {
-    this.exchequerClient.emit(`${ENUM.NatsServicesQueue.EXCHEQUER}.order.payment.${item.paid}`, {
-      ...dto,
-      item,
-    });
-
-    if (item.paid === ENUM.ORDER.PAID.ok) {
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.PRODUCT}.order.reserve`, {
+    this.exchequerClient.emit(
+      `${ENUM.NatsServicesQueue.EXCHEQUER}.${ENUM.NatsServicesQueue.ORDER}.payment.${item.paid}`,
+      {
         ...dto,
         item,
-      });
+      },
+    );
+
+    if (item.paid === ENUM.ORDER.PAID.ok) {
+      this.exchequerClient.emit(
+        `${ENUM.NatsServicesQueue.PRODUCT}.${ENUM.NatsServicesQueue.ORDER}.reserve`,
+        {
+          ...dto,
+          item,
+        },
+      );
     }
 
     return;

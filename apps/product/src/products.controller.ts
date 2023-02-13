@@ -20,7 +20,7 @@ export class ProductController implements IProductController {
 
   @MessagePattern(ProductContract.CreateCommand.Pattern)
   public async create(
-    @Payload() payload: ProductContract.CreateCommand.Request,
+    @Payload() payload: ProductContract.CreateCommand.Payload,
   ): Promise<SendErrorUtil | ProductContract.CreateCommand.Response> {
     const item: Entity | SendErrorUtil = await this.productsService.create(payload);
 
@@ -32,10 +32,20 @@ export class ProductController implements IProductController {
       id: item.id,
     };
   }
+  @MessagePattern(ProductContract.UpdateCommand.Pattern)
+  public async update(
+    @Payload() payload: ProductContract.UpdateCommand.Payload,
+  ): Promise<SendErrorUtil | ProductContract.UpdateCommand.Response> {
+    const item: Entity | SendErrorUtil = await this.productsService.update(payload);
+
+    if ('status' in item) return item;
+
+    return item;
+  }
 
   @MessagePattern(ProductContract.FindQuery.Pattern)
   public async find(
-    @Payload() payload: ProductContract.FindQuery.Request,
+    @Payload() payload: ProductContract.FindQuery.Payload,
   ): Promise<SendErrorUtil | ProductContract.FindQuery.Response> {
     const item: Entity | SendErrorUtil = await this.productsService.find(payload);
 
@@ -46,7 +56,7 @@ export class ProductController implements IProductController {
 
   @MessagePattern(ProductContract.GetQuery.Pattern)
   public async get(
-    @Payload() payload: ProductContract.GetQuery.Request,
+    @Payload() payload: ProductContract.GetQuery.Payload,
   ): Promise<SendErrorUtil | ProductContract.GetQuery.Response[]> {
     const item: Entity[] | SendErrorUtil = await this.productsService.get(payload);
 
@@ -57,7 +67,7 @@ export class ProductController implements IProductController {
 
   @MessagePattern(ProductContract.AllQuery.Pattern)
   public async all(
-    @Payload() payload: ProductContract.AllQuery.Request,
+    @Payload() payload: ProductContract.AllQuery.Payload,
   ): Promise<SendErrorUtil | ProductContract.AllQuery.Response[]> {
     const item: Entity[] | SendErrorUtil = await this.productsService.all(payload);
 

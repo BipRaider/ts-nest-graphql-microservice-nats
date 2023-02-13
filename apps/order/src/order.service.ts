@@ -1,5 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientNats } from '@nestjs/microservices';
+import { Injectable } from '@nestjs/common';
 
 import { OrderContract } from '@common/contracts';
 import { SendErrorUtil, ErrorUtil } from '@common/utils';
@@ -9,11 +8,11 @@ import { IOrderService } from './types';
 import { ISchema } from './order.schema';
 import { Entity } from './order.entity';
 import { OrderRepository } from './order.repository';
-import { OrderPaymentService } from './order.paid.service';
-import { OrderProcessService } from './order.process.service';
-import { OrderSendService } from './order.send.service';
-import { OrderReceiveService } from './order.receive.service';
-import { OrderExchangeService } from './order.exchange.service';
+import { OrderPaymentService } from './services/order.paid.service';
+import { OrderProcessService } from './services/order.process.service';
+import { OrderSendService } from './services/order.send.service';
+import { OrderReceiveService } from './services/order.receive.service';
+import { OrderExchangeService } from './services/order.exchange.service';
 
 @Injectable()
 export class OrderService implements IOrderService {
@@ -27,7 +26,7 @@ export class OrderService implements IOrderService {
   ) {}
 
   public create = async (
-    dto: OrderContract.CreateCommand.Request,
+    dto: OrderContract.CreateCommand.Payload,
   ): Promise<SendErrorUtil | Entity> => {
     try {
       const entity = new Entity(dto);
@@ -95,7 +94,7 @@ export class OrderService implements IOrderService {
   };
 
   public update = async (
-    dto: OrderContract.UpdateCommand.Request,
+    dto: OrderContract.UpdateCommand.Payload,
   ): Promise<SendErrorUtil | Entity> => {
     try {
       const entity = new Entity(dto);

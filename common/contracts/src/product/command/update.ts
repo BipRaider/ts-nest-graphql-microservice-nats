@@ -3,47 +3,62 @@ import { ObjectId } from 'mongoose';
 
 import { IBaseData, IProduct, ENUM } from '@common/interface';
 
-/*** Command for: `creating a product`.
+/*** Command for: `updating a product`.
  ** And based on this,the connection of servers is built.
  */
-export namespace CreateCommand {
+export namespace UpdateCommand {
   /*** The connection to the service `one to one`.*/
   export const Pattern: {
     readonly cmd: string;
   } = {
-    cmd: `${ENUM.NatsServicesQueue.PRODUCT}.create`,
+    cmd: `${ENUM.NatsServicesQueue.PRODUCT}.update`,
   };
 
   /*** These values must be:
    **  It is a bridge between a `Client app` and a an `API service`.
-   **  For `create` of the product.
+   **  For update of `the product`.
    */
-  export class Request implements Partial<Omit<IProduct, 'IsRemove' | 'userId'>> {
-    storeId: ObjectId;
+  export class Request
+    implements Pick<IBaseData, 'id'>, Partial<Omit<IProduct, 'userId' | 'name' | 'storeId'>>
+  {
+    id: ObjectId;
     price?: number;
     amount?: number;
     description?: string;
     discount?: number;
-    name: string;
+    isRemove?: boolean;
   }
 
   /*** These values must be:
    **  It is a bridge between an `API service` and a `Product service`.
-   **  For `create` of the product in database.
+   **  For update of `the product` in database.
    */
-  export class Payload implements Partial<Omit<IProduct, 'IsRemove'>> {
+  export class Payload
+    implements
+      Pick<IBaseData, 'id'>,
+      Partial<Omit<IProduct, 'name' | 'storeId'>>,
+      Pick<IProduct, 'userId'>
+  {
     userId: ObjectId;
-    storeId: ObjectId;
+    id: ObjectId;
     price?: number;
     amount?: number;
     description?: string;
     discount?: number;
-    name: string;
+    isRemove?: boolean;
   }
 
-  /*** These values must be returned from the service after the user has been created.*/
-  export class Response implements IBaseData {
+  /*** These values must be returned from the service after the products has been found.*/
+  export class Response implements Required<IBaseData & IProduct> {
     id: ObjectId;
+    userId: ObjectId;
+    storeId: ObjectId;
+    price: number;
+    amount: number;
+    description: string;
+    discount: number;
+    isRemove: boolean;
+    name: string;
     created: Date;
     updated: Date;
   }
@@ -55,6 +70,7 @@ export namespace CreateCommand {
   export const build = (data: Payload): NatsRecord<Payload, Header> => {
     return new NatsRecordBuilder<Payload>(data).build();
   };
+
   /*** The data types to be sent to the service.*/
   export type Record = NatsRecord<Payload, Header>;
 }

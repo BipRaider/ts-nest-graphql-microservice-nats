@@ -83,6 +83,20 @@ type GetProductsResponse {
   isRemove: Boolean
 }
 
+type UpdateProductResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  userId: ObjectID
+  storeId: ObjectID
+  price: Float
+  amount: Int
+  discount: Int
+  description: String
+  name: String
+  isRemove: Boolean
+}
+
 type CreateUserResponse {
   id: ObjectID
   created: Date
@@ -90,6 +104,26 @@ type CreateUserResponse {
 }
 
 type GetUserResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  name: String
+  email: String
+  roles: [Roles!]
+  privateData: PrivateData
+}
+
+type UpdateUserResponse {
+  id: ObjectID
+  created: Date
+  updated: Date
+  name: String
+  email: String
+  roles: [Roles!]
+  privateData: PrivateData
+}
+
+type GetUsersResponse {
   id: ObjectID
   created: Date
   updated: Date
@@ -253,8 +287,8 @@ scalar Date
 scalar ObjectID
 
 type Query {
-  getUser(data: GetUserInput!): GetUserResponse!
-  getUsers(data: GetUsersInput!): [GetUserResponse!]!
+  getUser(input: GetUserInput!): GetUserResponse!
+  getUsers(input: GetUsersInput!): [GetUsersResponse!]!
   findProduct(data: FindProductInput!): FindProductResponse!
   getProducts(data: GetProductsInput!): [GetProductsResponse!]!
   allProducts(data: AllProductsInput!): [AllProductsResponse!]!
@@ -262,9 +296,9 @@ type Query {
   redditAuth(input: SocialAuthInput!): String!
   googleAuth(input: SocialAuthInput!): String!
   getGoogleAuthURL: String!
-  findOrder(data: FindOrderInput!): FindOrderResponse!
-  getOrders(data: GetOrdersInput!): [GetOrdersResponse!]!
-  allOrders(data: AllOrdersInput!): [AllOrdersResponse!]!
+  findOrder(input: FindOrderInput!): FindOrderResponse!
+  getOrders(input: GetOrdersInput!): [GetOrdersResponse!]!
+  allOrders(input: AllOrdersInput!): [AllOrdersResponse!]!
 }
 
 input GetUserInput {
@@ -333,13 +367,15 @@ input AllOrdersInput {
 
 type Mutation {
   createUser(input: CreateUserInput!): CreateUserResponse!
+  updateUser(input: UpdateUserInput!): UpdateUserResponse!
   createProduct(input: CreateProductInput!): CreateProductResponse!
+  updateProduct(input: UpdateProductInput!): UpdateProductResponse!
   login(input: LoginUserInput!): LoginUserResponse!
   refreshToken: RefreshTokenResponse
   logout: Boolean!
   createOrder(input: CreateOrderInput!): CreateOrderResponse!
-  paidUpdate(input: PaidOrderInput!): PaidOrderResponse!
-  orderUpdate(input: UpdateOrderInput!): UpdateOrderResponse!
+  updateOrder(input: UpdateOrderInput!): UpdateOrderResponse!
+  updateOrderPaid(input: PaidOrderInput!): PaidOrderResponse!
 }
 
 input CreateUserInput {
@@ -354,14 +390,29 @@ input PrivateDataInput {
   lastname: String
 }
 
+input UpdateUserInput {
+  name: String
+  password: String
+  privateData: PrivateDataInput
+  avatar: String
+}
+
 input CreateProductInput {
-  userId: ObjectID!
+  name: String!
   storeId: ObjectID!
   price: Float
   amount: Int
   description: String
   discount: Int
-  name: String
+}
+
+input UpdateProductInput {
+  id: ObjectID!
+  isRemove: Boolean
+  price: Float
+  amount: Int
+  description: String
+  discount: Int
 }
 
 input LoginUserInput {
@@ -370,16 +421,7 @@ input LoginUserInput {
 }
 
 input CreateOrderInput {
-  customer: ObjectID!
   products: [ObjectID!]!
-}
-
-input PaidOrderInput {
-  codeReceipt: String
-  paidDate: Date
-  customer: ObjectID
-  codeOrder: String
-  paid: ORDER_PAID
 }
 
 input UpdateOrderInput {
@@ -391,4 +433,12 @@ input UpdateOrderInput {
   exchange: ORDER_EXCHANGE
   isCancel: Boolean
   isState: Boolean
+}
+
+input PaidOrderInput {
+  codeReceipt: String
+  paidDate: Date
+  customer: ObjectID
+  codeOrder: String
+  paid: ORDER_PAID
 }

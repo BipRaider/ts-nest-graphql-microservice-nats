@@ -14,10 +14,21 @@ export namespace FindQuery {
     cmd: `${ENUM.NatsServicesQueue.ORDER}.find`,
   };
 
-  /*** Must be `id` or `codeOrder` to search for a `order`.*/
+  /*** These values are needed:
+   **  It is a bridge between a `Client app` and a an `API service`.
+   **  For `search` of the order by `id` or `codeOrder`.
+   */
   export class Request implements Partial<Pick<IBaseData, 'id'> & Pick<IOrder, 'codeOrder'>> {
     id?: ObjectId;
     codeOrder?: string;
+  }
+
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `Order service`.
+   **  For `search` of the order by `id` or `codeOrder` in database.
+   */
+  export class Payload extends Request {
+    finderId: ObjectId;
   }
 
   /*** These values must be returned from the service after the order has been found.*/
@@ -42,10 +53,10 @@ export namespace FindQuery {
   export class Header {}
 
   /*** Build a request to submit it to the service for processing.*/
-  export const build = (data: Request): NatsRecord<Request, Header> => {
-    return new NatsRecordBuilder<Request>(data).build();
+  export const build = (data: Payload): NatsRecord<Payload, Header> => {
+    return new NatsRecordBuilder<Payload>(data).build();
   };
 
   /*** The data types to be sent to the service.*/
-  export type Record = NatsRecord<Request, Header>;
+  export type Record = NatsRecord<Payload, Header>;
 }

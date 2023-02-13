@@ -14,7 +14,7 @@ export class OrderController implements IOrderController {
 
   @MessagePattern(OrderContract.CreateCommand.Pattern)
   public async create(
-    @Payload() payload: OrderContract.CreateCommand.Request,
+    @Payload() payload: OrderContract.CreateCommand.Payload,
   ): Promise<SendErrorUtil | OrderContract.CreateCommand.Response> {
     const item: Entity | SendErrorUtil = await this.orderService.create(payload);
 
@@ -30,9 +30,20 @@ export class OrderController implements IOrderController {
     };
   }
 
+  @MessagePattern(OrderContract.UpdateCommand.Pattern)
+  public async update(
+    @Payload() payload: OrderContract.UpdateCommand.Payload,
+  ): Promise<SendErrorUtil | OrderContract.UpdateCommand.Response> {
+    const item: Entity | SendErrorUtil = await this.orderService.update(payload);
+
+    if ('status' in item) return item;
+
+    return item;
+  }
+
   @MessagePattern(OrderContract.FindQuery.Pattern)
   public async find(
-    @Payload() payload: OrderContract.FindQuery.Request,
+    @Payload() payload: OrderContract.FindQuery.Payload,
   ): Promise<SendErrorUtil | OrderContract.FindQuery.Response> {
     const item: Entity | SendErrorUtil = await this.orderService.find(payload);
 
@@ -43,7 +54,7 @@ export class OrderController implements IOrderController {
 
   @MessagePattern(OrderContract.GetQuery.Pattern)
   public async get(
-    @Payload() payload: OrderContract.GetQuery.Request,
+    @Payload() payload: OrderContract.GetQuery.Payload,
   ): Promise<SendErrorUtil | OrderContract.GetQuery.Response[]> {
     const item: Entity[] | SendErrorUtil = await this.orderService.get(payload);
 
@@ -54,20 +65,9 @@ export class OrderController implements IOrderController {
 
   @MessagePattern(OrderContract.AllQuery.Pattern)
   public async all(
-    @Payload() payload: OrderContract.AllQuery.Request,
+    @Payload() payload: OrderContract.AllQuery.Payload,
   ): Promise<SendErrorUtil | OrderContract.AllQuery.Response[]> {
     const item: Entity[] | SendErrorUtil = await this.orderService.all(payload);
-
-    if ('status' in item) return item;
-
-    return item;
-  }
-
-  @MessagePattern(OrderContract.UpdateCommand.Pattern)
-  public async update(
-    @Payload() payload: OrderContract.UpdateCommand.Request,
-  ): Promise<SendErrorUtil | OrderContract.UpdateCommand.Response> {
-    const item: Entity | SendErrorUtil = await this.orderService.update(payload);
 
     if ('status' in item) return item;
 

@@ -15,11 +15,20 @@ export namespace AuthQuery {
     cmd: 'user.auth',
   };
 
-  /*** Must be `email` to search for a user.*/
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `User service`.
+   **  For `search` of the user.
+   */
   export class Request implements Pick<IUser, 'email' | 'password'> {
     password: string;
     email: string;
   }
+
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `User service`.
+   **  For `search` of the user in database.
+   */
+  export class Payload extends Request {}
 
   /*** These values must be returned from the service after the user has been found.*/
   export class Response implements Required<IBaseData & Omit<IUser, 'password'>> {
@@ -42,10 +51,10 @@ export namespace AuthQuery {
   export class Header {}
 
   /*** Build a request to submit it to the service for processing.*/
-  export const build = (data: Request): NatsRecord<Request, Header> => {
-    return new NatsRecordBuilder<Request>(data).build();
+  export const build = (data: Payload): NatsRecord<Payload, Header> => {
+    return new NatsRecordBuilder<Payload>(data).build();
   };
 
   /*** The data types to be sent to the service.*/
-  export type UserRecord = NatsRecord<Request, Header>;
+  export type UserRecord = NatsRecord<Payload, Header>;
 }

@@ -56,10 +56,11 @@ export class UsersRepository implements IUserRepository {
         entity.id,
         {
           $set: set,
-          $addToSet: { roles: entity.roles },
+          $addToSet: { roles: entity.roles || [] },
         },
         { new: true },
       )
+      .select({ password: 0 })
       .exec();
   };
 }

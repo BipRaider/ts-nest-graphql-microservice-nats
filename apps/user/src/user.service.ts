@@ -14,7 +14,7 @@ export class UserService implements IUserService {
     private readonly passwordUtils: PasswordUtil,
   ) {}
 
-  async create(dto: UserContract.CreateCommand.Request): Promise<Entity | SendErrorUtil> {
+  async create(dto: UserContract.CreateCommand.Payload): Promise<Entity | SendErrorUtil> {
     try {
       const entity = new Entity(dto);
       if (!entity.email)
@@ -41,7 +41,7 @@ export class UserService implements IUserService {
     }
   }
 
-  async find(dto: UserContract.GetUserQuery.Request): Promise<Entity | SendErrorUtil> {
+  async find(dto: UserContract.GetUserQuery.Payload): Promise<Entity | SendErrorUtil> {
     try {
       const entity = new Entity(dto);
       const user = await this.repository.find(entity);
@@ -60,7 +60,7 @@ export class UserService implements IUserService {
     }
   }
 
-  async get(dto?: UserContract.GetUsersQuery.Request): Promise<Entity[] | SendErrorUtil> {
+  async get(dto?: UserContract.GetUsersQuery.Payload): Promise<Entity[] | SendErrorUtil> {
     try {
       const entity = new Entity({}).filter(dto);
       const users = await this.repository.get(entity);
@@ -74,7 +74,7 @@ export class UserService implements IUserService {
     }
   }
 
-  public auth = async (dto: AuthContract.AuthQuery.Request): Promise<Entity | SendErrorUtil> => {
+  public auth = async (dto: AuthContract.AuthQuery.Payload): Promise<Entity | SendErrorUtil> => {
     const entity = new Entity(dto);
     const user = await this.repository.auth(entity);
 

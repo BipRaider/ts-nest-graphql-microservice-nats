@@ -10,11 +10,11 @@ import { Entity } from '../user.entity';
  */
 export interface IUserService {
   /** The function to work and modify data for `creating` a user. */
-  create: (dto: UserContract.CreateCommand.Request) => Promise<Entity | SendErrorUtil>;
+  create: (dto: UserContract.CreateCommand.Payload) => Promise<Entity | SendErrorUtil>;
   /** The function to work and modify data for `finding` a user by `id` or `email`. */
-  find: (dto: UserContract.GetUserQuery.Request) => Promise<Entity | SendErrorUtil>;
+  find: (dto: UserContract.GetUserQuery.Payload) => Promise<Entity | SendErrorUtil>;
   /** The function to work and modify data for `finding` a `users`. */
-  get: (dto: UserContract.GetUsersQuery.Request) => Promise<Entity[] | SendErrorUtil>;
+  get: (dto: UserContract.GetUsersQuery.Payload) => Promise<Entity[] | SendErrorUtil>;
   /** The function to work and modify data for `finding` a user by  `email`. */
-  auth: (dto: AuthContract.AuthQuery.Request) => Promise<Entity | SendErrorUtil>;
+  auth: (dto: AuthContract.AuthQuery.Payload) => Promise<Entity | SendErrorUtil>;
 }

@@ -1,33 +1,33 @@
-import { InputType, Field, ObjectType, PartialType, Int, Float } from '@nestjs/graphql';
+import { InputType, Field, ObjectType, Int, PartialType, Float } from '@nestjs/graphql';
 import {
-  IsNotEmpty,
+  IsInt,
+  Min,
   IsOptional,
+  IsBoolean,
   IsString,
   Length,
-  IsMongoId,
   Max,
-  Min,
-  IsInt,
+  IsMongoId,
+  IsNotEmpty,
 } from 'class-validator';
-import { Schema } from 'mongoose';
+import { Schema, ObjectId } from 'mongoose';
 
 import { ProductContract } from '@common/contracts';
 
-import { BaseModel } from '../../../base.model';
+import { Product } from '../product.model';
 import { IsPrise } from '../../../../decorator';
 
 @InputType()
-export class CreateProductInput implements ProductContract.CreateCommand.Request {
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString({ message: 'The name is incorrect' })
-  @Length(1, 40)
-  name: string;
-
+export class UpdateProductInput implements ProductContract.UpdateCommand.Request {
   @Field(() => Schema.Types.ObjectId)
   @IsNotEmpty()
-  @IsMongoId({ message: 'The storeId is incorrect' })
-  storeId: Schema.Types.ObjectId;
+  @IsMongoId({ message: 'The Id is incorrect' })
+  id: ObjectId;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean({ message: 'The isRemove is incorrect' })
+  isRemove?: boolean;
 
   @Field(() => Float, { nullable: true })
   @IsOptional()
@@ -39,8 +39,8 @@ export class CreateProductInput implements ProductContract.CreateCommand.Request
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt({ message: 'The amount is incorrect' })
-  @Max(10_000_000)
   @Min(0)
+  @Max(10_000_000)
   amount?: number;
 
   @Field(() => String, { nullable: true })
@@ -53,11 +53,11 @@ export class CreateProductInput implements ProductContract.CreateCommand.Request
   @IsOptional()
   @IsInt({ message: 'The discount is incorrect' })
   @Max(100)
-  @Min(0)
+  @Min(1)
   discount?: number;
 }
 
 @ObjectType()
-export class CreateProductResponse
-  extends PartialType(BaseModel)
-  implements Partial<ProductContract.CreateCommand.Response> {}
+export class UpdateProductResponse
+  extends PartialType(Product)
+  implements Partial<ProductContract.UpdateCommand.Response> {}

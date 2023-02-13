@@ -3,9 +3,10 @@ import { GraphQLError } from 'graphql';
 
 import { ProductContract } from '@common/contracts';
 import { ErrorUtil, SendErrorUtil } from '@common/utils';
+import { ENUM, IJwtGenerateToken } from '@common/interface';
 
-import { Product } from './dto/product.model';
 import { ProductService } from './product.service';
+import { Product } from './dto/product.model';
 import {
   AllProductsInput,
   AllProductsResponse,
@@ -15,9 +16,10 @@ import {
   FindProductResponse,
   GetProductsInput,
   GetProductsResponse,
+  UpdateProductInput,
+  UpdateProductResponse,
 } from './dto/input';
-import { AuthRoles, AuthRole } from '../../decorator';
-import { ENUM } from '@common/interface';
+import { AuthRoles, AuthRole, CurrentUser } from '../../decorator';
 
 @Resolver(of => Product)
 export class ProductResolver {
@@ -65,9 +67,24 @@ export class ProductResolver {
   @AuthRole(ENUM.Roles.USER)
   async createProduct(
     @Args('input') input: CreateProductInput,
+    @CurrentUser() currentUser: IJwtGenerateToken,
   ): Promise<ProductContract.CreateCommand.Response | GraphQLError> {
     const payload: ProductContract.CreateCommand.Response | SendErrorUtil =
-      await this.productService.create(input);
+      await this.productService.create({ ...input, userId: currentUser.id });
+
+    if ('status' in payload) return new ErrorUtil(payload.status).response(payload);
+
+    return payload;
+  }
+
+  @Mutation(returns => UpdateProductResponse)
+  @AuthRole(ENUM.Roles.USER)
+  async updateProduct(
+    @Args('input') input: UpdateProductInput,
+    @CurrentUser() currentUser: IJwtGenerateToken,
+  ): Promise<ProductContract.UpdateCommand.Response | GraphQLError> {
+    const payload: ProductContract.UpdateCommand.Response | SendErrorUtil =
+      await this.productService.update({ ...input, userId: currentUser.id });
 
     if ('status' in payload) return new ErrorUtil(payload.status).response(payload);
 

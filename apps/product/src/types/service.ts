@@ -12,11 +12,11 @@ export interface IProductService {
   /** The function to work and modify data for `creating` a product.
    ** A product cannot be created with the same name for the same user.
    */
-  create: (dto: ProductContract.CreateCommand.Request) => Promise<Entity | SendErrorUtil>;
+  create: (dto: ProductContract.CreateCommand.Payload) => Promise<Entity | SendErrorUtil>;
   /** The function to work and modify data for `finding` a product by `id`. */
-  find: (dto: ProductContract.FindQuery.Request) => Promise<Entity | SendErrorUtil>;
+  find: (dto: ProductContract.FindQuery.Payload) => Promise<Entity | SendErrorUtil>;
   /** The function to work and modify data for `finding` a `product` by `userId` or `storeId`.*/
-  get: (dto: ProductContract.GetQuery.Request) => Promise<Entity[] | SendErrorUtil>;
+  get: (dto: ProductContract.GetQuery.Payload) => Promise<Entity[] | SendErrorUtil>;
   /** The function to work and modify data for `finding` a `product`. */
-  all: (dto: ProductContract.AllQuery.Request) => Promise<Entity[] | SendErrorUtil>;
+  all: (dto: ProductContract.AllQuery.Payload) => Promise<Entity[] | SendErrorUtil>;
 }

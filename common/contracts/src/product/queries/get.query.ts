@@ -3,33 +3,47 @@ import { ObjectId } from 'mongoose';
 
 import { IBaseData, IProduct, ENUM } from '@common/interface';
 
-/*** Query for search the `products`
+/*** Query for get the `products`.
  ** And based on this, the connection of servers is built.
  */
-export namespace FindQuery {
+export namespace GetQuery {
   /*** The connection to the service `one to one`.*/
   export const Pattern: {
     readonly cmd: string;
   } = {
-    cmd: `${ENUM.NatsServicesQueue.PRODUCT}.find`,
+    cmd: `${ENUM.NatsServicesQueue.PRODUCT}.get`,
   };
 
-  /*** Must be `id` to search for a `product`.*/
-  export class Request implements Pick<IBaseData, 'id'> {
-    id: ObjectId;
+  /*** These values must be:
+   **  It is a bridge between a `Client app` and a an `API service`.
+   **  For `get` of the products.
+   **  Must be one of these values `userId` or `storeId`.
+   */
+  export class Request implements Partial<Pick<IProduct, 'userId' | 'storeId'>> {
+    userId?: ObjectId;
+    storeId?: ObjectId;
+    skip?: number;
+    limit?: number;
   }
+
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `Product service`.
+   **  For `get` of the products in database.
+   **  Must be one of these values `userId` or `storeId`.
+   */
+  export class Payload extends Request {}
 
   /*** These values must be returned from the service after the product has been found.*/
   export class Response implements Required<IBaseData & IProduct> {
-    id: ObjectId;
     userId: ObjectId;
     storeId: ObjectId;
+    name: string;
     price: number;
     amount: number;
     description: string;
     discount: number;
     isRemove: boolean;
-    name: string;
+    id: ObjectId;
     created: Date;
     updated: Date;
   }
@@ -38,10 +52,10 @@ export namespace FindQuery {
   export class Header {}
 
   /*** Build a request to submit it to the service for processing.*/
-  export const build = (data: Request): NatsRecord<Request, Header> => {
+  export const build = (data: Payload): NatsRecord<Payload, Header> => {
     return new NatsRecordBuilder<Request>(data).build();
   };
 
   /*** The data types to be sent to the service.*/
-  export type Record = NatsRecord<Request, Header>;
+  export type Record = NatsRecord<Payload, Header>;
 }

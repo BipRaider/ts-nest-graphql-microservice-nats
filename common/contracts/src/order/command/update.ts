@@ -15,13 +15,35 @@ export namespace UpdateCommand {
   };
 
   /*** These values must be:
-   **  For update of the order.*/
+   **  It is a bridge between a `Client app` and a an `API service`.
+   **  For `update` the order.
+   */
   export class Request
     implements
       Pick<IBaseData, 'id'>,
       Partial<Omit<IOrder, 'products' | 'price' | 'customer' | 'codeOrder'>>
   {
     id: ObjectId;
+    processed?: ENUM.ORDER.PROCESS;
+    send?: ENUM.ORDER.SEND;
+    received?: ENUM.ORDER.RECEIVE;
+    exchange?: ENUM.ORDER.EXCHANGE;
+    paid?: ENUM.ORDER.PAID;
+    isCancel?: boolean;
+    isState?: boolean;
+  }
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `Order service`.
+   **  For `update` the order in database.
+   */
+  export class Payload
+    implements
+      Partial<Omit<IOrder, 'products' | 'price' | 'codeOrder'>>,
+      Pick<IBaseData, 'id'>,
+      Pick<IOrder, 'customer'>
+  {
+    id: ObjectId;
+    customer: ObjectId;
     processed?: ENUM.ORDER.PROCESS;
     send?: ENUM.ORDER.SEND;
     received?: ENUM.ORDER.RECEIVE;
@@ -56,10 +78,10 @@ export namespace UpdateCommand {
   export class Header {}
 
   /*** Build a request to submit it to the service for processing.*/
-  export const build = (data: Request): NatsRecord<Request, Header> => {
-    return new NatsRecordBuilder<Request>(data).build();
+  export const build = (data: Payload): NatsRecord<Payload, Header> => {
+    return new NatsRecordBuilder<Payload>(data).build();
   };
 
   /*** The data types to be sent to the service.*/
-  export type Record = NatsRecord<Request, Header>;
+  export type Record = NatsRecord<Payload, Header>;
 }

@@ -14,8 +14,10 @@ export namespace AllQuery {
     cmd: `${ENUM.NatsServicesQueue.ORDER}.all`,
   };
 
-  /*** These values are needed to filter the `orders`
-   *  that can be retrieved from the `order` database.*/
+  /*** These values are needed:
+   **  It is a bridge between a `Client app` and a an `API service`.
+   **  For `filter` of the orders.
+   */
   export class Request implements Partial<IOrder> {
     skip?: number;
     limit?: number;
@@ -30,6 +32,13 @@ export namespace AllQuery {
     purchase?: boolean;
     isCancel?: boolean;
     isState?: boolean;
+  }
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `Order service`.
+   **  For `filter` of the orders in database.
+   */
+  export class Payload extends Request {
+    finderId: ObjectId;
   }
 
   /*** These values must be returned from the service after the `orders` has been found.*/
@@ -54,10 +63,10 @@ export namespace AllQuery {
   export class Header {}
 
   /*** Build a request to submit it to the service for processing.*/
-  export const build = (data: Request): NatsRecord<Request, Header> => {
-    return new NatsRecordBuilder<Request>(data).build();
+  export const build = (data: Payload): NatsRecord<Payload, Header> => {
+    return new NatsRecordBuilder<Payload>(data).build();
   };
 
   /*** The data types to be sent to the service.*/
-  export type Record = NatsRecord<Request, Header>;
+  export type Record = NatsRecord<Payload, Header>;
 }

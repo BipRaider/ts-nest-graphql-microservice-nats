@@ -25,7 +25,6 @@ export const ProductSchema = new Schema<ISchema, IModel>(
     storeId: { type: Schema.Types.ObjectId, required: true, immutable: true },
     name: {
       type: String,
-      default: 'default name',
       required: true,
       immutable: true,
       maxlength: 40,

@@ -1,5 +1,5 @@
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
-import { ObjectId, Schema } from 'mongoose';
+import { ObjectId } from 'mongoose';
 
 import { IBaseData, IProduct, ENUM } from '@common/interface';
 
@@ -14,11 +14,13 @@ export namespace AllQuery {
     cmd: `${ENUM.NatsServicesQueue.PRODUCT}.all`,
   };
 
-  /*** These values are needed to filter the products
-   *  that can be retrieved from the product database.*/
+  /*** These values are needed:
+   **  It is a bridge between a `Client app` and a an `API service`.
+   **  For `filter` of the products.
+   */
   export class Request implements Partial<IProduct> {
-    userId?: Schema.Types.ObjectId;
-    storeId?: Schema.Types.ObjectId;
+    userId?: ObjectId;
+    storeId?: ObjectId;
     name?: string;
     price?: number;
     amount?: number;
@@ -28,6 +30,12 @@ export namespace AllQuery {
     skip?: number;
     limit?: number;
   }
+
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `Product service`.
+   **  For `filter` of the products that can be retrieved from the product database.
+   */
+  export class Payload extends Request {}
 
   /*** These values must be returned from the service after the products has been found.*/
   export class Response implements Required<IBaseData & IProduct> {
@@ -48,10 +56,10 @@ export namespace AllQuery {
   export class Header {}
 
   /*** Build a request to submit it to the service for processing.*/
-  export const build = (data: Request): NatsRecord<Request, Header> => {
-    return new NatsRecordBuilder<Request>(data).build();
+  export const build = (data: Payload): NatsRecord<Payload, Header> => {
+    return new NatsRecordBuilder<Payload>(data).build();
   };
 
   /*** The data types to be sent to the service.*/
-  export type Record = NatsRecord<Request, Header>;
+  export type Record = NatsRecord<Payload, Header>;
 }

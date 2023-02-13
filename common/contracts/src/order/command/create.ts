@@ -1,5 +1,5 @@
 import { NatsRecord, NatsRecordBuilder } from '@nestjs/microservices';
-import { ObjectId, Schema } from 'mongoose';
+import { ObjectId } from 'mongoose';
 
 import { IBaseData, IOrder, ENUM } from '@common/interface';
 
@@ -15,10 +15,19 @@ export namespace CreateCommand {
   };
 
   /*** These values must be:
-   **  For create a `order`.*/
-  export class Request implements Pick<IOrder, 'customer' | 'products'> {
-    customer: Schema.Types.ObjectId;
-    products: Schema.Types.ObjectId[];
+   **  It is a bridge between a `Client app` and a an `API service`.
+   **  For `create` an order.
+   */
+  export class Request implements Pick<IOrder, 'products'> {
+    products: ObjectId[];
+  }
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `Order service`.
+   **  For `create` an order in database.
+   */
+  export class Payload implements Pick<IOrder, 'customer' | 'products'> {
+    customer: ObjectId;
+    products: ObjectId[];
   }
 
   /*** These values must be returned from the service after:
@@ -36,9 +45,9 @@ export namespace CreateCommand {
   export class Header {}
 
   /*** Build a request to submit it to the service for processing.*/
-  export const build = (data: Request): NatsRecord<Request, Header> => {
-    return new NatsRecordBuilder<Request>(data).build();
+  export const build = (data: Payload): NatsRecord<Payload, Header> => {
+    return new NatsRecordBuilder<Payload>(data).build();
   };
   /*** The data types to be sent to the service.*/
-  export type Record = NatsRecord<Request, Header>;
+  export type Record = NatsRecord<Payload, Header>;
 }

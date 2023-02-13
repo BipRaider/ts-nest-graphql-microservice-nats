@@ -4,21 +4,32 @@ import { ObjectId } from 'mongoose';
 
 import { IBaseData, IPrivateData, IUser, ENUM } from '@common/interface';
 
-/*** Query for get the `users`.
+/*** Query for search the `user`
  ** And based on this, the connection of servers is built.
  */
-export namespace GetUsersQuery {
+export namespace GetUserQuery {
   /*** The connection to the service `one to one`.*/
   export const Pattern: {
     readonly cmd: string;
   } = {
-    cmd: `${ENUM.NatsServicesQueue.USER}.get`,
+    cmd: `${ENUM.NatsServicesQueue.USER}.find`,
   };
 
-  /*** Must be one of these values to get for  users.*/
-  export class Request {
-    skip?: number;
-    limit?: number;
+  /*** These values must be:
+   **  It is a bridge between a `Client app` and a an `API service`.
+   **  For `search` of the user.
+   */
+  export class Request implements Partial<Pick<IUser, 'email'> & Pick<IBaseData, 'id'>> {
+    email?: string;
+    id?: ObjectId;
+  }
+
+  /*** These values must be:
+   **  It is a bridge between an `API service` and a `User service`.
+   **  For `search` of the user in database.
+   */
+  export class Payload extends Request {
+    finderId: ObjectId;
   }
 
   /*** These values must be returned from the service after the user has been found.*/
@@ -42,10 +53,10 @@ export namespace GetUsersQuery {
   export class Header {}
 
   /*** Build a request to submit it to the service for processing.*/
-  export const build = (data: Request): NatsRecord<Request, Header> => {
-    return new NatsRecordBuilder<Request>(data).build();
+  export const build = (data: Payload): NatsRecord<Payload, Header> => {
+    return new NatsRecordBuilder<Payload>(data).build();
   };
 
   /*** The data types to be sent to the service.*/
-  export type UserRecord = NatsRecord<Request, Header>;
+  export type Record = NatsRecord<Payload, Header>;
 }

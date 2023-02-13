@@ -6,8 +6,8 @@ import { SendErrorUtil, ErrorUtil } from '@common/utils';
 import { ENUM } from '@common/interface';
 
 // import { IOrderExchangeService } from './types';
-import { Entity } from './order.entity';
-import { OrderRepository } from './order.repository';
+import { Entity } from '../order.entity';
+import { OrderRepository } from '../order.repository';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -171,17 +171,14 @@ export class OrderExchangeService {
 
     if ('status' in expect) return expect;
 
-    this.emitPaidEvent(dto, expect);
+    this.emitEvent(dto, expect);
     return expect;
   };
 
   /*** If all checks went well. Send event to nats.*/
-  private emitPaidEvent = (
-    dto: OrderContract.ExchangeCommand.Request,
-    item: Entity,
-  ): Promise<void> => {
+  private emitEvent = (dto: OrderContract.ExchangeCommand.Request, item: Entity): Promise<void> => {
     this.exchequerClient.emit(
-      `${ENUM.NatsServicesQueue.EXCHEQUER}.order.exchange.${item.exchange}`,
+      `${ENUM.NatsServicesQueue.EXCHEQUER}.${ENUM.NatsServicesQueue.ORDER}.exchange.${item.exchange}`,
       {
         ...dto,
         processTime: Date.now(),
@@ -190,10 +187,13 @@ export class OrderExchangeService {
     );
 
     if (item.processed === ENUM.ORDER.PROCESS.complete) {
-      this.exchequerClient.emit(`${ENUM.NatsServicesQueue.PRODUCT}.order.get`, {
-        ...dto,
-        item,
-      });
+      this.exchequerClient.emit(
+        `${ENUM.NatsServicesQueue.PRODUCT}.${ENUM.NatsServicesQueue.ORDER}.get`,
+        {
+          ...dto,
+          item,
+        },
+      );
     }
 
     return;

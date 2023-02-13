@@ -7,18 +7,18 @@ import { SendErrorUtil } from '@common/utils';
 export interface IProductController {
   /** The function to creating a `user`. */
   create: (
-    payload: ProductContract.CreateCommand.Request,
+    payload: ProductContract.CreateCommand.Payload,
   ) => Promise<ProductContract.CreateCommand.Response | SendErrorUtil>;
   /** The function to getting `user`.*/
   find: (
-    payload: ProductContract.FindQuery.Request,
+    payload: ProductContract.FindQuery.Payload,
   ) => Promise<ProductContract.FindQuery.Response | SendErrorUtil>;
   /** The function to getting `users`.*/
   get: (
-    payload: ProductContract.GetQuery.Request,
+    payload: ProductContract.GetQuery.Payload,
   ) => Promise<ProductContract.GetQuery.Response[] | SendErrorUtil>;
   /** The function to getting `users`.*/
   all: (
-    payload: ProductContract.AllQuery.Request,
+    payload: ProductContract.AllQuery.Payload,
   ) => Promise<ProductContract.AllQuery.Response[] | SendErrorUtil>;
 }

@@ -21,10 +21,8 @@ export class ProductRepository implements IProductRepository {
   };
 
   public find = async (entity: Entity): Promise<ISchema | null> => {
-    let item: ISchema | null = null;
-    if (entity.id) item = await this.db.findById(entity.id).select({}).exec();
-
-    return item;
+    if (entity.id) return await this.db.findById(entity.id).select({}).exec();
+    return null;
   };
 
   public get = async (entity?: Entity): Promise<ISchema[] | null> => {
@@ -36,13 +34,14 @@ export class ProductRepository implements IProductRepository {
 
   public all = async (entity: Entity): Promise<ISchema[]> => await this.findFromDB(entity);
 
-  private findFromDB = async (entity: Entity): Promise<ISchema[]> => {
-    return await this.db.find(entity.find()).skip(entity.skip).limit(entity.limit).exec();
-  };
-
   public update = async (entity: Entity): Promise<ISchema | null> => {
     if (!entity.id) return null;
     const set = entity.updateDB();
     return await this.db.findByIdAndUpdate(entity.id, { $set: set }, { new: true }).exec();
+  };
+
+  //Private func
+  private findFromDB = async (entity: Entity): Promise<ISchema[]> => {
+    return await this.db.find(entity.find()).skip(entity.skip).limit(entity.limit).exec();
   };
 }

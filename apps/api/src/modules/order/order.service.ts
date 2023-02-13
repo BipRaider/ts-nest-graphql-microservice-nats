@@ -4,23 +4,16 @@ import { ClientNats } from '@nestjs/microservices';
 import { ENUM } from '@common/interface';
 import { OrderContract } from '@common/contracts';
 import { ErrorUtil, SendErrorUtil } from '@common/utils';
-import {
-  AllOrdersInput,
-  CreateOrderInput,
-  FindOrderInput,
-  GetOrdersInput,
-  PaidOrderInput,
-  UpdateOrderInput,
-} from './dto/input';
+import { PaidOrderInput } from './dto/input';
 
 @Injectable()
 export class OrderService {
   constructor(@Inject(ENUM.NatsServicesName.ORDER) private readonly orderClient: ClientNats) {}
 
   public create = async (
-    data: CreateOrderInput,
+    data: OrderContract.CreateCommand.Payload,
   ): Promise<OrderContract.CreateCommand.Response | SendErrorUtil> => {
-    const record = OrderContract.CreateCommand.build({ ...data });
+    const record = OrderContract.CreateCommand.build(data);
 
     const payload: OrderContract.CreateCommand.Response | SendErrorUtil = await new Promise(
       async res => {
@@ -40,7 +33,7 @@ export class OrderService {
   };
 
   public find = async (
-    data: FindOrderInput,
+    data: OrderContract.FindQuery.Payload,
   ): Promise<OrderContract.FindQuery.Response | SendErrorUtil> => {
     const record = OrderContract.FindQuery.build(data);
 
@@ -62,7 +55,7 @@ export class OrderService {
   };
 
   public get = async (
-    data: GetOrdersInput,
+    data: OrderContract.GetQuery.Payload,
   ): Promise<OrderContract.GetQuery.Response[] | SendErrorUtil> => {
     const record = OrderContract.GetQuery.build(data);
 
@@ -84,7 +77,7 @@ export class OrderService {
   };
 
   public all = async (
-    data: AllOrdersInput,
+    data: OrderContract.AllQuery.Payload,
   ): Promise<OrderContract.AllQuery.Response[] | SendErrorUtil> => {
     const record = OrderContract.AllQuery.build(data);
 
@@ -106,7 +99,7 @@ export class OrderService {
   };
 
   public update = async (
-    data: UpdateOrderInput,
+    data: OrderContract.UpdateCommand.Payload,
   ): Promise<OrderContract.UpdateCommand.Response | SendErrorUtil> => {
     const record = OrderContract.UpdateCommand.build(data);
 

@@ -6,11 +6,19 @@ import { SendErrorUtil } from '@common/utils';
  */
 export interface IUserController {
   /** The function to creating a `user`. */
-  create: (payload: UserContract.CreateCommand.Request) => Promise<UserContract.CreateCommand.Response | SendErrorUtil>;
+  create: (
+    payload: UserContract.CreateCommand.Payload,
+  ) => Promise<UserContract.CreateCommand.Response | SendErrorUtil>;
   /** The function to getting `user`.*/
-  find: (payload: UserContract.GetUserQuery.Request) => Promise<UserContract.GetUserQuery.Response | SendErrorUtil>;
+  find: (
+    payload: UserContract.GetUserQuery.Payload,
+  ) => Promise<UserContract.GetUserQuery.Response | SendErrorUtil>;
   /** The function to getting `users`.*/
-  get: (payload: UserContract.GetUsersQuery.Request) => Promise<UserContract.GetUsersQuery.Response[] | SendErrorUtil>;
+  get: (
+    payload: UserContract.GetUsersQuery.Payload,
+  ) => Promise<UserContract.GetUsersQuery.Response[] | SendErrorUtil>;
   /** The function to getting `user` and checking him.*/
-  auth: (payload: AuthContract.AuthQuery.Request) => Promise<AuthContract.AuthQuery.Response | SendErrorUtil>;
+  auth: (
+    payload: AuthContract.AuthQuery.Payload,
+  ) => Promise<AuthContract.AuthQuery.Response | SendErrorUtil>;
 }

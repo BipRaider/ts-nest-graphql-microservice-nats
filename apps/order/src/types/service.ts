@@ -11,19 +11,19 @@ import { Entity } from '../order.entity';
 export interface IOrderService {
   /*** The function to work and modify data for:
    ** * `creating` a order.*/
-  create: (dto: OrderContract.CreateCommand.Request) => Promise<Entity | SendErrorUtil>;
+  create: (dto: OrderContract.CreateCommand.Payload) => Promise<Entity | SendErrorUtil>;
   /*** The function to work and modify data for:
    ** * `update` a order by `id` .*/
-  update: (dto: OrderContract.UpdateCommand.Request) => Promise<Entity | SendErrorUtil>;
+  update: (dto: OrderContract.UpdateCommand.Payload) => Promise<Entity | SendErrorUtil>;
   /*** The function to work and modify data for:
    ** * `finding` a order by `id` or `codeOrder`.*/
-  find: (dto: OrderContract.FindQuery.Request) => Promise<Entity | SendErrorUtil>;
+  find: (dto: OrderContract.FindQuery.Payload) => Promise<Entity | SendErrorUtil>;
   /*** The function to work and modify data for:
    ** * `finding` a `orders` by `customer`.*/
-  get: (dto: OrderContract.GetQuery.Request) => Promise<Entity[] | SendErrorUtil>;
+  get: (dto: OrderContract.GetQuery.Payload) => Promise<Entity[] | SendErrorUtil>;
   /*** The function to work and modify data for:
    ** * `finding` a `orders`. */
-  all: (dto: OrderContract.AllQuery.Request) => Promise<Entity[] | SendErrorUtil>;
+  all: (dto: OrderContract.AllQuery.Payload) => Promise<Entity[] | SendErrorUtil>;
 
   /*** The function  modify data for:
    ** * `updating` the `order`. */

@@ -8,11 +8,13 @@ import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { OrderRepository } from './order.repository';
 import { OrderSchema } from './order.schema';
-import { OrderPaymentService } from './order.paid.service';
-import { OrderProcessService } from './order.process.service';
-import { OrderSendService } from './order.send.service';
-import { OrderReceiveService } from './order.receive.service';
-import { OrderExchangeService } from './order.exchange.service';
+import {
+  OrderPaymentService,
+  OrderProcessService,
+  OrderSendService,
+  OrderReceiveService,
+  OrderExchangeService,
+} from './services';
 
 @Module({
   imports: [
