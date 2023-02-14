@@ -20,7 +20,7 @@ export class CreateUserInput implements UserContract.CreateCommand.Request {
   @Field(() => String)
   @IsNotEmpty()
   @IsString({ message: 'The name is incorrect' })
-  @Length(6, 15)
+  @Length(3, 15)
   name: string;
 
   @Field(() => String)

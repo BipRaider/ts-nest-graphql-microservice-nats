@@ -60,6 +60,25 @@ export class UserService implements IUserService {
     }
   }
 
+  async update(dto: UserContract.UpdateCommand.Payload): Promise<Entity | SendErrorUtil> {
+    try {
+      const entity = new Entity(dto);
+      const user = await this.repository.update(entity);
+      if (!user)
+        return new ErrorUtil(404).send({
+          error: 'User not found.',
+          payload: { email: entity.email, id: entity.id },
+        });
+
+      return new Entity(user);
+    } catch (error) {
+      return new ErrorUtil(502).send({
+        error: 'UserService.find something wrong.',
+        payload: error,
+      });
+    }
+  }
+
   async get(dto?: UserContract.GetUsersQuery.Payload): Promise<Entity[] | SendErrorUtil> {
     try {
       const entity = new Entity({}).filter(dto);

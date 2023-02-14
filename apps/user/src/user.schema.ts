@@ -1,6 +1,7 @@
 import { IPrivateData, IUser, ENUM } from '@common/interface';
 import { Schema, Document, Model, ObjectId } from 'mongoose';
 import { Entity } from './user.entity';
+import { PasswordUtil } from '@common/utils';
 
 /*** The `User` schema for database */
 export interface ISchema extends Document<ObjectId | string>, IUser {
@@ -20,15 +21,15 @@ export interface IModel extends Model<Instance> {
 
 const PrivateDataSchema = new Schema<IPrivateData>(
   {
-    firstname: { type: String, required: false },
-    lastname: { type: String, required: false },
+    firstname: { type: String, required: false, minlength: 2, maxlength: 30 },
+    lastname: { type: String, required: false, minlength: 2, maxlength: 30 },
   },
   { _id: false },
 );
 
 export const UserSchema = new Schema<ISchema, IModel>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, minlength: 3, maxlength: 15 },
     email: { type: String, required: true, unique: true, immutable: true },
     password: { type: String, required: true },
     privateData: { type: Schema.Types.Mixed, of: PrivateDataSchema, required: false, default: {} },
@@ -39,11 +40,7 @@ export const UserSchema = new Schema<ISchema, IModel>(
       default: [ENUM.Roles.USER],
     },
     tokens: {
-      emailVerification: {
-        type: String,
-        //  default: PasswordUtil.randomBytes()
-        default: 'default',
-      },
+      emailVerification: { type: String, default: PasswordUtil.randomBytes(36) },
     },
     active: { type: Boolean, default: false },
     githubId: { type: String, required: false },

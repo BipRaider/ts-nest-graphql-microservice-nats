@@ -58,10 +58,13 @@ export interface IEnvRedisConfig {
 }
 export interface IEnvEmailConfig {
   host: string;
-  port: string;
-  auth: string;
+  port: string | number;
+  user: string;
   password: string;
   apiKey: string;
+  from: string;
+  fromName: string;
+  clientUrl: string;
 }
 export interface IEnvServerConfig {
   port: number;

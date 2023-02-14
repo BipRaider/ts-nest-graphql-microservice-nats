@@ -73,10 +73,13 @@ export const envConfig = (): IEnvConfig => {
     },
     email: {
       host: process.env['EMAIL_HOST'] || '',
-      port: process.env['EMAIL_PORT'] || '',
-      auth: process.env['EMAIL_AUTH_USER'] || '',
+      port: process.env['EMAIL_PORT'] || 587,
+      user: process.env['EMAIL_AUTH_USER'] || '',
       password: process.env['EMAIL_AUTH_PASSWORD'] || '',
-      apiKey: process.env['SENDGRID_API_KEY'] || '',
+      apiKey: process.env['EMAIL_SENDGRID_API_KEY'] || '',
+      from: process.env['EMAIL_FROM'] || '',
+      fromName: process.env['EMAIL_FROM_NAME'] || '',
+      clientUrl: process.env['EMAIL_CLIENT_URL'] || '',
     },
     session: {
       secret: process.env['SESSION_SECRET'],

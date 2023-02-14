@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
-import { Ctx, MessagePattern, NatsContext, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 import { SendErrorUtil } from '@common/utils';
-import { IUser } from '@common/interface';
+
 import { AuthContract, UserContract } from '@common/contracts';
 
 import { IUserController } from './types';
@@ -39,6 +39,17 @@ export class UserController implements IUserController {
     return user;
   }
 
+  @MessagePattern(UserContract.UpdateCommand.Pattern)
+  public async update(
+    @Payload() payload: UserContract.UpdateCommand.Payload,
+  ): Promise<UserContract.UpdateCommand.Response | SendErrorUtil> {
+    const user: Entity | SendErrorUtil = await this.usersService.update(payload);
+
+    if ('status' in user) return user;
+
+    return user;
+  }
+
   @MessagePattern(UserContract.GetUsersQuery.Pattern)
   public async get(
     @Payload() payload?: UserContract.GetUsersQuery.Payload,
@@ -59,33 +70,5 @@ export class UserController implements IUserController {
     if ('status' in user) return user;
 
     return user;
-  }
-
-  // @MessagePattern({ cmd: 'user.getUserById' })
-  // public getUserById(@Payload() data: any): User {
-  //   return this.usersService.getUserById(data);
-  // }
-
-  // @MessagePattern({ cmd: 'user.usersList' })
-  // public getUsers(): User[] {
-  //   return this.usersService.getUsers();
-  // }
-
-  // @MessagePattern({ cmd: 'user.updateUser' })
-  // public updateUser(@Payload() data: any): User {
-  //   return this.usersService.createUser(data);
-  // }
-
-  // @MessagePattern({ cmd: 'user.deleteUser' })
-  // public deleteUser(@Payload() data: any): User {
-  //   return this.usersService.createUser(data);
-  // }
-  @MessagePattern('user.*')
-  public createUser1(@Payload() data: IUser, @Ctx() context: NatsContext) {
-    console.dir({ data, context });
-    console.dir('1===>');
-    console.dir(context.getSubject());
-    console.dir(context.getHeaders());
-    return this.usersService.create(data);
   }
 }

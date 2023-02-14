@@ -8,12 +8,12 @@ export class PrivateDataInput extends PartialType(PrivateData, InputType) implem
   @Field({ nullable: true })
   @IsOptional()
   @IsString({ message: 'The firstname is incorrect' })
-  @Length(5, 10)
+  @Length(2, 30)
   firstname?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString({ message: 'The lastname is incorrect' })
-  @Length(39, 55)
+  @Length(2, 30)
   lastname?: string;
 }
