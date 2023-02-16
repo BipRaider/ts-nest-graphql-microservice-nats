@@ -7,10 +7,16 @@ import { IJwtGenerateToken, IJwtValidateToken } from '@common/interface';
 export const CurrentUser = createParamDecorator(
   (data: unknown, context: ExecutionContext): IJwtGenerateToken => {
     const ctx = GqlExecutionContext.create(context);
-    // console.log('CurrentUser--3-step-->');
+    const { id, roles, email }: IJwtValidateToken = ctx.getContext().req?.user;
+    return { id, roles, email };
+  },
+);
 
-    const { id, roles, email }: IJwtValidateToken = ctx.getContext().req.user;
-
+/*** Return the data from `extra.user`. When use `Subscription`.*/
+export const CurrentUserGqlSub = createParamDecorator(
+  (data: unknown, context: ExecutionContext): IJwtGenerateToken => {
+    const ctx = GqlExecutionContext.create(context);
+    const { id, roles, email }: IJwtValidateToken = ctx.getContext()?.extra?.user;
     return { id, roles, email };
   },
 );

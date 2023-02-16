@@ -52,7 +52,7 @@ async function bootstrap(): Promise<void> {
   const sessionOptions = sessionConfig(redisClient, sessionEnv);
   app.use(session(sessionOptions));
 
-  // init 'passport' (npm install passport)
+  // init 'passport'
   app.use(passport.initialize());
   app.use(passport.session());
 

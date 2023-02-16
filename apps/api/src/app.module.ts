@@ -5,7 +5,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PassportModule } from '@nestjs/passport';
 
 import { JwtUtilModule, JwtStrategyName } from '@common/utils';
-import { RedisModule } from '@common/libs';
+import { RedisModule, PubSubModule } from '@common/libs';
 
 import { GraphQLOptionsHost } from './graphql/graphql.option';
 import { ScalarModule } from './graphql/scalar/scalar.module';
@@ -16,6 +16,8 @@ import { ListModules } from './modules';
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [] }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      inject: [JwtUtilModule],
+      imports: [JwtUtilModule],
       driver: ApolloDriver,
       useClass: GraphQLOptionsHost,
     }),
@@ -24,6 +26,7 @@ import { ListModules } from './modules';
       session: true,
     }),
     RedisModule,
+    PubSubModule,
     ScalarModule,
     JwtUtilModule,
     ...ListModules,

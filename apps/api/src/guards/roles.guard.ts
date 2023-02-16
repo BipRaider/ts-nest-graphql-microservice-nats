@@ -30,6 +30,7 @@ export class RoleGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const { user } = context.switchToHttp().getNext().req;
+
     const role = this.reflector.getAllAndOverride<ENUM.Roles>(ROLE_KEY, [
       context.getHandler(),
       context.getClass(),

@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { Session, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Context, Query } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
 
@@ -42,8 +42,10 @@ export class AuthResolver {
   @UseGuards(RefreshAuthGuard)
   async refreshToken(
     @Context() context: any,
+    @Session() session: Record<string, any>,
     @CurrentUser() user: IJwtGenerateToken,
   ): Promise<IJwtGenerateToken & { access_token: string }> {
+    console.log('refreshToken', session);
     const token = await this.authService.generateToken(user, context);
     return { ...user, ...token };
   }

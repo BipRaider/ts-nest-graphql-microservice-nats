@@ -194,6 +194,11 @@ export interface PaidOrderInput {
     paid?: Nullable<ORDER_PAID>;
 }
 
+export interface SendMessageInput {
+    message: string;
+    userId: ObjectID;
+}
+
 export interface PrivateData {
     firstname?: Nullable<string>;
     lastname?: Nullable<string>;
@@ -409,6 +414,11 @@ export interface UpdateOrderResponse {
     isState?: Nullable<boolean>;
 }
 
+export interface Message {
+    message: string;
+    sent: string;
+}
+
 export interface IQuery {
     getUser(input: GetUserInput): GetUserResponse | Promise<GetUserResponse>;
     getUsers(input: GetUsersInput): GetUsersResponse[] | Promise<GetUsersResponse[]>;
@@ -435,6 +445,13 @@ export interface IMutation {
     createOrder(input: CreateOrderInput): CreateOrderResponse | Promise<CreateOrderResponse>;
     updateOrder(input: UpdateOrderInput): UpdateOrderResponse | Promise<UpdateOrderResponse>;
     updateOrderPaid(input: PaidOrderInput): PaidOrderResponse | Promise<PaidOrderResponse>;
+    sendMessageOneToOne(input: SendMessageInput): Message | Promise<Message>;
+    sendMessageOneToMeny(input: SendMessageInput): Message | Promise<Message>;
+}
+
+export interface ISubscription {
+    getMessageOneToOne(): Message | Promise<Message>;
+    getMessageMenyToOne(): Message | Promise<Message>;
 }
 
 export type ObjectID = unknown;

@@ -280,6 +280,11 @@ type UpdateOrderResponse {
   isState: Boolean
 }
 
+type Message {
+  message: String!
+  sent: String!
+}
+
 """Date custom scalar type"""
 scalar Date
 
@@ -376,6 +381,8 @@ type Mutation {
   createOrder(input: CreateOrderInput!): CreateOrderResponse!
   updateOrder(input: UpdateOrderInput!): UpdateOrderResponse!
   updateOrderPaid(input: PaidOrderInput!): PaidOrderResponse!
+  sendMessageOneToOne(input: SendMessageInput!): Message!
+  sendMessageOneToMeny(input: SendMessageInput!): Message!
 }
 
 input CreateUserInput {
@@ -441,4 +448,14 @@ input PaidOrderInput {
   customer: ObjectID
   codeOrder: String
   paid: ORDER_PAID
+}
+
+input SendMessageInput {
+  message: String!
+  userId: ObjectID!
+}
+
+type Subscription {
+  getMessageOneToOne: Message!
+  getMessageMenyToOne: Message!
 }

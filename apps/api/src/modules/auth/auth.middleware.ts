@@ -8,7 +8,11 @@ import { IJwtValidateToken } from '@common/interface';
 export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly jwt: JwtUtil) {} //
 
-  async use(req: Request & { user: IJwtValidateToken; ip: string }, res: Response, next: NextFunction): Promise<void> {
+  async use(
+    req: Request & { user: IJwtValidateToken; ip: string },
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     const { authorization } = req.headers;
 
     let user: IJwtValidateToken;

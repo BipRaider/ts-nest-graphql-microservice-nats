@@ -96,7 +96,7 @@ export const envConfig = (): IEnvConfig => {
         playground: process.env['GRAPHQL_PLAYGROUND'] === 'true' || false,
         persistedQueries: process.env['GRAPHQL_PERSISTED_QUERIES'] === 'false' ? false : {}, //TODO:
         cache: process.env['GRAPHQL_CACHE'] === 'bounded' ? 'bounded' : 'bounded', //TODO:
-        installSubscriptionHandlers: true, // is old
+        // installSubscriptionHandlers: true, // is old
       },
     },
     rateLimit: {
