@@ -9,14 +9,17 @@ export const sessionConfig = (redisClient: Redis, sessionEnv: ISessionOption) =>
   const RedisStore = connectRedis(session);
   return {
     store: new RedisStore({
-      client: redisClient as any,
+      client: redisClient,
+      logErrors: true,
     }),
-    name: REDIS_AUTH_TOKEN_SESSION,
+    // name: REDIS_AUTH_TOKEN_SESSION,
     secret: sessionEnv.secret,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true,
+      sameSite: true,
+      httpOnly: false,
+      // httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 30, // 60 days --> need >= max of alive time of refresh token
     },

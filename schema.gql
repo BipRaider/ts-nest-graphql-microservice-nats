@@ -381,8 +381,8 @@ type Mutation {
   createOrder(input: CreateOrderInput!): CreateOrderResponse!
   updateOrder(input: UpdateOrderInput!): UpdateOrderResponse!
   updateOrderPaid(input: PaidOrderInput!): PaidOrderResponse!
-  sendMessageOneToOne(input: SendMessageInput!): Message!
-  sendMessageOneToMeny(input: SendMessageInput!): Message!
+  sendMessageOneToOne(input: SendMessageOneToOneInput!): Boolean!
+  sendMessageOneToMany(input: SendMessageManyToOneInput!): Boolean!
 }
 
 input CreateUserInput {
@@ -450,12 +450,16 @@ input PaidOrderInput {
   paid: ORDER_PAID
 }
 
-input SendMessageInput {
+input SendMessageOneToOneInput {
   message: String!
   userId: ObjectID!
 }
 
+input SendMessageManyToOneInput {
+  message: String!
+}
+
 type Subscription {
   getMessageOneToOne: Message!
-  getMessageMenyToOne: Message!
+  getMessageManyToOne: Message!
 }

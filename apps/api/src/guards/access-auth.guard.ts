@@ -10,6 +10,7 @@ export class AccessAuthGuard extends AuthGuard(JwtStrategyName.Access) {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
+
     // console.log('AccessAuthGuard--1-step-->');
     return req;
   }

@@ -21,7 +21,7 @@ import { ChatResolver } from './chat.resolver';
           store: redisStore,
           host: configService.get('REDIS_HOST'),
           port: configService.get('REDIS_PORT'),
-          ttl: 2 * 60 * 1000 * 1000,
+          ttl: 120,
         };
       },
     }),
@@ -35,3 +35,9 @@ import { ChatResolver } from './chat.resolver';
   providers: [ChatService, ChatResolver],
 })
 export class ChatModule {}
+/*
+ * Docs:
+ * https://typegraphql.com/docs/subscriptions.html
+ * https://docs.nestjs.com/graphql/subscriptions
+ * https://www.delightfulengineering.com/blog/nest-websockets/rate-limiting-acknowledgements
+ */

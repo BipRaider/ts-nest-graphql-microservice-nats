@@ -194,9 +194,13 @@ export interface PaidOrderInput {
     paid?: Nullable<ORDER_PAID>;
 }
 
-export interface SendMessageInput {
+export interface SendMessageOneToOneInput {
     message: string;
     userId: ObjectID;
+}
+
+export interface SendMessageManyToOneInput {
+    message: string;
 }
 
 export interface PrivateData {
@@ -445,13 +449,13 @@ export interface IMutation {
     createOrder(input: CreateOrderInput): CreateOrderResponse | Promise<CreateOrderResponse>;
     updateOrder(input: UpdateOrderInput): UpdateOrderResponse | Promise<UpdateOrderResponse>;
     updateOrderPaid(input: PaidOrderInput): PaidOrderResponse | Promise<PaidOrderResponse>;
-    sendMessageOneToOne(input: SendMessageInput): Message | Promise<Message>;
-    sendMessageOneToMeny(input: SendMessageInput): Message | Promise<Message>;
+    sendMessageOneToOne(input: SendMessageOneToOneInput): boolean | Promise<boolean>;
+    sendMessageOneToMany(input: SendMessageManyToOneInput): boolean | Promise<boolean>;
 }
 
 export interface ISubscription {
     getMessageOneToOne(): Message | Promise<Message>;
-    getMessageMenyToOne(): Message | Promise<Message>;
+    getMessageManyToOne(): Message | Promise<Message>;
 }
 
 export type ObjectID = unknown;

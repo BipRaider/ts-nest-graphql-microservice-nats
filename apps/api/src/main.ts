@@ -12,7 +12,7 @@ import compression from 'compression';
 import { useContainer } from 'class-validator';
 
 import { ValidatePipe } from '@common/pipe';
-import { LoggingInterceptor, ErrorsInterceptor } from '@common/interceptor';
+import { ErrorsInterceptor, ErrorsLoggerInterceptor } from '@common/interceptor';
 import { AllExceptionsFilter } from '@common/filters';
 import { IEnvConfig, ISessionOption } from '@common/interface';
 import { envConfig, sessionConfig } from '@common/config';
@@ -25,7 +25,7 @@ async function bootstrap(): Promise<void> {
   const port = env.server.port;
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    bufferLogs: true,
+    bodyParser: true,
   });
 
   app.use(cookieParser());
@@ -65,7 +65,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
-  app.useGlobalInterceptors(new LoggingInterceptor(), new ErrorsInterceptor());
+  app.useGlobalInterceptors(new ErrorsLoggerInterceptor(), new ErrorsInterceptor());
 
   // Custom exceptions filter
   const { httpAdapter } = app.get(HttpAdapterHost);

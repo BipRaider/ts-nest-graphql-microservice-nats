@@ -2,9 +2,8 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { PassportModule } from '@nestjs/passport';
 
-import { JwtUtilModule, JwtStrategyName } from '@common/utils';
+import { JwtUtilModule } from '@common/utils';
 import { RedisModule, PubSubModule } from '@common/libs';
 
 import { GraphQLOptionsHost } from './graphql/graphql.option';
@@ -21,10 +20,7 @@ import { ListModules } from './modules';
       driver: ApolloDriver,
       useClass: GraphQLOptionsHost,
     }),
-    PassportModule.register({
-      defaultStrategy: JwtStrategyName.Gql,
-      session: true,
-    }),
+
     RedisModule,
     PubSubModule,
     ScalarModule,

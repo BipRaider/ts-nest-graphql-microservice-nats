@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import get from 'lodash.get';
 
 import { JwtStrategyName } from '../enum';
+
 import { IJwtValidateToken } from '@common/interface';
 
 @Injectable()
@@ -15,12 +16,12 @@ export class GqlStrategy extends PassportStrategy(Strategy, JwtStrategyName.Gql)
       audience: configService.get('JWT_ACCESS_AUDIENCE') || 'JWT_ACCESS_AUDIENCE',
       issuer: configService.get('JWT_ACCESS_ISSUER') || 'JWT_ACCESS_ISSUER',
       expiresIn: configService.get('JWT_ACCESS_EXPIRES') || '2y',
-      passReqToCallback: true,
+      // passReqToCallback: true, //Return Request to the validate func.
+      // ignoreExpiration: true,
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: any) => {
           let token: string = null;
           if (!token) token = get(req, 'connectionParams.Authorization', null);
-
           if (token && typeof token === 'string') return token.split(' ')[1];
           return '';
         },
@@ -28,8 +29,7 @@ export class GqlStrategy extends PassportStrategy(Strategy, JwtStrategyName.Gql)
     });
   }
 
-  async validate(req: any, user: IJwtValidateToken, fn: any): Promise<any> {
-    fn(null, user);
+  async validate(user: IJwtValidateToken, _done: any): Promise<any> {
     return user;
   }
 }

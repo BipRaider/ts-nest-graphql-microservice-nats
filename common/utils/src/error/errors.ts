@@ -66,6 +66,7 @@ export class ErrorUtil extends Error {
   sendClient = (err: GraphQLError): GraphQLError => {
     const { extensions } = err;
     delete extensions.exception;
+
     if (err.message?.startsWith('Variable ')) {
       return new ErrorUtil(400).formatErrorVariable(err);
     }
@@ -79,9 +80,9 @@ export class ErrorUtil extends Error {
   /*** Return the data to `formatError` into `apollo`.
    * @param extensions  It's data from answer microservice.
    */
-  public response = (data: SendErrorUtil): GraphQLError => {
+  public response = (data: SendErrorUtil, defName?: boolean): GraphQLError => {
     const code = HttpStatus[this.httpStatusCode];
-    return new GraphQLError(`${'Error'}: ${this.message}`, {
+    return new GraphQLError(defName ? this.message : `${'Error'}: ${this.message}`, {
       extensions: {
         response: {
           ...data.response,
@@ -100,7 +101,7 @@ export class ErrorUtil extends Error {
   private formatError = (err: GraphQLError): GraphQLError => {
     const { extensions, path } = err;
     delete extensions.exception;
-    return new GraphQLError(this.message || err.message, {
+    return new GraphQLError(String(extensions.error) || err.message || this.message, {
       extensions,
       path,
     });

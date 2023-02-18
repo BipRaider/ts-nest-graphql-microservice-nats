@@ -1,21 +1,21 @@
 import { join } from 'path';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
-import { ApolloServerPluginLandingPageLocalDefault, Context } from 'apollo-server-core';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
+import { PUB_SUB } from '@common/libs';
 import { ErrorUtil, JwtUtil } from '@common/utils';
 import { envConfig } from '@common/config';
 import { IJwtGenerateToken } from '@common/interface';
 
 import { clearPassword } from './graphql.middleware';
 
-const logger = new Logger('Apollo');
-
 @Injectable()
 export class GraphQLOptionsHost implements GqlOptionsFactory {
-  constructor(private readonly jwt: JwtUtil) {}
+  constructor(private readonly jwt: JwtUtil, @Inject(PUB_SUB) private pubSub: RedisPubSub) {}
   async createGqlOptions(): Promise<ApolloDriverConfig> {
     const { graphql } = envConfig();
     const { apollo } = graphql;
@@ -26,9 +26,11 @@ export class GraphQLOptionsHost implements GqlOptionsFactory {
       plugins: apollo.playground ? [] : [ApolloServerPluginLandingPageLocalDefault()],
       autoSchemaFile: join(process.cwd(), './schema.gql'),
       typePaths: [join(process.cwd(), './schema.gql'), join(process.cwd(), './**/*.gql')],
+
       subscriptions: {
         'graphql-ws': {
           path: '/graphql',
+
           onConnect: async context => {
             const { extra, connectionParams, connectionInitReceived } = context as {
               extra: any;
@@ -38,11 +40,15 @@ export class GraphQLOptionsHost implements GqlOptionsFactory {
             if (extra && connectionInitReceived) {
               let user: IJwtGenerateToken = null;
               if (connectionParams?.Authorization) {
-                const token = connectionParams.Authorization.split(' ')[1];
-                const { id, roles, email } = await this.jwt.verifyAccess(token);
-                user = { id, roles, email };
+                const token = String(connectionParams.Authorization).split(' ')[1];
+                const expect = await this.jwt.verifyAccess(token);
+                if (expect) {
+                  const { id, roles, email } = expect;
+                  user = { id, roles, email };
+                }
               }
               extra.user = user;
+              extra.pubSub = this.pubSub;
             }
           },
         },
@@ -71,30 +77,32 @@ export class GraphQLOptionsHost implements GqlOptionsFactory {
       context: async ({
         req,
         res,
-        connection,
         extra,
         connectionParams,
         connectionInitReceived,
+        subscriptions,
       }) => {
         // Http request
+
         return {
           token: undefined as string | undefined,
           req: req as Request,
           res,
           extra,
-          connection,
           connectionParams,
           connectionInitReceived,
+          subscriptions,
+          pubSub: this.pubSub,
         };
       },
       // formatResponse: (response: GraphQLResponse, _requestContext: GraphQLRequestContext<object>): GraphQLResponse => {
       //   logger.log('formatResponse');
-
       //   return response;
       // },
       formatError: (err: GraphQLError): GraphQLError => {
-        logger.error(err);
+        const logger = new Logger('Apollo');
         delete err.stack;
+        logger.error(err);
         return new ErrorUtil().sendClient(err);
       },
     };

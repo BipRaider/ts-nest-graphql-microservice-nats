@@ -16,7 +16,9 @@ export const CurrentUser = createParamDecorator(
 export const CurrentUserGqlSub = createParamDecorator(
   (data: unknown, context: ExecutionContext): IJwtGenerateToken => {
     const ctx = GqlExecutionContext.create(context);
-    const { id, roles, email }: IJwtValidateToken = ctx.getContext()?.extra?.user;
+    const user: IJwtValidateToken = ctx.getContext()?.extra?.user;
+
+    const { id, roles, email } = user;
     return { id, roles, email };
   },
 );

@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtModuleOptions, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtAccessStrategy, JwtRefreshStrategy, GqlStrategy } from './strategy';
 import { JwtUtil } from './jwt';
 import { InjectJwtService, JwtStrategyEnv, JwtStrategyName } from './enum';
+import { SessionSerializer } from './session.serializer';
 
 /*** Refresh jwt service*/
 export const JwtRefreshService = () => {
@@ -69,19 +70,20 @@ export const JwtModuleRootAsync = (): DynamicModule => {
 @Module({
   imports: [
     PassportModule.register({
-      defaultStrategy: JwtStrategyName.Gql,
+      defaultStrategy: JwtStrategyName.Access,
       session: true,
     }),
     JwtModuleRootAsync(),
   ],
   providers: [
     GqlStrategy,
+    SessionSerializer,
     JwtRefreshStrategy,
     JwtAccessStrategy,
     JwtUtil,
     JwtRefreshService(),
     JwtAccessService(),
   ],
-  exports: [GqlStrategy, JwtRefreshStrategy, JwtAccessStrategy, JwtUtil],
+  exports: [GqlStrategy, JwtRefreshStrategy, JwtAccessStrategy, JwtUtil, SessionSerializer],
 })
 export class JwtUtilModule {}

@@ -13,4 +13,8 @@ export class GqlAuthGuard extends AuthGuard(JwtStrategyName.Gql) {
     const extra = ctx.getContext()?.extra;
     return { extra, connectionParams };
   }
+
+  // handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
+  //   return user;
+  // }
 }
